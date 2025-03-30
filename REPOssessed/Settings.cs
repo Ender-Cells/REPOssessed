@@ -148,6 +148,7 @@ namespace REPOssessed
 
                 cheatSettings["DebugMode"] = b_DebugMode.ToString();
                 cheatSettings["IsFirstLaunch"] = b_IsFirstLaunch.ToString();
+                cheatSettings["UseValuableTiers"] = b_useValuableTiers.ToString();
                 cheatSettings["PlayerESP"] = b_PlayerESP.ToString();
                 cheatSettings["EnemyESP"] = b_EnemyESP.ToString();
                 cheatSettings["ItemESP"] = b_ItemESP.ToString();
@@ -238,9 +239,11 @@ namespace REPOssessed
                         b_DebugMode = bool.Parse(debugModeToken.ToString());
                         HackMenu.Instance.ToggleDebugTab(b_DebugMode);
                     }
-
+                    
                     if (cheatSettings.TryGetValue("IsFirstLaunch", out JToken isFirstLaunchToken))
                         b_IsFirstLaunch = bool.Parse(isFirstLaunchToken.ToString());
+                    if (cheatSettings.TryGetValue("UseValuableTiers", out JToken useValuableTiersToken))
+                        b_useValuableTiers = bool.Parse(useValuableTiersToken.ToString());
                     if (cheatSettings.TryGetValue("PlayerESP", out JToken playerESPToken))
                         b_PlayerESP = bool.Parse(playerESPToken.ToString());
                     if (cheatSettings.TryGetValue("EnemyESP", out JToken enemyESPToken))
