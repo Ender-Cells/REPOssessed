@@ -58,6 +58,7 @@ namespace REPOssessed.Util
             if (GUILayout.Button(label.Localize())) action.Invoke();
         }
     }
+
     public class UI
     {
         public static void SetColor(ref RGBAColor color, string hexCode)
@@ -146,17 +147,6 @@ namespace REPOssessed.Util
             GUILayout.FlexibleSpace();
             cheat.Enabled = GUILayout.Toggle(cheat.Enabled, "");
             GUILayout.EndHorizontal();
-        }
-
-        public static void Dropdown(string label, ref bool drop, params UIButton[] buttons)
-        {
-            if (!drop)
-                if (GUILayout.Button("< " + label.Localize(), new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter })) drop = true;
-            if (drop)
-            {
-                if (GUILayout.Button("^ " + label.Localize(), new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter })) drop = false;
-                buttons.ToList().ForEach(b => b.Draw());
-            }
         }
 
         public static void ToggleSlider(string header, string displayValue, ref bool enable, ref float value, float min, float max, params object[] param)
