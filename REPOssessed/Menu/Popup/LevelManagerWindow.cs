@@ -19,13 +19,14 @@ namespace REPOssessed.Menu.Popup
         {
             UI.VerticalSpace(ref scrollPos, () =>
             {
-                if (!REPOssessed.Instance.IsIngame || RunManager.instance == null || RunManager.instance.levelCurrent == null || RoundDirector.instance == null || RunManager.instance.levels == null)
+                PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+                if (!REPOssessed.Instance.IsIngame || RunManager.instance == null || RunManager.instance.levelCurrent == null || RoundDirector.instance == null || RunManager.instance.levels == null || player == null || player.Handle() == null)
                 {
                     UI.Label("General.MustBeIngame", Settings.c_error);
                     GUI.DragWindow();
                     return;
                 }
-                if (!PlayerAvatar.instance.GetLocalPlayer().Handle().IsMasterClient())
+                if (player.Handle().IsMasterClient())
                 {
                     UI.Label("General.HostRequired", Settings.c_error);
                     GUI.DragWindow();

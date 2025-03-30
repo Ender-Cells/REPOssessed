@@ -62,7 +62,7 @@ namespace REPOssessed.Menu.Tab
         {
             PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
             if (player == null) return;
-            SpawnPoint spawnPoint = Object.FindObjectsOfType<SpawnPoint>().ToList().FirstOrDefault(s => s != null);
+            SpawnPoint spawnPoint = Object.FindObjectsOfType<SpawnPoint>().FirstOrDefault(s => s != null);
             if (spawnPoint == null || spawnPoint.transform == null) return;
             player.Handle().Teleport(spawnPoint.transform.position, spawnPoint.transform.rotation);
         }

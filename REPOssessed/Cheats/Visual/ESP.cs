@@ -59,27 +59,32 @@ namespace REPOssessed.Cheats
         private void DisplayPlayers()
         {
             DisplayObjects(
-                GameObjectManager.players?.Where(p => p?.Handle() is PlayerHandler ph && ph != null && !ph.IsLocalPlayer() && !ph.IsDead()),
+                GameObjectManager.players?.Where(p => p != null && p.Handle() is PlayerHandler ph && ph != null && !ph.IsLocalPlayer() && !ph.IsDead()),
                 player => $"{(player.Handle().IsTalking() ? "[VC]" : "")} {player.Handle().GetName()} ( {player.Handle().GetHealth()}/{player.Handle().GetMaxHealth()} )",
-                player => Settings.c_espPlayers
+                player => Settings.c_espPlayer
             );
         }
 
         private void DisplayItems()
         {
             DisplayObjects(
-                GameObjectManager.items?.Where(i => i?.Handle() is ObjectHandler o && (!o.IsCart() && o.IsShopItem() || o.IsValuable())),
+                GameObjectManager.items?.Where(i => i != null && i.Handle() is ObjectHandler o && (!o.IsCart() && o.IsShopItem() || o.IsValuable())),
                 item => $"{item.Handle().GetName()} {(item.Handle().IsValuable() ? $"( {item.Handle().GetValue()} )" : "")} {(item.Handle().IsTrap() ? "( Trap )" : "")}",
-                item => Settings.c_espItems
+                item =>
+                {
+                    if (!Settings.b_useValuableTiers) return Settings.c_espItem;
+                    int index = Array.FindLastIndex(Settings.i_valuableValueThresholds, x => x <= item.Handle().GetValue());
+                    return index > -1 ? Settings.c_valuableValueColors[index] : Settings.c_espItem;
+                }
             );
         }
 
         private void DisplayEnemies()
         {
             DisplayObjects(
-                GameObjectManager.enemies?.Where(e => e?.Handle() is EnemyHandler eh && eh != null && !eh.IsDead() && !eh.IsDisabled()),
+                GameObjectManager.enemies?.Where(e => e != null && e.Handle() is EnemyHandler eh && eh != null && !eh.IsDead() && !eh.IsDisabled()),
                 enemy => $"{enemy.Handle().GetName()} ( {enemy.Handle().GetHealth()}/{enemy.Handle().GetMaxHealth()} )",
-                enemy => Settings.c_espEnemies
+                enemy => Settings.c_espEnemy
             );
         }
 
@@ -88,7 +93,7 @@ namespace REPOssessed.Cheats
             DisplayObjects(
                 GameObjectManager.deathHeads?.Where(d => d != null && d.playerAvatar != null && d.playerAvatar.Handle() != null && d.playerAvatar.Handle().IsDead()),
                 deathHead => $"{deathHead.playerAvatar.Handle().GetName()}'s Death Head",
-                deathHead => Settings.c_espDeathHeads
+                deathHead => Settings.c_espDeathHead
             );
         }
 
@@ -97,7 +102,7 @@ namespace REPOssessed.Cheats
             DisplayObjects(
                 GameObjectManager.extractions?.Where(e => e != null && !e.Reflect().GetValue<bool>("isShop") && !e.StateIs(ExtractionPoint.State.Complete)), 
                 extraction => "Extraction",
-                extraction => Settings.c_espExtractions
+                extraction => Settings.c_espExtraction
             );           
         }
 

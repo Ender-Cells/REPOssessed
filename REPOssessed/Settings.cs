@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using REPOssessed.Cheats;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using REPOssessed.Cheats.Core;
+using REPOssessed.Language;
+using REPOssessed.Menu.Core;
+using REPOssessed.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using REPOssessed.Cheats.Core;
-using REPOssessed.Util;
-using Audial.Utils;
-using REPOssessed.Menu.Core;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
-using REPOssessed.Language;
 
 namespace REPOssessed
 {
@@ -47,12 +45,12 @@ namespace REPOssessed
         public static RGBAColor c_success = new RGBAColor(0, 255, 0, 1f);
         public static RGBAColor c_error = new RGBAColor(255, 0, 0, 1f);
         public static RGBAColor c_menuText = new RGBAColor(255, 255, 255, 1f);
-        public static RGBAColor c_espPlayers = new RGBAColor(0, 255, 0, 1f);
-        public static RGBAColor c_espItems = new RGBAColor(255, 255, 255, 1f);
-        public static RGBAColor c_espEnemies = new RGBAColor(255, 0, 0, 1f);
+        public static RGBAColor c_espPlayer = new RGBAColor(0, 255, 0, 1f);
+        public static RGBAColor c_espItem = new RGBAColor(255, 255, 255, 1f);
+        public static RGBAColor c_espEnemy = new RGBAColor(255, 0, 0, 1f);
         public static RGBAColor c_espCart = new RGBAColor(0, 0, 255, 1f);
-        public static RGBAColor c_espExtractions = new RGBAColor(255, 165, 0, 1f);
-        public static RGBAColor c_espDeathHeads = new RGBAColor(128, 0, 128, 1f);
+        public static RGBAColor c_espExtraction = new RGBAColor(255, 165, 0, 1f);
+        public static RGBAColor c_espDeathHead = new RGBAColor(128, 0, 128, 1f);
         public static RGBAColor c_espTruck = new RGBAColor(0, 255, 255, 1f);
 
         public static bool b_PlayerESP = false;
@@ -63,10 +61,22 @@ namespace REPOssessed
         public static bool b_DeathHeadESP = false;
         public static bool b_TruckESP = false;
 
+        public static bool b_useValuableTiers = false;
+
         public static bool b_DisplayMapObjects = false;
         public static bool b_DisplayDeathHeads = false;
         public static bool b_DisplayPlayers = false;
         public static bool b_DisplayEnemies = false;
+
+        public static int[] i_valuableValueThresholds = new int[] { 1000, 5000, 10000, 20000 };
+
+        public static RGBAColor[] c_valuableValueColors = new RGBAColor[]
+        {
+            new RGBAColor(0.5f, 0.5f, 0.5f, 1f),
+            new RGBAColor(10, 187, 10, 1f),
+            new RGBAColor(255, 0, 255, 1f),
+            new RGBAColor(255, 165, 0, 1f),
+        };
 
         internal class Config
         {
@@ -119,10 +129,13 @@ namespace REPOssessed
 
 
                 colors["MenuText"] = JsonConvert.SerializeObject(c_menuText);
-                colors["ESPPlayers"] = JsonConvert.SerializeObject(c_espPlayers);
-                colors["ESPItems"] = JsonConvert.SerializeObject(c_espItems);
-                colors["ESPEnemies"] = JsonConvert.SerializeObject(c_espEnemies);
-                colors["ESPTraps"] = JsonConvert.SerializeObject(c_espCart);
+                colors["ESPPlayer"] = JsonConvert.SerializeObject(c_espPlayer);
+                colors["ESPItem"] = JsonConvert.SerializeObject(c_espItem);
+                colors["ESPCart"] = JsonConvert.SerializeObject(c_espCart);
+                colors["ESPEnemy"] = JsonConvert.SerializeObject(c_espEnemy);
+                colors["ESPExtraction"] = JsonConvert.SerializeObject(c_espExtraction);
+                colors["ESPDeathHead"] = JsonConvert.SerializeObject(c_espDeathHead);
+                colors["ESPTruck"] = JsonConvert.SerializeObject(c_espTruck);
 
                 settings["Theme"] = ThemeUtil.name;
                 settings["Language"] = LanguageUtil.Language.Name;
@@ -259,12 +272,18 @@ namespace REPOssessed
 
                     if (colors.TryGetValue("MenuText", out JToken menuTextToken))
                         c_menuText = JsonConvert.DeserializeObject<RGBAColor>(menuTextToken.ToString());
-                    if (colors.TryGetValue("ESPPlayers", out JToken espPlayersToken))
-                        c_espPlayers = JsonConvert.DeserializeObject<RGBAColor>(espPlayersToken.ToString());
-                    if (colors.TryGetValue("ESPItems", out JToken espItemsToken))
-                        c_espItems = JsonConvert.DeserializeObject<RGBAColor>(espItemsToken.ToString());
-                    if (colors.TryGetValue("ESPEnemies", out JToken espEnemiesToken))
-                        c_espEnemies = JsonConvert.DeserializeObject<RGBAColor>(espEnemiesToken.ToString());
+                    if (colors.TryGetValue("ESPPlayer", out JToken espPlayerToken))
+                        c_espPlayer = JsonConvert.DeserializeObject<RGBAColor>(espPlayerToken.ToString());
+                    if (colors.TryGetValue("ESPItem", out JToken espItemToken))
+                        c_espItem = JsonConvert.DeserializeObject<RGBAColor>(espItemToken.ToString());
+                    if (colors.TryGetValue("ESPEnemy", out JToken espEnemyToken))
+                        c_espEnemy = JsonConvert.DeserializeObject<RGBAColor>(espEnemyToken.ToString());
+                    if (colors.TryGetValue("ESPExtraction", out JToken espExtractionToken))
+                        c_espExtraction = JsonConvert.DeserializeObject<RGBAColor>(espExtractionToken.ToString());
+                    if (colors.TryGetValue("ESPDeathHead", out JToken espDeatHeadToken))
+                        c_espDeathHead = JsonConvert.DeserializeObject<RGBAColor>(espDeatHeadToken.ToString());
+                    if (colors.TryGetValue("ESPTruck", out JToken espTruckToken))
+                        c_espTruck = JsonConvert.DeserializeObject<RGBAColor>(espTruckToken.ToString());
                     if (colors.TryGetValue("ESPCart", out JToken espCartToken))
                         c_espCart = JsonConvert.DeserializeObject<RGBAColor>(espCartToken.ToString());
                 }

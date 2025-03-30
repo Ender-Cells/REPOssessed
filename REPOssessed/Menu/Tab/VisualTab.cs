@@ -35,6 +35,7 @@ namespace REPOssessed.Menu.Tab
                 UI.Header("VisualTab.ESP");
                 UI.CheatToggleSlider(Cheat.Instance<ESP>(), "VisualTab.ToggleESP", ESP.Value.ToString("F1"), ref ESP.Value, 0f, 5000f);
                 UI.Button("VisualTab.ToggleAllESP", ESP.ToggleAll);
+                UI.Checkbox("VisualTab.UseValuableTiers", ref Settings.b_useValuableTiers);
                 UI.Checkbox("VisualTab.PlayerESP", ref Settings.b_PlayerESP);
                 UI.Checkbox("VisualTab.EnemyESP", ref Settings.b_EnemyESP);
                 UI.Checkbox("VisualTab.ItemESP", ref Settings.b_ItemESP);
