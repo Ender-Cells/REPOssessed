@@ -2,7 +2,6 @@
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
-using Steamworks.Ugc;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +15,8 @@ namespace REPOssessed.Menu.Popup
 
         private string s_search = "";
         private Vector2 scrollPos = Vector2.zero;
+        private bool b_ignoreExtractionItems = false;
+        private bool b_ignoreCartItems = false;
 
         public override void DrawContent(int windowID)
         {
@@ -25,21 +26,21 @@ namespace REPOssessed.Menu.Popup
                 GUI.DragWindow();
                 return;
             }
-            List<GroupedPhysGrabObject> groupedPhysGrabObject = GameObjectManager.items?.Where(i => i != null && i.Handle()?.IsValuable() == true || i.Handle()?.IsShopItem() == true).GroupBy(i => i.Handle()?.GetName()).Select(g => new GroupedPhysGrabObject { physGrabObject = g.FirstOrDefault(), Count = g.Count() }).ToList() ?? new List<GroupedPhysGrabObject>();
-            if (groupedPhysGrabObject == null) groupedPhysGrabObject = new List<GroupedPhysGrabObject>();
+            List<GroupedPhysGrabObject> groupedPhysGrabObject = GameObjectManager.items?.Where(i => i != null && i.Handle() != null && !i.Handle().CurrentlyHeld() && (i.Handle().IsValuable() || i.Handle().IsShopItem()) && (!b_ignoreExtractionItems || !i.Handle().IsInExtraction()) && (!b_ignoreCartItems || !i.Handle().IsInCart())).GroupBy(i => i.Handle()?.GetName()).Select(g => new GroupedPhysGrabObject { physGrabObject = g.FirstOrDefault(), Count = g.Count() }).ToList() ?? new List<GroupedPhysGrabObject>();
             UI.VerticalSpace(ref scrollPos, () =>
             {
                 GUILayout.BeginHorizontal();
                 UI.Textbox("General.Search", ref s_search);
                 UI.Button("LootManager.TeleportAllItems", () => TeleportAll(groupedPhysGrabObject));
+                UI.Checkbox("LootManager.IgnoreExtractionItems", ref b_ignoreExtractionItems);
+                UI.Checkbox("LootManager.IgnoreCartsItems", ref b_ignoreCartItems);
                 GUILayout.EndHorizontal();
                 GUILayout.Space(20);
                 UI.ButtonGrid(groupedPhysGrabObject, p => $"{p?.physGrabObject?.Handle()?.GetName()} {p.Count}x", s_search, p =>
                 {
-                    List<GroupedPhysGrabObject> items = groupedPhysGrabObject.Where(gp => gp == p).ToList();
+                    List<PhysGrabObject> items = GameObjectManager.items?.Where(i => i != null && i.Handle() != null && i.Handle().GetName() == p.physGrabObject.Handle().GetName()).ToList();
                     Teleport(items[Random.Range(0, items.Count)]);
-                }, 3);
-                
+                }, 3);        
             });
             GUI.DragWindow();
         }
@@ -47,13 +48,13 @@ namespace REPOssessed.Menu.Popup
         public static void TeleportAll(List<GroupedPhysGrabObject> groupedPhysGrabObject)
         {
             if (SemiFunc.MainCamera() == null || SemiFunc.MainCamera().transform == null) return;
-            groupedPhysGrabObject.Where(i => i != null && i.physGrabObject != null).ToList().ForEach(i => Teleport(i));
+            groupedPhysGrabObject.Where(i => i != null && i.physGrabObject != null).ToList().ForEach(i => Teleport(i.physGrabObject));
         }
 
-        private static void Teleport(GroupedPhysGrabObject groupedPhysGrabObject)
+        private static void Teleport(PhysGrabObject physGrabObject)
         {
-            if (SemiFunc.MainCamera() == null || SemiFunc.MainCamera().transform == null || groupedPhysGrabObject == null || groupedPhysGrabObject.physGrabObject == null || groupedPhysGrabObject.physGrabObject.Handle() == null) return;
-            groupedPhysGrabObject.physGrabObject.Handle().Teleport(SemiFunc.MainCamera().transform.position, SemiFunc.MainCamera().transform.rotation);
+            if (SemiFunc.MainCamera() == null || SemiFunc.MainCamera().transform == null || physGrabObject == null || physGrabObject.Handle() == null) return;
+            physGrabObject.Handle().Teleport(SemiFunc.MainCamera().transform.position, SemiFunc.MainCamera().transform.rotation);
         }
 
         public class GroupedPhysGrabObject

@@ -133,6 +133,7 @@ namespace REPOssessed
             ObjectExtensions.ObjectHandlers?.Clear();
             PlayerExtensions.PlayerHandlers?.Clear();
             EnemyExtensions.EnemyHandlers?.Clear();
+            LastGrabbedPhysObjects?.Clear();
         }
 
         [HarmonyPatch(typeof(MenuPageLobby), "PlayerAdd"), HarmonyPostfix]

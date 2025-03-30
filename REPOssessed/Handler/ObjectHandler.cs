@@ -1,9 +1,11 @@
 ﻿using Photon.Pun;
 using REPOssessed.Extensions;
+using REPOssessed.Manager;
 using REPOssessed.Util;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static PhysGrabInCart;
 
 namespace REPOssessed.Handler
 {
@@ -46,7 +48,11 @@ namespace REPOssessed.Handler
         public bool IsNonValuable() => physGrabObject?.Reflect().GetValue<bool>("isNonValuable") ?? false;
         public bool IsHinge() => physGrabObject?.Reflect().GetValue<bool>("hasHinge") ?? false;
         public bool IsCart() => physGrabObject?.Reflect().GetValue<bool>("isCart") ?? false;
+        public Vector3 GetPosition() => physGrabObject?.transform?.position ?? Vector3.zero;
+        public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
+        public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;
+        public bool CurrentlyHeld() => physGrabObject?.grabbed ?? false;
         public PlayerAvatar GetLastPlayerHeld() => Patches.LastGrabbedPhysObjects?.ToList().FirstOrDefault(p => p.Key == physGrabObject).Value ?? null;
     }
 

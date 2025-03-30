@@ -15,11 +15,9 @@ namespace REPOssessed.Cheats
             if (Cheat.Instance<NoObjectMoneyLoss>().Enabled && __instance.isValuable && !__instance.isEnemy && SemiFunc.IsMasterClientOrSingleplayer())
             {
                 PhysGrabObject physGrabObject = __instance.Reflect().GetValue<PhysGrabObject>("physGrabObject");
-                if (physGrabObject?.Handle() == null) return true;
+                if (physGrabObject == null || physGrabObject.Handle() == null || physGrabObject.Handle().IsInExtraction()) return true;
                 PlayerAvatar player = physGrabObject.Handle().GetLastPlayerHeld();
-                if (player == null || player.Handle() == null) return true;
-                Debug.Log($"{PlayerAvatar.instance.GetLocalPlayer().Handle().physGrabObject} | {physGrabObject}");
-                if (player.Handle().IsLocalPlayer() || PlayerAvatar.instance.GetLocalPlayer().Handle().physGrabObject == physGrabObject) return false;
+                if (player != null && player.Handle() != null && (player.Handle().IsLocalPlayer() || PlayerAvatar.instance.GetLocalPlayer()?.Handle()?.physGrabObject == physGrabObject)) return false;
             }
             return true;
         }

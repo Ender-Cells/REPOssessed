@@ -103,7 +103,7 @@ namespace REPOssessed.Menu.Tab
             {
                 if (selectedPlayer == null) selectedPlayer = player;
                 if (selectedPlayer.GetInstanceID() == player.GetInstanceID()) GUI.contentColor = Settings.c_success.GetColor();
-                string name = selectedPlayer.Handle().IsREPOssessedUser() ? $"[REPOssessed] {player.Handle().GetName()}" : player.Handle().GetName();
+                string name = player.Handle().IsREPOssessedUser() ? $"[REPOssessed] {player.Handle().GetName()}" : player.Handle().GetName();
                 if (GUILayout.Button(name, GUI.skin.label)) selectedPlayer = player;
                 GUI.contentColor = Settings.c_menuText.GetColor();
             }
