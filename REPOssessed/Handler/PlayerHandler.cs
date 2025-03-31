@@ -1,7 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using REPOssessed.Cheats;
 using REPOssessed.Cheats.Components;
 using REPOssessed.Manager;
 using REPOssessed.Util;
@@ -20,6 +19,8 @@ namespace REPOssessed.Handler
         private PlayerAvatar player = null;
         public PlayerVoiceChat playerVoiceChat = null;
         public PhysGrabObject physGrabObject = null;
+        public ItemAttributes itemAttributes = null;
+        public ItemEquippable itemEquippable = null;
 
         public Player photonPlayer => player.photonView.Owner;
         public string steamId => player.Reflect().GetValue<string>("steamID");
@@ -28,7 +29,9 @@ namespace REPOssessed.Handler
         {
             this.player = player;
             this.playerVoiceChat = player?.Reflect()?.GetValue<PlayerVoiceChat>("voiceChat") ?? null;
-            this.physGrabObject = player.physGrabber?.Reflect()?.GetValue<PhysGrabObject>("grabbedPhysGrabObject") ?? null;
+            this.physGrabObject = player?.physGrabber?.Reflect()?.GetValue<PhysGrabObject>("grabbedPhysGrabObject") ?? null;
+            this.itemAttributes = physGrabObject?.GetComponent<ItemAttributes>() ?? null;
+            this.itemEquippable = itemAttributes?.GetComponent<ItemEquippable>() ?? null;
         }
 
         public static void ClearRPCHistory() => rpcHistory.Clear();
@@ -152,7 +155,7 @@ namespace REPOssessed.Handler
             if (IsDead()) player.Revive();
         }
         public void ForceTumble() => player.tumble?.TumbleSet(true, false);
-        public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() : photonPlayer.IsMasterClient;
+        public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() :photonPlayer.IsMasterClient;
         public void Heal(int amount)
         {
             player.playerHealth.Reflect().SetValue("health", amount);

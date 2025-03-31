@@ -1,4 +1,5 @@
 ﻿using REPOssessed.Cheats.Core;
+using REPOssessed.Extensions;
 using REPOssessed.Handler;
 
 namespace REPOssessed.Cheats
@@ -10,9 +11,9 @@ namespace REPOssessed.Cheats
             if (!Enabled) return;
             PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
             if (player == null || player.Handle() == null || !player.Handle().IsMasterClient()) return;
-            ItemEquippable itemEquippable = player.Handle().physGrabObject?.GetComponent<ItemEquippable>() ?? null;
+            ItemEquippable itemEquippable = player.Handle().itemEquippable;
             if (itemEquippable == null) return;
-            ItemBattery itemBattery = itemEquippable?.GetComponent<ItemBattery>() ?? null;
+            ItemBattery itemBattery = itemEquippable.GetComponentHierarchy<ItemBattery>();
             if (itemBattery == null) return;
             itemBattery.SetBatteryLife(100);
         }
