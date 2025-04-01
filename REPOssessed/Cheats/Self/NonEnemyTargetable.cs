@@ -12,7 +12,7 @@ namespace REPOssessed.Cheats
     {
         public override void OnEnable()
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null) return;
             GameObjectManager.enemies?.Where(e => e != null && e.Handle() != null && !e.Handle().IsDead() && !e.Handle().IsDisabled()).ToList().ForEach(e =>
             {
@@ -30,7 +30,7 @@ namespace REPOssessed.Cheats
         [HarmonyPatch(typeof(Enemy), "SetChaseTarget"), HarmonyPrefix]
         public static bool SetChaseTarget(PlayerAvatar playerAvatar)
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (Cheat.Instance<NonEnemyTargetable>().Enabled && player != null && playerAvatar == player) return false;
             return true;
         }
@@ -38,7 +38,7 @@ namespace REPOssessed.Cheats
         [HarmonyPatch(typeof(EnemyVision), "VisionTrigger"), HarmonyPrefix]
         public static bool VisionTrigger(int playerID, PlayerAvatar player, bool culled, bool playerNear)
         {
-            PlayerAvatar _player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar _player = GameObjectManager.LocalPlayer;
             if (Cheat.Instance<NonEnemyTargetable>().Enabled && _player != null && _player == player) return false;
             return true;
         }

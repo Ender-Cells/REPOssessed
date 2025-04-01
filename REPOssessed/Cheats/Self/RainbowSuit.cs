@@ -1,5 +1,6 @@
 ﻿using REPOssessed.Cheats.Core;
 using REPOssessed.Handler;
+using REPOssessed.Manager;
 using System.Collections;
 using UnityEngine;
 
@@ -20,8 +21,9 @@ namespace REPOssessed.Cheats
             int index = 0;
             while (Enabled) 
             {
-                if (PlayerAvatar.instance.GetLocalPlayer() == null) yield return new WaitForSeconds(0.5f);
-                PlayerAvatar.instance.GetLocalPlayer().PlayerAvatarSetColor(index);
+                PlayerAvatar player = GameObjectManager.LocalPlayer;
+                if (player == null) yield return new WaitForSeconds(0.5f);
+                player.PlayerAvatarSetColor(index);
                 index = (index + 1) % colors;
                 yield return new WaitForSeconds(Value);
             }

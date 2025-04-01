@@ -2,6 +2,7 @@
 using Photon.Pun;
 using REPOssessed.Cheats.Core;
 using REPOssessed.Handler;
+using REPOssessed.Manager;
 using Steamworks;
 
 namespace REPOssessed.Cheats
@@ -22,7 +23,7 @@ namespace REPOssessed.Cheats
 
         private static void SetName(string name)
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null || player.Handle() == null || player.Handle().GetName() == name) return;
             if (!SemiFunc.IsMultiplayer()) PlayerAvatar.instance.AddToStatsManagerRPC(name, player.Handle().GetSteamID());
             else

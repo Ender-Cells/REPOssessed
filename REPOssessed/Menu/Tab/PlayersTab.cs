@@ -1,4 +1,6 @@
-﻿using REPOssessed.Handler;
+﻿using REPOssessed.Cheats;
+using REPOssessed.Cheats.Core;
+using REPOssessed.Handler;
 using REPOssessed.Language;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
@@ -19,6 +21,7 @@ namespace REPOssessed.Menu.Tab
         private int color = -1;
         private int heal = 1;
         private int damage = 1;
+        private float flingforce = 1f;
 
         public override void Draw()
         {
@@ -69,6 +72,7 @@ namespace REPOssessed.Menu.Tab
             UI.Button("PlayersTab.Kill", () => selectedPlayer.PlayerDeath(-1));
             UI.Button("PlayersTab.Revive", () => selectedPlayer.Handle().RevivePlayer());
             UI.Button("PlayersTab.ForceTumble", () => selectedPlayer.Handle().ForceTumble());
+            UI.ExecuteSlider("PlayersTab.Fling", flingforce.ToString("F1"), () => selectedPlayer.Handle().Fling(flingforce), ref flingforce, 1f, 1000f);
             UI.TextboxAction("PlayersTab.Heal", ref heal, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Heal(heal)));
             UI.TextboxAction("PlayersTab.Damage", ref damage, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Hurt(damage)));
             UI.Button("PlayersTab.BreakHeldItem", () =>
@@ -81,7 +85,7 @@ namespace REPOssessed.Menu.Tab
             {
                 UI.Button("PlayersTab.TeleportToPlayer", () =>
                 {
-                    if (selectedPlayer != null && selectedPlayer.transform != null) PlayerAvatar.instance.GetLocalPlayer().Handle().Teleport(selectedPlayer.transform.position, selectedPlayer.transform.rotation);
+                    if (selectedPlayer != null && selectedPlayer.transform != null) GameObjectManager.LocalPlayer.Handle().Teleport(selectedPlayer.transform.position, selectedPlayer.transform.rotation);
                 }, "SelfTab.Teleport");
                 UI.Button("PlayersTab.TeleportPlayerToYou", () =>
                 {
@@ -103,7 +107,7 @@ namespace REPOssessed.Menu.Tab
             {
                 if (selectedPlayer == null) selectedPlayer = player;
                 if (selectedPlayer.GetInstanceID() == player.GetInstanceID()) GUI.contentColor = Settings.c_success.GetColor();
-                string name = player.Handle().IsREPOssessedUser() ? $"[REPOssessed] {player.Handle().GetName()}" : player.Handle().GetName();
+                string name = player.Handle().IsREPOssessedUser() && Cheat.Instance<DisplayREPOssessedUsers>().Enabled ? $"[REPOssessed] {player.Handle().GetName()}" : player.Handle().GetName();
                 if (GUILayout.Button(name, GUI.skin.label)) selectedPlayer = player;
                 GUI.contentColor = Settings.c_menuText.GetColor();
             }

@@ -4,42 +4,24 @@ namespace REPOssessed.Cheats.Core
 {
     public abstract class ToggleCheat : Cheat
     {
-        private bool _enabled;
-        private bool lastenabled;
+        private new bool enabled = false;
+
         public bool Enabled
         {
-            get => _enabled;
-
+            get => enabled;
             set
             {
-                _enabled = value;
-                RunOns();      
+                if (enabled == value) return;
+                enabled = value;
+                if (enabled) OnEnable();
+                else OnDisable();
             }
-        }
-
-        private void RunOns()
-        {
-            if (!lastenabled && _enabled)
-            {
-                OnEnable();
-                lastenabled = true;
-            }
-            else if (lastenabled && !_enabled)
-            {
-                OnDisable();
-                lastenabled = false;
-            } 
         }
 
         public ToggleCheat() { }
         public ToggleCheat(KeyCode defaultKeybind) : base(defaultKeybind) { }
 
-        public void Toggle()
-        {
-            Enabled = !Enabled;
-        }
-
-
+        public virtual void Toggle() => Enabled = !Enabled;
         public virtual void OnGui() { }
         public virtual void Update() { }
         public virtual void FixedUpdate() { }

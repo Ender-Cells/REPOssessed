@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using REPOssessed.Cheats.Core;
 using REPOssessed.Handler;
+using REPOssessed.Manager;
 using REPOssessed.Util;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace REPOssessed.Cheats
                 PhysGrabObject physGrabObject = __instance.Reflect().GetValue<PhysGrabObject>("physGrabObject");
                 if (physGrabObject == null || physGrabObject.Handle() == null || physGrabObject.Handle().IsInExtraction()) return true;
                 PlayerAvatar player = physGrabObject.Handle().GetLastPlayerHeld();
-                if (player != null && player.Handle() != null && (player.Handle().IsLocalPlayer() || PlayerAvatar.instance.GetLocalPlayer()?.Handle()?.physGrabObject == physGrabObject)) return false;
+                if (player != null && player.Handle() != null && (player.Handle().IsLocalPlayer() || GameObjectManager.LocalPlayer?.Handle()?.physGrabObject == physGrabObject)) return false;
             }
             return true;
         }

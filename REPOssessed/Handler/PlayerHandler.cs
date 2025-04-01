@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace REPOssessed.Handler
 {
@@ -17,10 +18,11 @@ namespace REPOssessed.Handler
         public static Dictionary<string, Queue<RPCData>> rpcHistory = new Dictionary<string, Queue<RPCData>>();
 
         private PlayerAvatar player = null;
+        public Rigidbody rigidbody = null;
         public PlayerVoiceChat playerVoiceChat = null;
-        public PhysGrabObject physGrabObject = null;
-        public ItemAttributes itemAttributes = null;
-        public ItemEquippable itemEquippable = null;
+
+        private PhysGrabObject PhysGrabObject => player?.physGrabber?.Reflect()?.GetValue<PhysGrabObject>("grabbedPhysGrabObject") ?? null;
+        public PhysGrabObject physGrabObject => PhysGrabObject?.grabbed ?? false ? PhysGrabObject : null;
 
         public Player photonPlayer => player.photonView.Owner;
         public string steamId => player.Reflect().GetValue<string>("steamID");
@@ -28,10 +30,8 @@ namespace REPOssessed.Handler
         public PlayerHandler(PlayerAvatar player)
         {
             this.player = player;
+            this.rigidbody = player?.tumble?.Reflect().GetValue<Rigidbody>("rb") ?? null;
             this.playerVoiceChat = player?.Reflect()?.GetValue<PlayerVoiceChat>("voiceChat") ?? null;
-            this.physGrabObject = player?.physGrabber?.Reflect()?.GetValue<PhysGrabObject>("grabbedPhysGrabObject") ?? null;
-            this.itemAttributes = physGrabObject?.GetComponent<ItemAttributes>() ?? null;
-            this.itemEquippable = itemAttributes?.GetComponent<ItemEquippable>() ?? null;
         }
 
         public static void ClearRPCHistory() => rpcHistory.Clear();
@@ -155,6 +155,11 @@ namespace REPOssessed.Handler
             if (IsDead()) player.Revive();
         }
         public void ForceTumble() => player.tumble?.TumbleSet(true, false);
+        public void Fling(float force)
+        {
+            ForceTumble();
+            if (rigidbody != null) rigidbody.AddForce(Random.insideUnitSphere.normalized * force, ForceMode.Impulse);
+        }
         public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() :photonPlayer.IsMasterClient;
         public void Heal(int amount)
         {
@@ -206,25 +211,10 @@ namespace REPOssessed.Handler
             return handler;
         }
 
-        private static PlayerAvatar localPlayer;
-
-        public static PlayerAvatar GetLocalPlayer(this PlayerAvatar player)
-        {
-            if (localPlayer == null)
-            {
-                localPlayer = GameObjectManager.players?.FirstOrDefault(p => p != null && p.Handle().IsLocalPlayer());
-                if (localPlayer == null) return null;
-            }
-            return localPlayer;
-        }
-    }
-
-    public static class PhotonPlayerExtensions
-    {
         public static PlayerAvatar GamePlayer(this Player photonPlayer)
         {
             if (GameObjectManager.players == null) return null;
-            return GameObjectManager.players.Find(x => x != null && x.Handle().PhotonPlayer() != null && x.Handle().PhotonPlayer().ActorNumber == photonPlayer.ActorNumber);
+            return GameObjectManager.players.Find(p => p != null && p.Handle() != null && p.Handle().PhotonPlayer() != null && p.Handle().PhotonPlayer().ActorNumber == photonPlayer.ActorNumber);
         }
     }
 }

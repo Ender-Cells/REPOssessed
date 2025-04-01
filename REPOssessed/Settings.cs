@@ -20,7 +20,7 @@ namespace REPOssessed
         /* *    
          * Menu Settings
          * */
-        public static string s_Version = "v1.0.0";
+        public static string s_Version = "v1.0.2";
         public static bool b_IsFirstLaunch = true;
 
         public static bool b_isMenuOpen = false;

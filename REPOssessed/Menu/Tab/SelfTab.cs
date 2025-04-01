@@ -35,6 +35,9 @@ namespace REPOssessed.Menu.Tab
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
                 UI.Checkbox("SelfTab.Invisibility", Cheat.Instance<Invisibility>());
                 UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());
+                UI.Checkbox("SelfTab.NoGunSpread", Cheat.Instance<NoGunSpread>());
+                UI.Checkbox("SelfTab.NoGunCooldown", Cheat.Instance<NoGunCooldown>());
+                UI.CheatToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1f, 50f);
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
                 UI.CheatToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
@@ -60,7 +63,7 @@ namespace REPOssessed.Menu.Tab
 
         private void TeleportToTruck()
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null) return;
             SpawnPoint spawnPoint = Object.FindObjectsOfType<SpawnPoint>().FirstOrDefault(s => s != null);
             if (spawnPoint == null || spawnPoint.transform == null) return;
@@ -69,7 +72,7 @@ namespace REPOssessed.Menu.Tab
 
         private void CartsTeleportContent()
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null) return;
             int Index = 1;
             GameObjectManager.carts.Where(c => c != null && c.transform != null).ToList().ForEach(c =>
@@ -80,7 +83,7 @@ namespace REPOssessed.Menu.Tab
 
         private void ExtractionsTeleportContent()
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null) return;
             int Index = 1;
             GameObjectManager.extractions.Where(e => e != null && e.transform != null && !e.Reflect().GetValue<bool>("isShop") && !e.StateIs(ExtractionPoint.State.Complete)).ToList().ForEach(e =>

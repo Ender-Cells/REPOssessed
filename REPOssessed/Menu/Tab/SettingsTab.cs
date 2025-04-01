@@ -40,11 +40,7 @@ namespace REPOssessed.Menu.Tab
         {
             if (i_languageIndex == -1) i_languageIndex = Array.IndexOf(LanguageUtil.GetLanguages(), LanguageUtil.Language.Name);
             if (i_themeIndex == -1) i_themeIndex = Array.IndexOf(ThemeUtil.GetThemes(), ThemeUtil.name);
-
-            GUILayout.BeginVertical();
             MenuContent();
-            ColorsContent();
-            GUILayout.EndVertical();
             KeybindContent();
         }
 
@@ -70,19 +66,12 @@ namespace REPOssessed.Menu.Tab
                 UI.Select("SettingsTab.Language", ref i_languageIndex, LanguageUtil.GetLanguages().Select(x => new UIOption(x, () => LanguageUtil.SetLanguage(x))).ToArray());
 
                 UI.Checkbox("SettingsTab.FPSCounter", Cheat.Instance<FPSCounter>());
+                UI.Checkbox("SettingsTab.DisplayREPOssessedUsers", Cheat.Instance<DisplayREPOssessedUsers>());
                 UI.Toggle("SettingsTab.DebugMode", ref Settings.b_DebugMode, "General.Enable", "General.Disable", HackMenu.Instance.ToggleDebugTab);
-            }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.55f - HackMenu.Instance.spaceFromLeft));
-        }
 
-        private void ColorsContent()
-        {
-            UI.VerticalSpace(ref scrollPos2, () =>
-            {
                 UI.Header("SettingsTab.Colors");
-
                 UI.TextboxAction("SettingsTab.MenuText", ref s_menuText, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_menuText, s_menuText)));
                 UI.TextboxAction("SettingsTab.Primary", ref s_primaryColor, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_primary, s_primaryColor)));
-
                 UI.TextboxAction("SettingsTab.PlayerColor", ref s_espPlayer, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espPlayer, s_espPlayer)));
                 UI.TextboxAction("SettingsTab.ItemColor", ref s_espItem, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espItem, s_espItem)));
                 UI.TextboxAction("SettingsTab.EnemyColor", ref s_espEnemy, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espEnemy, s_espEnemy)));
@@ -90,11 +79,11 @@ namespace REPOssessed.Menu.Tab
                 UI.TextboxAction("SettingsTab.ExtractionColor", ref s_espExtraction, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espExtraction, s_espExtraction)));
                 UI.TextboxAction("SettingsTab.DeathHeadColor", ref s_espDeathHead, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espDeathHead, s_espDeathHead)));
                 UI.TextboxAction("SettingsTab.TruckColor", ref s_espTruck, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espTruck, s_espTruck)));
-
                 UI.Button(["SettingsTab.TieredLootColors", $"({GetTiersColored()})"], () => EditTierColors(), "General.Set");
                 UI.Textbox("SettingsTab.Tiers", ref s_lootTiers, @"[^0-9,]");
                 UI.Textbox("SettingsTab.TierColors", ref s_lootTierColors, @"[^0-9A-Za-z,]");
-            });
+
+            }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.55f - HackMenu.Instance.spaceFromLeft));
         }
 
         private void KeybindContent()

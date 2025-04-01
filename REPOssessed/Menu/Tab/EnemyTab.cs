@@ -135,7 +135,7 @@ namespace REPOssessed.Menu.Tab
             {
                 if (selectedPlayer != null) enemy.Handle().Lure(selectedPlayer);
             });
-            UI.Button("EnemyTab.TeleportToEnemy", () => PlayerAvatar.instance.GetLocalPlayer().Handle().Teleport(enemy.transform.position, enemy.transform.rotation));
+            UI.Button("EnemyTab.TeleportToEnemy", () => GameObjectManager.LocalPlayer.Handle().Teleport(enemy.transform.position, enemy.transform.rotation));
             UI.Button("EnemyTab.TeleportEnemyToPlayer", () =>
             {
                 if (selectedPlayer != null && selectedPlayer.transform != null) enemy.Handle().Teleport(selectedPlayer.transform.position);

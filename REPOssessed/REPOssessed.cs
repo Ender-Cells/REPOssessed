@@ -133,6 +133,9 @@ namespace REPOssessed
             }
         }
 
-        public void AlertUsingREPOssessed() => PlayerAvatar.instance?.GetLocalPlayer()?.photonView.RPC("ChatMessageSendRPC", RpcTarget.All, "", false);
+        public void AlertUsingREPOssessed()
+        {
+            if (GameObjectManager.localPlayer != null) GameObjectManager.localPlayer.photonView.RPC("ChatMessageSendRPC", RpcTarget.All, "", false);
+        }
     }
 }

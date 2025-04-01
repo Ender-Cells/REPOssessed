@@ -1,13 +1,12 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
+using REPOssessed.Handler;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using REPOssessed.Util;
 using Object = UnityEngine.Object;
-using REPOssessed.Handler;
 
 namespace REPOssessed.Manager
 {
@@ -16,6 +15,17 @@ namespace REPOssessed.Manager
     {
         private static Queue<Action> ObjectQueue = new Queue<Action>();
         private static bool CoroutineStarted = false;
+
+        public static PlayerAvatar localPlayer = null;
+
+        public static PlayerAvatar LocalPlayer
+        {
+            get
+            {
+                if (localPlayer == null) localPlayer = players.FirstOrDefault(p => p != null && p.Handle() != null && p.Handle().IsLocalPlayer());
+                return localPlayer;
+            }
+        }
 
         public static List<PlayerAvatar> REPOssessedPlayers = new List<PlayerAvatar>();
         public static List<Enemy> enemies = new List<Enemy>();

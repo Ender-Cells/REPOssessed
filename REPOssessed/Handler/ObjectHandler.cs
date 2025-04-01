@@ -24,8 +24,8 @@ namespace REPOssessed.Handler
             this.itemAttributes = physGrabObject?.GetComponentHierarchy<ItemAttributes>();
             this.valuableObject = physGrabObject?.GetComponentHierarchy<ValuableObject>();
             this.physGrabObjectImpactDetector = physGrabObject?.GetComponentHierarchy<PhysGrabObjectImpactDetector>();
-            this.trap = physGrabObject.GetComponentHierarchy<Trap>();
-            this.enemyRigidbody = physGrabObject.GetComponentHierarchy<EnemyRigidbody>();
+            this.trap = physGrabObject?.GetComponentHierarchy<Trap>();
+            this.enemyRigidbody = physGrabObject?.GetComponentHierarchy<EnemyRigidbody>();
         }
 
         public string GetName() => IsShopItem() ? itemAttributes?.item?.itemName : physGrabObject?.name.Replace("(Clone)", "").Replace("Valuable", "").Trim();
@@ -52,7 +52,7 @@ namespace REPOssessed.Handler
         public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
         public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;
-        public bool CurrentlyHeld() => physGrabObject?.grabbed ?? false;
+        public bool CurrentlyHeld() => (physGrabObject?.grabbed ?? false) || (physGrabObject?.grabbedLocal ?? false);
         public PlayerAvatar GetLastPlayerHeld() => Patches.LastGrabbedPhysObjects?.ToList().FirstOrDefault(p => p.Key == physGrabObject).Value ?? null;
     }
 

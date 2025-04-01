@@ -26,7 +26,7 @@ namespace REPOssessed.Cheats
 
         public override void Execute()
         {
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
+            PlayerAvatar player = GameObjectManager.LocalPlayer;
             if (player == null || player.Handle() == null || !player.Handle().IsMasterClient()) return;
             GameObjectManager.extractions.Where(e => e != null && e.Reflect().GetValue<bool>("isShop")).ToList().ForEach(e =>
             {

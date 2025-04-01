@@ -1,21 +1,26 @@
-﻿using REPOssessed.Cheats.Core;
-using REPOssessed.Extensions;
+﻿using HarmonyLib;
+using REPOssessed.Cheats.Core;
 using REPOssessed.Handler;
+using REPOssessed.Manager;
+using REPOssessed.Util;
 
 namespace REPOssessed.Cheats
 {
+    [HarmonyPatch]
     internal class UnlimitedBattery : ToggleCheat
     {
-        public override void Update()
+        [HarmonyPatch(typeof(ItemBattery), "Update"), HarmonyPrefix]
+        public static void Update(ItemBattery __instance)
         {
-            if (!Enabled) return;
-            PlayerAvatar player = PlayerAvatar.instance.GetLocalPlayer();
-            if (player == null || player.Handle() == null || !player.Handle().IsMasterClient()) return;
-            ItemEquippable itemEquippable = player.Handle().itemEquippable;
-            if (itemEquippable == null) return;
-            ItemBattery itemBattery = itemEquippable.GetComponentHierarchy<ItemBattery>();
-            if (itemBattery == null) return;
-            itemBattery.SetBatteryLife(100);
+            if (Cheat.Instance<UnlimitedBattery>().Enabled)
+            {
+                PhysGrabObject physGrabObject = __instance.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+                if (physGrabObject != null)
+                {
+                    PlayerAvatar player = GameObjectManager.LocalPlayer;
+                    if (player != null && player.Handle().physGrabObject != null && player.Handle().physGrabObject == physGrabObject) __instance.SetBatteryLife(100);
+                }
+            }
         }
     }
 }

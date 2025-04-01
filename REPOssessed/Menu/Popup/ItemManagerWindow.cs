@@ -1,6 +1,7 @@
 ﻿using REPOssessed.Extensions;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
+using Steamworks.Ugc;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace REPOssessed.Menu.Popup
         private Vector2 scrollPos = Vector2.zero;
         private string s_search = "";
         private string s_amount = "1";
+        private Dictionary<GameObject, string> Items = new Dictionary<GameObject, string>();
 
         public override void DrawContent(int windowID)
         {
@@ -37,7 +39,8 @@ namespace REPOssessed.Menu.Popup
                 UI.Textbox("ItemManager.Amount", ref s_amount, @"[^0-9]", 0, false);
                 GUILayout.EndHorizontal();
                 GUILayout.Space(20);
-                UI.ButtonGrid(GetItems().Where(i => i.Key != null).OrderBy(i => GetName(i.Key.name)).ToList(), (i) => GetName(i.Key.name), s_search, (i) => SpawnItem(i.Key, i.Value), 3);
+                GetItems().Where(i => i.Key != null && !Items.ContainsKey(i.Key)).ToList().ForEach(i => Items[i.Key] = i.Value);
+                UI.ButtonGrid(Items.Where(i => i.Key != null).OrderBy(i => GetName(i.Key.name)).ToList(), (i) => GetName(i.Key.name), s_search, (i) => SpawnItem(i.Key, i.Value), 3);
             });
             GUI.DragWindow();
         }
