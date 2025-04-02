@@ -16,7 +16,7 @@ namespace REPOssessed.Manager
         private static Queue<Action> ObjectQueue = new Queue<Action>();
         private static bool CoroutineStarted = false;
 
-        public static PlayerAvatar localPlayer = null;
+        private static PlayerAvatar localPlayer = null;
 
         public static PlayerAvatar LocalPlayer
         {

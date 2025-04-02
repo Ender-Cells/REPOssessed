@@ -8,6 +8,7 @@ namespace REPOssessed.Handler
 {
     public class EnemyHandler
     {
+        public static List<Enemy> PermaKilledEnemies = new List<Enemy>();
         private Enemy enemy = null;
         public EnemyHealth enemyHealth = null;
         public EnemyParent enemyParent = null;
@@ -19,20 +20,13 @@ namespace REPOssessed.Handler
             this.enemyParent = enemy.GetComponentHierarchy<EnemyParent>();
         }
 
-        public void Heal(int heal)
+        public void Heal(int heal) => enemyHealth?.Reflect()?.Invoke("Hurt", -heal, new Vector3(0, 0, 0));
+        public void Hurt(int damage) => enemyHealth?.Reflect()?.Invoke("Hurt", damage, new Vector3(0, 0, 0));
+        public void Kill() => enemyHealth?.Reflect()?.Invoke("Death", new Vector3(0, 0, 0));
+        public void PermaKill()
         {
-            if (enemyHealth == null) return;
-            enemyHealth.Reflect().Invoke("Hurt", -heal, new Vector3(0, 0, 0));
-        }
-        public void Hurt(int damage)
-        {
-            if (enemyHealth == null) return;
-            enemyHealth.Reflect().Invoke("Hurt", damage, new Vector3(0, 0, 0));
-        }
-        public void Kill()
-        {
-            if (enemyHealth == null) return;
-            enemyHealth.Reflect().Invoke("Death", new Vector3(0, 0, 0));
+            Kill();
+            PermaKilledEnemies.Add(enemy);
         }
         public void Lure(PlayerAvatar player)
         {

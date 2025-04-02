@@ -131,6 +131,7 @@ namespace REPOssessed.Menu.Tab
             UI.Label("EnemyTab.MaxHealth", enemy.Handle().GetMaxHealth().ToString());
             UI.Label("EnemyTab.EnemyTarget", enemyTarget);
             UI.Button("EnemyTab.Kill", () => enemy.Handle().Kill());
+            UI.Button("EnemyTab.PermaKill", () => enemy.Handle().PermaKill());
             UI.Button("EnemyTab.Lure", () =>
             {
                 if (selectedPlayer != null) enemy.Handle().Lure(selectedPlayer);

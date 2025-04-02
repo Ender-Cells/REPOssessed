@@ -37,7 +37,7 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalSpace(ref scrollPos, () =>
             {
                 UI.Header("ServerTab.ServerCheats");
-                UI.TextboxAction("ServerTab.SetCurrency", ref currency, 5, new UIButton("General.Set", () =>
+                UI.TextboxAction("ServerTab.SetCurrency", ref currency, 10, new UIButton("General.Set", () =>
                 {
                     SetCurrency.Currency = currency / 1000;
                     Cheat.Instance<SetCurrency>().Execute();

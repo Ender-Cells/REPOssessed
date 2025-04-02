@@ -102,21 +102,29 @@ namespace REPOssessed
         [HarmonyPatch(typeof(PhotonNetwork), "ExecuteRpc"), HarmonyPrefix]
         public static bool ExecuteRPC(Hashtable rpcData, Player sender)
         {
-            if (sender is null || sender?.GamePlayer() == null) return true;
-
-            string rpc = rpcData.ContainsKey(keyByteFive) ?
-                PhotonNetwork.PhotonServerSettings.RpcList[Convert.ToByte(rpcData[keyByteFive])]
-                : rpcData[keyByteThree] as string;
-
-            if (!IgnoredRPCDebugs.Contains(rpc)) Debug.LogWarning($"Processing RPC '{rpc}' From '{sender.NickName}'");
-
-            if (!sender.IsLocal && sender.GamePlayer().Handle().IsRPCBlocked())
+            try
             {
-                Debug.LogError($"RPC {rpc} was blocked from {sender.NickName}.");
-                return false;
-            }
+                if (sender is null || sender?.GamePlayer() == null) return true;
 
-            return sender.GamePlayer().Handle().OnReceivedRPC(rpc, rpcData);
+                string rpc = rpcData.ContainsKey(keyByteFive) ?
+                    PhotonNetwork.PhotonServerSettings.RpcList[Convert.ToByte(rpcData[keyByteFive])]
+                    : rpcData[keyByteThree] as string;
+
+                if (!IgnoredRPCDebugs.Contains(rpc)) Debug.LogWarning($"Processing RPC '{rpc}' From '{sender.NickName}'");
+
+                if (!sender.IsLocal && sender.GamePlayer().Handle().IsRPCBlocked())
+                {
+                    Debug.LogError($"RPC {rpc} was blocked from {sender.NickName}.");
+                    return false;
+                }
+
+                return sender.GamePlayer().Handle().OnReceivedRPC(rpc, rpcData);
+            }
+            catch (Exception e)
+            {
+                Settings.s_DebugMessage = "Msg: " + e.Message + "\nSrc: " + e.Source + "\n" + e.StackTrace;
+                return true;
+            }
         }
 
         [HarmonyPatch(typeof(LoadBalancingPeer), "OpRaiseEvent"), HarmonyPrefix]
@@ -141,6 +149,13 @@ namespace REPOssessed
         {
             if (!SemiFunc.RunIsLobbyMenu()) return;
             REPOssessed.Instance.AlertUsingREPOssessed();
+        }
+
+        [HarmonyPatch(typeof(EnemyParent), "SpawnRPC"), HarmonyPostfix]
+        public static void SpawnRPC(EnemyParent __instance)
+        {
+            Enemy enemy = __instance.Reflect().GetValue<Enemy>("Enemy");
+            if (enemy != null && EnemyHandler.PermaKilledEnemies.Contains(enemy) && enemy.Handle() != null) enemy.Handle().Kill();
         }
 
         [HarmonyPatch(typeof(NetworkManager), "AllPlayerSpawnedRPC"), HarmonyPostfix]

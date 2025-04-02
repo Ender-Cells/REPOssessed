@@ -112,7 +112,7 @@ namespace REPOssessed
             {
                 if (Event.current.type == EventType.Repaint)
                 {
-                    VisualUtil.DrawString(new Vector2(5f, 2f), $"REPOssessed {Settings.s_Version} By Dustin | Menu Toggle: {FirstSetupManagerWindow.GetMenuKeybindName()}{(Cheat.Instance<FPSCounter>().Enabled ? $" | FPS: {Cheat.Instance<FPSCounter>().FPS}" : "")}", Settings.c_primary.GetColor(), false, false, true, 14);
+                    VisualUtil.DrawString(new Vector2(5f, 2f), $"REPOssessed {Settings.s_Version} By Dustin | Menu Toggle: {FirstSetupManagerWindow.GetMenuKeybindName()} | Unload Toggle: {(Cheat.Instance<UnloadMenu>().HasKeybind ? Cheat.Instance<UnloadMenu>().keybind.ToString() : "None")}{(Cheat.Instance<FPSCounter>().Enabled ? $" | FPS: {Cheat.Instance<FPSCounter>().FPS}" : "")}", Settings.c_primary.GetColor(), false, false, true, 14);
                     if (MenuUtil.resizing)
                     {
                         VisualUtil.DrawString(new Vector2(Screen.width / 2, 35f), new string[] {"SettingsTab.ResizeTitle", "SettingsTab.ResizeConfirm"}.Localize(), Settings.c_primary, true, true, true, 22);
@@ -133,9 +133,16 @@ namespace REPOssessed
             }
         }
 
+        public void Unload()
+        {
+            StopAllCoroutines();
+            harmony?.UnpatchAll();
+            Loader.Unload();
+        }
+
         public void AlertUsingREPOssessed()
         {
-            if (GameObjectManager.localPlayer != null) GameObjectManager.localPlayer.photonView.RPC("ChatMessageSendRPC", RpcTarget.All, "", false);
+            if (GameObjectManager.LocalPlayer != null) GameObjectManager.LocalPlayer.photonView.RPC("ChatMessageSendRPC", RpcTarget.All, "", false);
         }
     }
 }
