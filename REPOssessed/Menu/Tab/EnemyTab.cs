@@ -108,6 +108,7 @@ namespace REPOssessed.Menu.Tab
             UI.Header("EnemyTab.GeneralActions");
 
             UI.Button("EnemyTab.KillAll", () => GameObjectManager.enemies.Where(e => e != null && !e.Handle().IsDead() && !e.Handle().IsDisabled()).ToList().ForEach(e => e.Handle().Kill()));
+            UI.Button("EnemyTab.PermaKillAll", () => GameObjectManager.enemies.Where(e => e != null && !e.Handle().IsDead() && !e.Handle().IsDisabled()).ToList().ForEach(e => e.Handle().PermaKill()));
             UI.Button("EnemyTab.TeleportAllEnemies", () => GameObjectManager.enemies.Where(e => e != null && !e.Handle().IsDead() && !e.Handle().IsDisabled()).ToList().ForEach(e =>
             {
                 if (selectedPlayer != null && selectedPlayer.transform != null) e.Handle().Teleport(selectedPlayer.transform.position);
@@ -191,7 +192,7 @@ namespace REPOssessed.Menu.Tab
             if (roomVolume == null || roomVolume.transform == null) return;
             LevelPoint levelPoint = LevelGenerator.Instance.LevelPathPoints.OrderByDescending(p => Vector3.Distance(p.transform.position, roomVolume.transform.position)).FirstOrDefault();
             if (levelPoint == null || levelPoint.transform == null) return;
-            for (int i = 0; i < amount; i++) LevelGenerator.Instance.Reflect().Invoke("EnemySpawn", false, enemy, levelPoint.transform.position);
+            for (int i = 0; i < amount; i++) LevelGenerator.Instance.EnemySpawn(enemy, levelPoint.transform.position);
         }
     }
 }

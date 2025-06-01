@@ -19,7 +19,7 @@ namespace REPOssessed.Menu.Core
 
         private Vector2 scrollPos = Vector2.zero;
         private List<MenuTab> tabs = new List<MenuTab>();
-        private int selectedTab = 0;
+        private int selectedTab = 1;
         public float contentWidth;
         public float contentHeight;
         public int spaceFromTop = 60;

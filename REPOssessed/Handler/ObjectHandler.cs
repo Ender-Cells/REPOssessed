@@ -39,9 +39,19 @@ namespace REPOssessed.Handler
             }
             physGrabObjectImpactDetector?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DestroyObjectRPC", RpcTarget.All, effects);
         }
+        public void Damage(int valueLost, int breakLevel = 1, bool loseValue = true)
+        {
+            if (IsEnemy() || IsPlayer()) return;
+            if (!SemiFunc.IsMultiplayer())
+            {
+                physGrabObjectImpactDetector?.Reflect()?.Invoke("BreakRPC", valueLost, Vector3.zero, breakLevel, loseValue);
+                return;
+            }
+            physGrabObjectImpactDetector?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("BreakRPC", RpcTarget.All, valueLost, Vector3.zero, breakLevel, loseValue);
+        }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
-        public float GetValue() => valuableObject != null ? valuableObject.dollarValueCurrent : 0f;
+        public float GetValue() => valuableObject != null ? valuableObject.Reflect().GetValue<float>("dollarValueCurrent") : 0f;
         public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false;
         public bool IsEnemy() => enemyRigidbody != null || (physGrabObject?.Reflect()?.GetValue<bool>("isEnemy") ?? false);
         public bool IsValuable() => physGrabObject?.Reflect().GetValue<bool>("isValuable") ?? false;

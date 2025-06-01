@@ -40,6 +40,8 @@ namespace REPOssessed.Menu.Tab
                 UI.CheatToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1f, 50f);
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
+                UI.Checkbox("SelfTab.HearAllDeadPlayers", Cheat.Instance<HearAllDeadPlayers>());
+                UI.Checkbox("SelfTab.NoAntiCharge", Cheat.Instance<NoAntiCharge>());
                 UI.CheatToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
                 UI.Checkbox("SelfTab.UseSpoofedName", Cheat.Instance<NameSpoofer>());
                 UI.Textbox("SelfTab.SpoofedName", ref NameSpoofer.Value, true, 100);

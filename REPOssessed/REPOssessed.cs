@@ -2,7 +2,6 @@
 using Photon.Pun;
 using REPOssessed.Cheats;
 using REPOssessed.Cheats.Core;
-using REPOssessed.Handler;
 using REPOssessed.Language;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
@@ -61,9 +60,10 @@ namespace REPOssessed
 
         private void LoadCheats()
         {
+            Settings.Changelog.ReadChanges();
             cheats = new List<ToggleCheat>();
             menu = new HackMenu();
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "REPOssessed.Cheats", StringComparison.Ordinal) && t.IsSubclassOf(typeof(Cheat))))
+            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => string.Equals(t.Namespace, "REPOssessed.Cheats", StringComparison.Ordinal) && t.IsSubclassOf(typeof(Cheat))))
             {
                 if (type.IsSubclassOf(typeof(ToggleCheat))) cheats.Add((ToggleCheat)Activator.CreateInstance(type));
                 else Activator.CreateInstance(type);

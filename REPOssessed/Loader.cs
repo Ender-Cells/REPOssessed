@@ -19,19 +19,18 @@ namespace REPOssessed
                 return;
             }
             LoadHarmony();
-            Loader.Load = new GameObject();
+            Load = new GameObject();
             Load.AddComponent<REPOssessed>();
-            Object.DontDestroyOnLoad(Loader.Load);
+            Object.DontDestroyOnLoad(Load);
         }
 
         public static void LoadHarmony()
         {
-            String name = "REPOssessed.Resources.0Harmony.dll";
+            string name = "REPOssessed.Resources.0Harmony.dll";
             Assembly assembly = Assembly.GetExecutingAssembly();
             Stream stream = assembly.GetManifestResourceStream(name);
             byte[] rawAssembly = new byte[stream.Length];
             stream.Read(rawAssembly, 0, (int)stream.Length);
-
             AppDomain.CurrentDomain.Load(rawAssembly);
             harmonyLoaded = true;
         }

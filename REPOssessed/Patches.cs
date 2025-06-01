@@ -6,6 +6,7 @@ using REPOssessed.Cheats;
 using REPOssessed.Cheats.Core;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
+using REPOssessed.Menu.Tab;
 using REPOssessed.Util;
 using System;
 using System.Collections.Generic;
@@ -142,6 +143,7 @@ namespace REPOssessed
             PlayerExtensions.PlayerHandlers?.Clear();
             EnemyExtensions.EnemyHandlers?.Clear();
             LastGrabbedPhysObjects?.Clear();
+            EnemyHandler.PermaKilledEnemies?.Clear();
         }
 
         [HarmonyPatch(typeof(MenuPageLobby), "PlayerAdd"), HarmonyPostfix]
@@ -149,6 +151,13 @@ namespace REPOssessed
         {
             if (!SemiFunc.RunIsLobbyMenu()) return;
             REPOssessed.Instance.AlertUsingREPOssessed();
+        }
+
+        [HarmonyPatch(typeof(SemiFunc), "MasterOnlyRPC"), HarmonyPrefix]
+        public static bool MasterOnlyRPC(ref bool __result)
+        {
+            __result = true;
+            return false;
         }
 
         [HarmonyPatch(typeof(EnemyParent), "SpawnRPC"), HarmonyPostfix]

@@ -1,5 +1,4 @@
-﻿using REPOssessed.Cheats;
-using REPOssessed.Cheats.Core;
+﻿using REPOssessed.Cheats.Core;
 using REPOssessed.Extensions;
 using REPOssessed.Language;
 using System;
@@ -106,10 +105,12 @@ namespace REPOssessed.Util
             GUILayout.EndHorizontal();
         }
 
-        public static void Label(string label, RGBAColor color = null)
+        public static void Label(string label, RGBAColor color = null, bool bold = false)
         {
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.fontStyle = bold ? FontStyle.Bold : FontStyle.Normal;
             GUILayout.BeginHorizontal();
-            GUILayout.Label(color is null ? label.Localize() : color.AsString(label.Localize()));
+            GUILayout.Label(color is null ? label.Localize() : color.AsString(label.Localize()), style);
             GUILayout.EndHorizontal();
         }
 
@@ -193,7 +194,7 @@ namespace REPOssessed.Util
             GUILayout.EndHorizontal();
         }
 
-        public static void ExecuteSlider(string header, string displayValue, Action executable, ref float value, float min, float max, string execute = "General.execute", params object[] param)
+        public static void ExecuteSlider(string header, string displayValue, Action executable, ref float value, float min, float max, string execute = "General.Execute", params object[] param)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
@@ -234,6 +235,16 @@ namespace REPOssessed.Util
             value = GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(Settings.i_sliderWidth));
             GUILayout.EndHorizontal();
         }
+
+        public static void Slider(string header, string displayValue, ref int value, int min, int max)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
+            GUILayout.FlexibleSpace();
+            value = (int)GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(Settings.i_sliderWidth));
+            GUILayout.EndHorizontal();
+        }
+
         public static void NumSelect(string header, ref int value, int min, int max)
         {
             GUILayout.BeginHorizontal();

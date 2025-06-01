@@ -20,7 +20,7 @@ namespace REPOssessed
         /* *    
          * Menu Settings
          * */
-        public static string s_Version = "v1.0.2";
+        public static string s_Version = "v1.0.0";
         public static bool b_IsFirstLaunch = true;
 
         public static bool b_isMenuOpen = false;
@@ -239,7 +239,7 @@ namespace REPOssessed
                         b_DebugMode = bool.Parse(debugModeToken.ToString());
                         HackMenu.Instance.ToggleDebugTab(b_DebugMode);
                     }
-                    
+
                     if (cheatSettings.TryGetValue("IsFirstLaunch", out JToken isFirstLaunchToken))
                         b_IsFirstLaunch = bool.Parse(isFirstLaunchToken.ToString());
                     if (cheatSettings.TryGetValue("UseValuableTiers", out JToken useValuableTiersToken))
@@ -268,7 +268,7 @@ namespace REPOssessed
                         b_DisplayEnemies = bool.Parse(displayEnemiesToken.ToString());
                 }
 
-                    Debug.Log("Loading Colors...");
+                Debug.Log("Loading Colors...");
                 if (json.TryGetValue("Colors", out JToken colorsToken))
                 {
                     JObject colors = colorsToken.ToObject<JObject>();
@@ -327,6 +327,42 @@ namespace REPOssessed
                 File.Copy(defaultConf, config);
                 Cheat.instances.ForEach(c => c.keybind = c.defaultKeybind);
                 LoadConfig();
+            }
+        }
+
+        internal class Changelog
+        {
+            public class Entry
+            {
+                public string Version { get; set; }
+                public string Type { get; set; }
+                public string Name { get; set; }
+                public string Description { get; set; }
+            }
+
+            public static List<Entry> entries = new();
+
+            public static void ReadChanges()
+            {
+                using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("REPOssessed.Resources.Changelog.json");
+                using StreamReader reader = new(stream);
+                string jsonStr = reader.ReadToEnd();
+                JObject array = JObject.Parse(jsonStr);
+                JObject entriesObj = (JObject)array["Entries"];
+                foreach (JProperty obj in entriesObj.Properties())
+                {
+                    JArray entriesArray = (JArray)obj.Value;
+                    foreach (JObject entry in entriesArray)
+                    {
+                        entries.Add(new Entry
+                        {
+                            Version = array["Version"]?.ToString(),
+                            Type = obj.Name,
+                            Name = entry["Name"]?.ToString(),
+                            Description = entry["Description"]?.ToString()
+                        });
+                    }
+                }
             }
         }
     }

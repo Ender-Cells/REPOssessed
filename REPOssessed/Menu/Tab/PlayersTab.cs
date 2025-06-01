@@ -21,6 +21,7 @@ namespace REPOssessed.Menu.Tab
         private int color = -1;
         private int heal = 1;
         private int damage = 1;
+        private int objectDamage = 1;
         private float flingforce = 1f;
 
         public override void Draw()
@@ -44,8 +45,8 @@ namespace REPOssessed.Menu.Tab
             UI.Button("PlayersTab.ReviveOthers", () => GameObjectManager.players.Where(p => p != null && p.Handle().IsDead() && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.Handle().RevivePlayer()));
             UI.Button("PlayersTab.KillAll", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.PlayerDeath(-1)));
             UI.Button("PlayersTab.KillOthers", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.PlayerDeath(-1)));
-            UI.TextboxAction("PlayersTab.TalkAll", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.ChatMessageSend(message, false))));
-            UI.TextboxAction("PlayersTab.TalkOthers", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.ChatMessageSend(message, false))));
+            UI.TextboxAction("PlayersTab.ChatMessageAll", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.ChatMessageSend(message))));
+            UI.TextboxAction("PlayersTab.ChatMessageOthers", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.ChatMessageSend(message))));
             UI.TextboxAction("PlayersTab.ChangeAllColors", ref color, 3, new UIButton("General.Set", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.PlayerAvatarSetColor(color))));
             UI.TextboxAction("PlayersTab.ChangeOthersColors", ref color, 3, new UIButton("General.Set", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.PlayerAvatarSetColor(color))));
             UI.Label("PlayersTab.Colors");
@@ -63,6 +64,7 @@ namespace REPOssessed.Menu.Tab
             UI.Label("PlayersTab.SteamId", selectedPlayer.Handle().GetSteamID().ToString());
             UI.Label("PlayersTab.Status", selectedPlayer.Handle().IsDead() ? "Dead" : "Alive");
             UI.Label("PlayersTab.Health", selectedPlayer.Handle().GetHealth().ToString());
+            UI.Label("PlayersTab.MaxHealth", selectedPlayer.Handle().GetMaxHealth().ToString());
             UI.Label("PlayersTab.HoldingItem", PhysGrabObject);
             UI.Label("PlayersTab.IsMasterClient", selectedPlayer.Handle().IsMasterClient().ToString());
             UI.Label("PlayersTab.REPOssessedUser", selectedPlayer.Handle().IsREPOssessedUser().ToString());
@@ -75,12 +77,16 @@ namespace REPOssessed.Menu.Tab
             UI.ExecuteSlider("PlayersTab.Fling", flingforce.ToString("F1"), () => selectedPlayer.Handle().Fling(flingforce), ref flingforce, 1f, 1000f);
             UI.TextboxAction("PlayersTab.Heal", ref heal, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Heal(heal)));
             UI.TextboxAction("PlayersTab.Damage", ref damage, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Hurt(damage)));
-            UI.Button("PlayersTab.BreakHeldItem", () =>
+            UI.Button("PlayersTab.BreakHeldObject", () =>
             {
                 if (selectedPlayer.Handle().physGrabObject != null) selectedPlayer.Handle().physGrabObject.Handle().Break();
             });
-            UI.TextboxAction("PlayersTab.ChatMessage", ref message, 100, new UIButton("PlayersTab.Send", () => selectedPlayer.ChatMessageSend(message, false)));
+            UI.TextboxAction("PlayersTab.DamageHeldObject", ref objectDamage, 3, new UIButton("General.Set", () =>
+            {
+                if (selectedPlayer.Handle().physGrabObject != null) selectedPlayer.Handle().physGrabObject.Handle().Damage(objectDamage);
+            }));
             UI.TextboxAction("PlayersTab.ChangeColor", ref color, 2, new UIButton("General.Set", () => selectedPlayer.PlayerAvatarSetColor(color)));
+            UI.TextboxAction("PlayersTab.ChatMessage", ref message, 100, new UIButton("PlayersTab.Send", () => selectedPlayer.ChatMessageSend(message)));
             if (!selectedPlayer.Handle().IsLocalPlayer())
             {
                 UI.Button("PlayersTab.TeleportToPlayer", () =>

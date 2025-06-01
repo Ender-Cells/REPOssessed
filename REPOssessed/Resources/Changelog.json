@@ -1,0 +1,401 @@
+{
+  "Version": "1.0.0",
+  "Entries": {
+    "Added": [
+      {
+        "Name": "Changelog",
+        "Description": "Lets you see every addition"
+      },
+      {
+        "Name": "No Overcharge",
+        "Description": "Removes overcharge for enemies"
+      },
+      {
+        "Name": "Always Show Level",
+        "Description": "Shows the current level"
+      },
+      {
+        "Name": "Godmode",
+        "Description": "Prevents you from taking damage"
+      },
+      {
+        "Name": "Hear All Dead Players",
+        "Description": "Lets you hear dead players"
+      },
+      {
+        "Name": "Infinite Jump",
+        "Description": "Lets you jump forever"
+      },
+      {
+        "Name": "Invisibility",
+        "Description": "Makes you invisible"
+      },
+      {
+        "Name": "Name Spoofer",
+        "Description": "Lets you change your name"
+      },
+      {
+        "Name": "No Clip",
+        "Description": "Lets you clip through walls"
+      },
+      {
+        "Name": "No Gun Cooldown",
+        "Description": "Removes gun cooldown"
+      },
+      {
+        "Name": "No Gun Spread",
+        "Description": "Removes gun spread"
+      },
+      {
+        "Name": "Non Enemy Targetable",
+        "Description": "Makes enemies not target you"
+      },
+      {
+        "Name": "No Object Money Loss",
+        "Description": "Prevents objects from losing value"
+      },
+      {
+        "Name": "No Tumble",
+        "Description": "Removes tumble"
+      },
+      {
+        "Name": "Rainbow Suit",
+        "Description": "Makes your suit change like a rainbow"
+      },
+      {
+        "Name": "Safe Godmode",
+        "Description": "Allows you to take damage unless it'll kill you"
+      },
+      {
+        "Name": "Super Speed",
+        "Description": "Lets you change your speed"
+      },
+      {
+        "Name": "Unlimited Battery",
+        "Description": "Makes items batteries unlimited"
+      },
+      {
+        "Name": "Unlimited Stamina",
+        "Description": "Gives you unlimited stamina"
+      },
+      {
+        "Name": "Cart Teleports",
+        "Description": "Lets you teleport to a cart"
+      },
+      {
+        "Name": "Extraction Teleports",
+        "Description": "Lets you teleport to a extraction"
+      },
+      {
+        "Name": "Truck Teleport",
+        "Description": "Lets you teleport to a truck"
+      },
+      {
+        "Name": "Display REPOssessed Users",
+        "Description": "Lets you see other players using the menu"
+      },
+      {
+        "Name": "FPS Counter",
+        "Description": "Lets you see your games fps"
+      },
+      {
+        "Name": "Debug Mode",
+        "Description": "Adds a debug tab"
+      },
+      {
+        "Name": "All ESP Colors",
+        "Description": "Lets you change esp colors"
+      },
+      {
+        "Name": "Toggle ESP",
+        "Description": "Global ESP toggle"
+      },
+      {
+        "Name": "Toggle All ESP",
+        "Description": "Toggles all ESPs"
+      },
+      {
+        "Name": "Player ESP",
+        "Description": "Shows where players are"
+      },
+      {
+        "Name": "Enemy ESP",
+        "Description": "Shows where enemies are"
+      },
+      {
+        "Name": "Item ESP",
+        "Description": "Shows where items are"
+      },
+      {
+        "Name": "Cart ESP",
+        "Description": "Shows where carts are"
+      },
+      {
+        "Name": "Extraction ESP",
+        "Description": "Shows where extractions are"
+      },
+      {
+        "Name": "Death Head ESP",
+        "Description": "Shows where death heads are"
+      },
+      {
+        "Name": "Truck ESP",
+        "Description": "Shows where the truck is"
+      },
+      {
+        "Name": "FOV",
+        "Description": "Lets you change your FOV"
+      },
+      {
+        "Name": "Set Currency",
+        "Description": "Lets you set your currency"
+      },
+      {
+        "Name": "Break All Objects",
+        "Description": "Breaks every object"
+      },
+      {
+        "Name": "Force Thief Punishment",
+        "Description": "Spawns exploding grenades by triggering thief punishment"
+      },
+      {
+        "Name": "Complete All Extractions",
+        "Description": "Makes all extractions completed"
+      },
+      {
+        "Name": "Toggle Info Display",
+        "Description": "Global info display toggle"
+      },
+      {
+        "Name": "Toggle All Info Displays",
+        "Description": "Toggles all info displays"
+      },
+      {
+        "Name": "Display Map Objects",
+        "Description": "Displays the total number of map objects"
+      },
+      {
+        "Name": "Display Death Heads",
+        "Description": "Displays the total number of death heads"
+      },
+      {
+        "Name": "Display Players",
+        "Description": "Displays the total number of players"
+      },
+      {
+        "Name": "Display Enemies",
+        "Description": "Displays the total number of enemies"
+      },
+      {
+        "Name": "Loot Manager",
+        "Description": "Lets you view and teleport items"
+      },
+      {
+        "Name": "Item Manager",
+        "Description": "Lets you spawn items"
+      },
+      {
+        "Name": "Level Manager",
+        "Description": "Lets you change levels"
+      },
+      {
+        "Name": "Player Tab Steam Id",
+        "Description": "Lets you view their steam id"
+      },
+      {
+        "Name": "Player Tab Status",
+        "Description": "Lets you view if their alive or dead"
+      },
+      {
+        "Name": "Player Tab Health",
+        "Description": "Lets you view their health"
+      },
+      {
+        "Name": "Player Tab Max Health",
+        "Description": "Lets you view their max health"
+      },
+      {
+        "Name": "Player Tab Holding Item",
+        "Description": "Lets you view their held item"
+      },
+      {
+        "Name": "Player Tab Is Master Client",
+        "Description": "Lets you view if they have the master client"
+      },
+      {
+        "Name": "Player Tab REPOssessed User",
+        "Description": "Lets you view if their using the menu"
+      },
+      {
+        "Name": "Player Tab Crowned",
+        "Description": "Lets you view if they have the crown"
+      },
+      {
+        "Name": "Player Tab Heal",
+        "Description": "Heal them to max health"
+      },
+      {
+        "Name": "Player Tab Crown",
+        "Description": "Crowns them"
+      },
+      {
+        "Name": "Player Tab Kill",
+        "Description": "Kills them"
+      },
+      {
+        "Name": "Player Tab Revive",
+        "Description": "Revives them"
+      },
+      {
+        "Name": "Player Tab Force Tumble",
+        "Description": "Forces them to tumble"
+      },
+      {
+        "Name": "Player Tab Fling",
+        "Description": "Flings them"
+      },
+      {
+        "Name": "Player Tab Heal Amount",
+        "Description": "Heal by a specific amount"
+      },
+      {
+        "Name": "Player Tab Damage Amount",
+        "Description": "Damage by a specific amount"
+      },
+      {
+        "Name": "Player Tab Break Held Object",
+        "Description": "Breaks the object their holding"
+      },
+      {
+        "Name": "Player Tab Damage Held Object",
+        "Description": "Damages the object their holding"
+      },
+      {
+        "Name": "Player Tab Change Color",
+        "Description": "Changes their avatar color"
+      },
+      {
+        "Name": "Player Tab Chat Message",
+        "Description": "Sends a chat message as them"
+      },
+      {
+        "Name": "Player Tab Teleport To Player",
+        "Description": "Teleports you to the player"
+      },
+      {
+        "Name": "Player Tab Teleport Player To You",
+        "Description": "Teleports the player to you"
+      },
+      {
+        "Name": "Player Tab Block RPCs",
+        "Description": "Blocks RPCs from being sent to you from them"
+      },
+      {
+        "Name": "Player Tab Revive All",
+        "Description": "Revives every player"
+      },
+      {
+        "Name": "Player Tab Revive Others",
+        "Description": "Revives other players excluding you"
+      },
+      {
+        "Name": "Player Tab Kill All",
+        "Description": "Kills every player"
+      },
+      {
+        "Name": "Player Tab Kill Others",
+        "Description": "Kills other players excluding you"
+      },
+      {
+        "Name": "Player Tab Chat Message All",
+        "Description": "Makes every player send a chat"
+      },
+      {
+        "Name": "Player Tab Chat Message Others",
+        "Description": "Makes every player excluding you send a chat"
+      },
+      {
+        "Name": "Player Tab Change All Colors",
+        "Description": "Changes the color of every players avatar"
+      },
+      {
+        "Name": "Player Tab Change Others Colors",
+        "Description": "Changes the color of every players avatar excluding you"
+      },
+      {
+        "Name": "Enemy Tab Kill All",
+        "Description": "Kills every enemy"
+      },
+      {
+        "Name": "Enemy Tab Perma Kill All",
+        "Description": "Re-kills enemies when they respawn making it permanent"
+      },
+      {
+        "Name": "Enemy Tab Teleport All Enemies",
+        "Description": "Teleports all enemies to the selected player"
+      },
+      {
+        "Name": "Enemy Tab Lure All",
+        "Description": "Lures all enemies to the selected player"
+      },
+      {
+        "Name": "Enemy Tab Health",
+        "Description": "Lets you view the enemy health"
+      },
+      {
+        "Name": "Enemy Tab Max Health",
+        "Description": "Lets you view the enemy max health"
+      },
+      {
+        "Name": "Enemy Tab Enemy Target",
+        "Description": "Lets you view the enemy target"
+      },
+      {
+        "Name": "Enemy Tab Kill",
+        "Description": "Kills the enemy"
+      },
+      {
+        "Name": "Enemy Tab Perma Kill",
+        "Description": "Re-kills the enemy when they respawn making it premanent"
+      },
+      {
+        "Name": "Enemy Tab Lure",
+        "Description": "Lures the enemy to the selected player"
+      },
+      {
+        "Name": "Enemy Tab Teleport To Enemy",
+        "Description": "Teleports you to the enemy"
+      },
+      {
+        "Name": "Enemy Tab Teleport Enemy To Player",
+        "Description": "Teleports the enemy to the player"
+      },
+      {
+        "Name": "Enemy Tab Teleport Player To Enemy",
+        "Description": "Telports the player to the enemy"
+      },
+      {
+        "Name": "Enemy Tab Damage",
+        "Description": "Damages the enemy by the amount"
+      },
+      {
+        "Name": "Enemy Tab Heal",
+        "Description": "Heals the enemy by the amount"
+      },
+      {
+        "Name": "Enemy Tab Freeze",
+        "Description": "Freezes the enemy by the amount"
+      },
+      {
+        "Name": "Enemy Tab Spawn",
+        "Description": "Lets you spawn an enemy"
+      }
+    ],
+    "Changed": [
+
+    ],
+    "Fixed": [
+
+    ]
+  }
+}
