@@ -1,5 +1,5 @@
 # REPOssessed
-<sup>A R.E.P.O Cheat by [Dustin](https://github.com/Dustin21335) | [UnkownCheats Thread](tbd) | [Discord Server](https://discord.gg/D6wuXEnfhP)</sup>
+<sup>A R.E.P.O Cheat by [Dustin](https://github.com/Dustin21335) | [UnkownCheats Thread](https://www.unknowncheats.me/forum/other-games/735028-repossessed-repo-cheat.html) | [Discord Server](https://discord.gg/D6wuXEnfhP)</sup>
 
 #### Screenshots
 <p>
