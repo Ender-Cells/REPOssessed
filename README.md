@@ -17,7 +17,7 @@ If you encounter any issues or bugs while using this mod, please follow the guid
 #### How to Report a Bug
 
 1. **Check Existing Issues:** Before submitting a new bug report, please check the [existing issues](https://github.com/IcyRelic/REPOssessed/labels/bug) to see if the problem has already been reported.
-2. **Create a New Issue:** If the issue hasn't been reported, [create a new issue](tbd) on the GitHub repository. Use the "Bug Report" template provided to ensure you include relevant information.
+2. **Create a New Issue:** If the issue hasn't been reported, [create a new issue](https://github.com/IcyRelic/REPOssessed/issues/new?assignees=Dustin21335&labels=bug&projects=&template=bug_report.md&title=%5BBUG%5D) on the GitHub repository. Use the "Bug Report" template provided to ensure you include relevant information.
 
 ### New Feature Request
 
@@ -26,7 +26,7 @@ If you have a feature or enhancement you'd like to see added to this project, fe
 #### How to Request a Feature
 
 1. **Check Existing Requests:** Before submitting a new feature request, please check the [existing requests](https://github.com/IcyRelic/REPOssessed/labels/enhancement) to see if the feature has already been suggested.
-2. **Create a New Request:** If the feature hasn't been requested, [create a new feature request](tbd) on the GitHub repository. Use the "Feature Request" template provided to ensure you include relevant information.
+2. **Create a New Request:** If the feature hasn't been requested, [create a new feature request](https://github.com/IcyRelic/REPOssessed/issues/new?assignees=Dustin21335&labels=enhancement&projects=&template=feature-request.md&title=%5BFeature%5D) on the GitHub repository. Use the "Feature Request" template provided to ensure you include relevant information.
 
 ### Issue Guidelines
 - **One Issue per Report:** Please report only one bug or request per issue to ensure clarity and easier tracking.
@@ -48,7 +48,6 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Theme:** Changes your themes.
   - **Language:** Changes your language.
   - **Key Binds:** Configure custom key bindings.
-  - **Display REPOssessed Users:** View other users using the cheat
   - **GUI Size Settings:** Adjust the size of the graphical user interface. Including esp labels
   - **Color Settings:** Customize the colors used for nearly everything.
   - **Togglable Hacks save with settings:** Enable or disable hacks with settings that persist.
@@ -62,7 +61,6 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Safe God Mode:** Allows you to take damage unless it'll kill you  
   - **No Tumble:** Removes tumble  
   - **Infinite Jump:** Lets you jump forever  
-  - **Invisibility:** Makes you invisible  
   - **Unlimited Battery:** Makes item batteries unlimited  
   - **No Gun Spread:** Removes gun spread  
   - **No Gun Cooldown:** Removes gun cooldown  
@@ -70,13 +68,15 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Non Enemy Targetable:** Makes enemies not target you  
   - **Always Show Level:** Shows the current level  
   - **Hear All Dead Players:** Lets you hear dead players  
-  - **No Anti Charge:** Disables anti-charge effects  
-  - **Rainbow Suit:** Makes your suit change colors like a rainbow  
-  - **Name Spoofer:** Lets you change your name  
-  - **Spoofed Name:** Set the fake name to use  
-  - **No Object Money Loss:** Prevents objects from losing value  
+  - **No Over Charge:** Disables overcharge effects  
+  - **Rainbow Suit:** Makes your suit change colors like a rainbow   
   - **No Clip:** Lets you clip through walls  
+  - **Unlimited Death Head Energy:** Lets you use your death head forever
   - **Super Speed:** Lets you change your movement speed  
+  - **Name Spoofer:** Lets you change your name  
+  - **Spoofed Name:** Set the name to use 
+  - **SteamID Spoofer:** Lets you change your steam id
+  - **Spoofed SteamID:** Set the steam id to use
   - **Truck Teleport:** Lets you teleport to the truck  
   - **Cart Teleports:** Lets you teleport to a cart  
   - **Extraction Teleports:** Lets you teleport to an extraction  
@@ -101,19 +101,17 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Max Health:** Lets you view their max health  
   - **Holding Item:** Lets you view their held item  
   - **Is Master Client:** Lets you view if they have the master client  
-  - **REPOssessed User:** Lets you view if they're using the menu  
   - **Crowned:** Lets you view if they have the crown  
+    **Open Profile:** Opens their steam profile in your browser 
   - **Heal:** Heal them to max health  
   - **Crown:** Crowns them  
   - **Kill:** Kills them  
   - **Revive:** Revives them  
   - **Force Tumble:** Forces them to tumble  
-  - **Fling:** Flings them  
   - **Heal Amount:** Heal by a specific amount  
   - **Damage Amount:** Damage by a specific amount  
   - **Break Held Object:** Breaks the object they're holding  
   - **Damage Held Object:** Damages the object they're holding  
-  - **Change Color:** Changes their avatar color  
   - **Chat Message:** Sends a chat message as them  
   - **Teleport To Player:** Teleports you to the player  
   - **Teleport Player To You:** Teleports the player to you  
@@ -124,8 +122,6 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Kill Others:** Kills other players excluding you  
   - **Chat Message All:** Makes every player send a chat  
   - **Chat Message Others:** Makes every player excluding you send a chat  
-  - **Change All Colors:** Changes the color of every player's avatar  
-  - **Change Others Colors:** Changes the color of every player's avatar excluding you  
 
   #### Enemy Tab
   - **Kill All:** Kills every enemy  
@@ -144,6 +140,8 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Damage:** Damages the enemy by the amount  
   - **Heal:** Heals the enemy by the amount  
   - **Freeze:** Freezes the enemy by the amount  
+  - **Selected Enemy:** Selected enemy to spawn
+  - **Spawn Amount:** Amount of an enemy to spawn
   - **Spawn:** Lets you spawn an enemy  
 
   #### Server Tab
@@ -171,11 +169,8 @@ Thank you for contributing to the development of this mod by sharing your feedba
 | Unload Menu  | <kbd>Pause</kbd> | Completely unload the cheat |
 | NoClip Controls  | <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Space</kbd><kbd>LCTRL</kbd> | Movement Controls while using NoClip |
 
-## Changelog | v1.0.0
+## Changelog | v1.0.1
   - You can view all updates, changes, and fixes with descriptions for all versions at this [link](https://raw.githubusercontent.com/IcyRelic/REPOssessed/refs/heads/main/REPOssessed/Resources/Changelog.json)
-
-## Credit
-  - [DeadVoiceChat](https://thunderstore.io/c/repo/p/Xkein/DeadVoiceChat/) - Hear All Dead Players Hack
 
 ## Helpful Links
   - [HTML Color Wheel (With Alpha Support)](https://rgbacolorpicker.com/color-wheel-picker)

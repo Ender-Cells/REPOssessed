@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -7,41 +7,37 @@ namespace REPOssessed.Util
 {
     public class ThemeUtil
     {
-        public static string name { get; set; }
-        public static GUISkin Skin { get; set; }
-        public static AssetBundle AssetBundle { get; set; }
-        private static string Resource =>  $"{Assembly.GetExecutingAssembly().GetName().Name}.Resources.Theme.";
+        public static string Name = "Default";
+        public static GUISkin? Skin;
+        public static AssetBundle? AssetBundle;
 
-        public static void Initialize() => SetTheme("Default");
-
-        private static bool ThemeExists(string theme) => Assembly.GetExecutingAssembly().GetManifestResourceStream($"{Resource}{theme}.skin") != null;
-
-        private static AssetBundle LoadAssetBundle(string theme) => AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(theme));
-
-        public static string[] GetThemes() => Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(r => r.StartsWith(Resource) && r.EndsWith(".skin")).Select(r => r.Replace(Resource, "").Replace(".skin", "")).OrderBy(n => n).ToArray();
-
-        public static void SetTheme(string theme)
+        public static string[] GetThemes()
         {
-            if (name == theme)
+            return Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(r => r.Contains(".Resources.Theme.") && r.EndsWith(".skin")).Select(r => r[(r.IndexOf(".Resources.Theme.") + ".Resources.Theme.".Length)..^".skin".Length]).OrderBy(n => n).ToArray();
+        }
+
+        public static void SetTheme(string themeName)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().FirstOrDefault(r => r.EndsWith($"{themeName}.skin") && r.Contains(".Resources.Theme.")) ?? "");
+            if (stream == null)
             {
-                Debug.LogError($"[ERROR] Theme {theme} already loaded");
+                Debug.LogError($"[ERROR] Theme {themeName} doesn't exist");
+                themeName = "Default";
+            }
+            if (Name == themeName && Skin != null && AssetBundle != null)
+            {
+                Debug.LogWarning($"[WARNING] Theme {themeName} already loaded");
                 return;
             }
-            name = ThemeExists(theme) ? theme : "Default";
             AssetBundle?.Unload(true);
-            AssetBundle = LoadAssetBundle($"{Resource}{theme}.skin");
-            if (AssetBundle == null)
-            {
-                Debug.LogError($"[ERROR] Failed to load Theme {theme}");
-                return;
-            }
-            Skin = AssetBundle.LoadAllAssets<GUISkin>().FirstOrDefault();
-            if (Skin == null)
-            {
-                Debug.LogError($"[ERROR] Failed to load Theme {theme}");
-                return;
-            }
-            Debug.Log($"Loaded Theme {theme}");
+            AssetBundle = null;
+            Skin = null;
+            AssetBundle = AssetBundle.LoadFromStream(stream);
+            if (AssetBundle == null) return;
+            Skin = AssetBundle.LoadAsset<GUISkin>("assets/lethalmenu.guiskin");
+            Name = themeName;
+            Debug.Log($"Loaded Theme {themeName}");
         }
     }
 }

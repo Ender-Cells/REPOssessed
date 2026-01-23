@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
-using Photon.Pun;
-using REPOssessed.Cheats;
 using REPOssessed.Cheats.Core;
-using REPOssessed.Language;
+using REPOssessed.Cheats.Executable;
+using REPOssessed.Cheats.SettingsTab;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Menu.Popup;
@@ -17,30 +16,18 @@ namespace REPOssessed
 {
     public class REPOssessed : MonoBehaviour
     {
-        private List<ToggleCheat> cheats;
-        private Harmony harmony;
-        private HackMenu menu;
+        private List<ToggleCheat> cheats = new List<ToggleCheat>();
+        private HackMenu? hackMenu;
+        public Harmony? harmony;
 
-        public bool IsIngame => !SemiFunc.IsMainMenu() && !SemiFunc.RunIsLobby() && !SemiFunc.RunIsLobbyMenu();
-
-        private static REPOssessed instance;
-        public static REPOssessed Instance
-        {
-            get
-            {
-                if (instance == null) instance = new REPOssessed();
-                return instance;
-            }
-        }
+        public static REPOssessed? Instance;
 
         public void Start()
         {
-            instance = this;
-            LanguageUtil.Initialize();
-            ThemeUtil.Initialize();
+            Instance = this;
+            TranslationUtil.Initialize();
             LoadCheats();
             DoPatching();
-            AlertUsingREPOssessed();
             GameObjectManager.CollectObjects();
         }
 
@@ -54,20 +41,19 @@ namespace REPOssessed
             }
             catch (Exception e)
             {
-                Settings.s_DebugMessage = "Msg: " + e.Message + "\nSrc: " + e.Source + "\n" + e.StackTrace;
+                Debug.LogException(e);
             }
         }
 
         private void LoadCheats()
         {
             Settings.Changelog.ReadChanges();
-            cheats = new List<ToggleCheat>();
-            menu = new HackMenu();
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => string.Equals(t.Namespace, "REPOssessed.Cheats", StringComparison.Ordinal) && t.IsSubclassOf(typeof(Cheat))))
+            hackMenu = new HackMenu();
+            foreach (Type cheat in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(Cheat)) && t.Namespace.StartsWith("REPOssessed.Cheats") && !t.Namespace.Contains(".Core") && !t.Namespace.Contains(".Components")))
             {
-                if (type.IsSubclassOf(typeof(ToggleCheat))) cheats.Add((ToggleCheat)Activator.CreateInstance(type));
-                else Activator.CreateInstance(type);
-                Debug.Log($"Loaded Cheat: {type.Name}");
+                if (cheat.IsSubclassOf(typeof(ToggleCheat))) cheats.Add((ToggleCheat)Activator.CreateInstance(cheat));
+                else Activator.CreateInstance(cheat);
+                Debug.Log($"Loaded Cheat: {cheat.Name}");
             }
             Settings.Config.SaveDefaultConfig();
             Settings.Config.LoadConfig();
@@ -77,11 +63,11 @@ namespace REPOssessed
         {
             try
             {
-                cheats.ForEach(cheat => cheat.FixedUpdate());
+                cheats?.ForEach(c => c.FixedUpdate());
             }
             catch (Exception e)
             {
-                Settings.s_DebugMessage = "Msg: " + e.Message + "\nSrc: " + e.Source + "\n" + e.StackTrace;
+                Debug.LogException(e);
             }
         }
 
@@ -98,11 +84,11 @@ namespace REPOssessed
                         else Debug.LogError($"REPOssessed Cheat Type: {c.GetType().Name}");
                     });
                 }
-                if (IsIngame) cheats.ForEach(cheat => cheat.Update());
+                if (GameUtil.IsInGame()) cheats?.ForEach(c => c.Update());
             }
             catch (Exception e)
             {
-                Settings.s_DebugMessage = "Msg: " + e.Message + "\nSrc: " + e.Source + "\n" + e.StackTrace;
+                Debug.LogException(e);
             }
         }
 
@@ -112,37 +98,29 @@ namespace REPOssessed
             {
                 if (Event.current.type == EventType.Repaint)
                 {
-                    VisualUtil.DrawString(new Vector2(5f, 2f), $"REPOssessed {Settings.s_Version} By Dustin | Menu Toggle: {FirstSetupManagerWindow.GetMenuKeybindName()} | Unload Toggle: {(Cheat.Instance<UnloadMenu>().HasKeybind ? Cheat.Instance<UnloadMenu>().keybind.ToString() : "None")}{(Cheat.Instance<FPSCounter>().Enabled ? $" | FPS: {Cheat.Instance<FPSCounter>().FPS}" : "")}", Settings.c_primary.GetColor(), false, false, true, 14);
+                    VisualUtil.DrawString(new Vector2(5f, 2f), $"REPOssessed {Settings.s_Version} By Dustin | Menu Toggle: {(Cheat.Instance<ToggleMenu>().HasKeybind ? Cheat.Instance<ToggleMenu>().keybind.ToString() : KeyCode.None.ToString())} | Unload Toggle: {(Cheat.Instance<UnloadMenu>().HasKeybind ? Cheat.Instance<UnloadMenu>().keybind.ToString() : "None")}{(Cheat.Instance<FPSCounter>().Enabled ? $" | FPS: {Cheat.Instance<FPSCounter>().FPS}" : "")}", Settings.c_primary.GetColor(), false, false, true, 14);
                     if (MenuUtil.resizing)
                     {
-                        VisualUtil.DrawString(new Vector2(Screen.width / 2, 35f), new string[] {"SettingsTab.ResizeTitle", "SettingsTab.ResizeConfirm"}.Localize(), Settings.c_primary, true, true, true, 22);
+                        VisualUtil.DrawString(new Vector2(Screen.width / 2, 35f), TranslationUtil.Translate("SettingsTab.ResizeTitle", "SettingsTab.ResizeConfirm"), Settings.c_primary, true, true, true, 22);
                         MenuUtil.ResizeMenu();
                     }
-                    if (Settings.b_DebugMode)
-                    {
-                        VisualUtil.DrawString(new Vector2(5f, 20f), "[DEBUG MODE]", new RGBAColor(50, 205, 50, 1f), false, false, true, 10);
-                        VisualUtil.DrawString(new Vector2(10f, 65f), new RGBAColor(255, 195, 0, 1f).AsString(Settings.s_DebugMessage), false, false, false, 22);
-                    }
+                    if (Cheat.Instance<DebugMode>().Enabled) VisualUtil.DrawString(new Vector2(5f, 20f), "[DEBUG MODE]", new RGBAColor(50, 205, 50, 1f), false, false, true, 10);
                 }
-                if (IsIngame) cheats.ForEach(cheat => { if (cheat.Enabled) cheat.OnGui(); });
-                menu.Draw();
+                if (GameUtil.IsInGame()) cheats?.Where(c => c.Enabled).ToList().ForEach(c => c.OnGui());
+                hackMenu?.Draw();
             }
             catch (Exception e)
             {
-                Settings.s_DebugMessage = "Msg: " + e.Message + "\nSrc: " + e.Source + "\n" + e.StackTrace;
+                Debug.LogException(e);
             }
         }
 
         public void Unload()
         {
             StopAllCoroutines();
-            harmony?.UnpatchAll();
+            harmony?.UnpatchAll("REPOssessed");
+            if (GameUtil.IsInGame()) MenuUtil.HideCursor();
             Loader.Unload();
-        }
-
-        public void AlertUsingREPOssessed()
-        {
-            if (GameObjectManager.LocalPlayer != null) GameObjectManager.LocalPlayer.photonView.RPC("ChatMessageSendRPC", RpcTarget.All, "", false);
         }
     }
 }

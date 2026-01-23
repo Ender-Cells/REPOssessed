@@ -1,6 +1,4 @@
 ﻿using REPOssessed.Cheats.Core;
-using REPOssessed.Extensions;
-using REPOssessed.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,345 +11,110 @@ namespace REPOssessed.Util
     {
         public string label;
         public Action action;
-        private GUIStyle style = null;
 
-        public UIButton(string label, Action action, GUIStyle style = null)
+        public UIButton(string label, Action action)
         {
-            this.label = label.Localize();
+            this.label = TranslationUtil.Translate(label);
             this.action = action;
-            this.style = style;
         }
 
         public void Draw()
         {
-            if (style != null ? GUILayout.Button(label, style) : GUILayout.Button(label)) action.Invoke();
+            if (GUILayout.Button(label)) action.Invoke();
         }
     }
 
     public class UIOption
     {
         public string label;
-        public object value;
-        public Action action;
-
-
-        public UIOption(string label, object value)
-        {
-            this.label = label.Localize();
-            this.value = value;
-        }
+        public Action? action;
 
         public UIOption(string label, Action action)
         {
-            this.label = label.Localize();
+            this.label = TranslationUtil.Translate(label);
             this.action = action;
-        }
-
-        public void Draw(ref object refValue)
-        {
-            if (GUILayout.Button(label.Localize())) refValue = value;
         }
 
         public void Draw()
         {
-            if (GUILayout.Button(label.Localize())) action.Invoke();
+            if (GUILayout.Button(label)) action?.Invoke();
         }
     }
 
     public class UI
     {
-        public static void SetColor(ref RGBAColor color, string hexCode)
+        public static void Label(string header, string? label = null, bool bold = false, int fontSize = -1, bool middleAlignment = false, RGBAColor? rGBAColor = null)
         {
-            while (hexCode.Length < 6) hexCode += "0";
-            color = new RGBAColor(hexCode);
-            Settings.Config.SaveConfig();
-        }
-        public static void Image(Rect rect, Sprite image)
-        {
-            GUIUtility.RotateAroundPivot(180, image.pivot);
-            GUI.DrawTexture(rect, image.texture);
-            GUIUtility.RotateAroundPivot(180, image.pivot);
-        }
-
-        public static void Image(Rect rect, Texture image)
-        {
-            GUI.DrawTexture(rect, image);
-        }
-
-        public static void Header(string header, bool space = false)
-        {
-            if (space) GUILayout.Space(20);
-            GUILayout.Label(header.Localize(), new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold });
+            HorizontalGroup(() =>
+            {
+                GUILayout.Label(rGBAColor != null ? rGBAColor.AsString(TranslationUtil.Translate(header)) : TranslationUtil.Translate(header), new GUIStyle(GUI.skin.label)
+                {
+                    alignment = middleAlignment ? TextAnchor.MiddleCenter : TextAnchor.UpperLeft,
+                    fontStyle = bold ? FontStyle.Bold : FontStyle.Normal,
+                    fontSize = fontSize > 0 ? fontSize : Settings.i_menuFontSize,
+                });
+                if (!string.IsNullOrEmpty(label))
+                {
+                    GUILayout.FlexibleSpace();
+                    GUILayout.Label(rGBAColor != null ? rGBAColor.AsString(TranslationUtil.Translate(header)) : TranslationUtil.Translate(label));
+                }
+            });
         }
 
-        public static void Header(string header, int size, bool space = false)
+        public static void Label(string[] header, string? label = null, bool bold = false, int fontSize = -1, bool middleAlignment = false)
         {
-            if (space) GUILayout.Space(20);
-            GUILayout.Label(header.Localize(), new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, fontSize = size });
-        }
-
-        public static void SubHeader(string header, bool space = false)
-        {
-            if (space) GUILayout.Space(20);
-            GUILayout.Label(header.Localize(), new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold });
-        }
-
-        public static void Label(string header, string label, RGBAColor color = null)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(color is null ? label.Localize() : color.AsString(label.Localize()));
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Label(string label, RGBAColor color = null, bool bold = false)
-        {
-            GUIStyle style = new GUIStyle(GUI.skin.label);
-            style.fontStyle = bold ? FontStyle.Bold : FontStyle.Normal;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(color is null ? label.Localize() : color.AsString(label.Localize()), style);
-            GUILayout.EndHorizontal();
+            Label(TranslationUtil.Translate(header), label, bold, fontSize, middleAlignment);
         }
 
         public static void Checkbox(string header, ref bool value)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            value = GUILayout.Toggle(value, "");
-            GUILayout.EndHorizontal();
+            bool tempValue = value;
+            HorizontalGroup(() =>
+            {
+                Label(header);
+                GUILayout.FlexibleSpace();
+                tempValue = GUILayout.Toggle(tempValue, "");
+            });
+            value = tempValue;
         }
 
         public static void Checkbox(string[] header, ref bool value)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            value = GUILayout.Toggle(value, "");
-            GUILayout.EndHorizontal();
+            Checkbox(TranslationUtil.Translate(header), ref value);
         }
 
-        public static void Checkbox(string header, ToggleCheat cheat)
+        public static void Checkbox(string header, ToggleCheat toggleCheat)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            cheat.Enabled = GUILayout.Toggle(cheat.Enabled, "");
-            GUILayout.EndHorizontal();
+            bool tempValue = toggleCheat.Enabled;
+            Checkbox(header, ref tempValue);
+            toggleCheat.Enabled = tempValue;
         }
 
-        public static void Checkbox(string[] header, ToggleCheat cheat)
+        public static void Checkbox(string[] header, ToggleCheat toggleCheat)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            cheat.Enabled = GUILayout.Toggle(cheat.Enabled, "");
-            GUILayout.EndHorizontal();
+            Checkbox(TranslationUtil.Translate(header), toggleCheat);
         }
 
-        public static void ToggleSlider(string header, string displayValue, ref bool enable, ref float value, float min, float max, params object[] param)
+        public static void Textbox(string label, ref string value, string regex, int length, params UIButton[] buttons)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
-            GUILayout.FlexibleSpace();
-
-            GUIStyle slider = new GUIStyle(GUI.skin.horizontalSlider) { alignment = TextAnchor.MiddleCenter, fixedWidth = Settings.i_sliderWidth };
-
-            value = GUILayout.HorizontalSlider(value, min, max, slider, GUI.skin.horizontalSliderThumb);
-
-            enable = GUILayout.Toggle(enable, "");
-
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Toggle(string header, ref bool value, string enabled = "General.Enable", string disabled = "General.Disable", params Action<bool>[] action)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            bool newValue = !value;
-            if (GUILayout.Button(value ? disabled.Localize() : enabled.Localize()))
+            string tempValue = value;
+            HorizontalGroup(() =>
             {
-                value = newValue;
-                action.ToList().ForEach(a => a.Invoke(newValue));
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        public static void CheatToggleSlider(ToggleCheat toggle, string header, string displayValue, ref float value, float min, float max, params object[] param)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
-            GUILayout.FlexibleSpace();
-
-            GUIStyle slider = new GUIStyle(GUI.skin.horizontalSlider) { alignment = TextAnchor.MiddleCenter, fixedWidth = Settings.i_sliderWidth };
-
-            value = GUILayout.HorizontalSlider(value, min, max, slider, GUI.skin.horizontalSliderThumb);
-
-            toggle.Enabled = GUILayout.Toggle(toggle.Enabled, "");
-
-            GUILayout.EndHorizontal();
-        }
-
-        public static void ExecuteSlider(string header, string displayValue, Action executable, ref float value, float min, float max, string execute = "General.Execute", params object[] param)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
-            GUILayout.FlexibleSpace();
-            GUIStyle slider = new GUIStyle(GUI.skin.horizontalSlider) { alignment = TextAnchor.MiddleCenter, fixedWidth = Settings.i_sliderWidth };
-            value = GUILayout.HorizontalSlider(value, min, max, slider, GUI.skin.horizontalSliderThumb);
-            if (GUILayout.Button(execute.Localize())) executable.Invoke();
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Button(string header, Action action, string btnText = "General.Execute")
-        {
-            if (!String.IsNullOrEmpty(btnText.Localize()))
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(header.Localize());
+                Label(TranslationUtil.Translate(label));
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button(btnText.Localize())) action();
-                GUILayout.EndHorizontal();
-            }
-            else if (GUILayout.Button(header.Localize())) action();
+                tempValue = GUILayout.TextField(tempValue, length, GUILayout.Width(Settings.i_textboxWidth));
+                if (!string.IsNullOrEmpty(regex)) tempValue = Regex.Replace(tempValue, regex, "");
+                buttons.ToList().ForEach(b => b?.Draw());
+            });
+            value = tempValue;
         }
 
-        public static void Button(string[] header, Action action, string btnText = "General.Execute")
+        public static void Textbox(string[] label, ref string value, string regex, int length, params UIButton[] buttons)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button(btnText.Localize())) action();
-            GUILayout.EndHorizontal();
+            Textbox(TranslationUtil.Translate(label), ref value, regex, length, buttons);
         }
 
-        public static void Slider(string header, string displayValue, ref float value, float min, float max)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
-            GUILayout.FlexibleSpace();
-            value = GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(Settings.i_sliderWidth));
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Slider(string header, string displayValue, ref int value, int min, int max)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize() + " ( " + displayValue + " )");
-            GUILayout.FlexibleSpace();
-            value = (int)GUILayout.HorizontalSlider(value, min, max, GUILayout.Width(Settings.i_sliderWidth));
-            GUILayout.EndHorizontal();
-        }
-
-        public static void NumSelect(string header, ref int value, int min, int max)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(value.ToString());
-            if (GUILayout.Button("-")) value = Mathf.Clamp(value - 1, min, max);
-            if (GUILayout.Button("+")) value = Mathf.Clamp(value + 1, min, max);
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Select(string header, ref int index, params UIOption[] options)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(header.Localize());
-            GUILayout.FlexibleSpace();
-
-            options[index].Draw();
-
-            if (GUILayout.Button("-")) index = Mathf.Clamp(index - 1, 0, options.Length - 1);
-            if (GUILayout.Button("+")) index = Mathf.Clamp(index + 1, 0, options.Length - 1);
-
-
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Textbox<T>(string label, ref T value, bool big = true, int length = -1, params Action<T>[] onChanged) where T : struct, IConvertible, IComparable<T>
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.TextField(value.ToString(), length, GUILayout.Width(big ? Settings.i_textboxWidth * 3 : Settings.i_textboxWidth)).Parse<T>(out T result))
-            {
-                if (!value.Equals(result)) onChanged.ToList().ForEach(action => action.Invoke(result));
-                value = result;
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Textbox(string label, ref string value, bool big = true, int length = -1, params Action<string>[] onChanged)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            string s = GUILayout.TextField(value, length, GUILayout.Width(big ? Settings.i_textboxWidth * 3 : Settings.i_textboxWidth));
-            if (s != value) onChanged.ToList().ForEach(action => action.Invoke(s));
-            value = s;
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Textbox(string label, ref string value, string regex = "", int size = 3, bool big = true)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            value = GUILayout.TextField(value, GUILayout.Width(big ? Settings.i_textboxWidth * size : Settings.i_textboxWidth));
-            value = Regex.Replace(value, regex, "");
-            GUILayout.EndHorizontal();
-        }
-
-        public static void TextboxAction(string label, ref string value, string regex, int length, params UIButton[] buttons)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            value = GUILayout.TextField(value, length, GUILayout.Width(Settings.i_textboxWidth));
-            value = Regex.Replace(value, regex, "");
-            buttons.ToList().ForEach(btn => btn.Draw());
-            GUILayout.EndHorizontal();
-        }
-
-        public static void TextboxAction<T>(string label, ref T value, int length = -1, params UIButton[] buttons) where T : struct, IConvertible, IComparable<T>
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.TextField(value.ToString(), length, GUILayout.Width(Settings.i_textboxWidth)).Parse<T>(out T result))
-                value = result;
-            buttons.ToList().ForEach(btn => btn.Draw());
-            GUILayout.EndHorizontal();
-        }
-
-        public static void TextboxAction(string label, ref string value, int length = 1, params UIButton[] buttons)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label.Localize());
-            GUILayout.FlexibleSpace();
-            value = GUILayout.TextField(value, length, GUILayout.Width(Settings.i_textboxWidth));
-            buttons.ToList().ForEach(btn => btn.Draw());
-            GUILayout.EndHorizontal();
-        }
-
-        public static void Actions(params UIButton[] buttons)
-        {
-            GUILayout.BeginHorizontal();
-            buttons.ToList().ForEach(btn => btn.Draw());
-            GUILayout.EndHorizontal();
-        }
-        public static void HorizontalSpace(string title, Action action)
-        {
-            if (title is not null) Header(title);
-            GUILayout.BeginHorizontal();
-            action.Invoke();
-            GUILayout.EndHorizontal();
-        }
-
-        public static void VerticalSpace(ref Vector2 ScrollPosition, Action action, params GUILayoutOption[] options)
+        public static void VerticalGroup(ref Vector2 ScrollPosition, Action action, params GUILayoutOption[] options)
         {
             GUILayout.BeginVertical(options);
             ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
@@ -360,24 +123,127 @@ namespace REPOssessed.Util
             GUILayout.EndVertical();
         }
 
-        public static void ButtonGrid<T>(List<T> objects, Func<T, string> textSelector, string search, Action<T> action, int numPerRow, int btnWidth = 175)
+        public static void HorizontalGroup(ref Vector2 ScrollPosition, Action action, params GUILayoutOption[] options)
         {
-            List<T> filtered = objects.FindAll(x => textSelector(x).ToLower().Contains(search.ToLower()));
+            GUILayout.BeginHorizontal(options);
+            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
+            action.Invoke();
+            GUILayout.EndScrollView();
+            GUILayout.EndHorizontal();
+        }
 
-            int rows = Mathf.CeilToInt(filtered.Count / (float)numPerRow);
+        public static void VerticalGroup(Action action, params GUILayoutOption[] options)
+        {
+            GUILayout.BeginVertical(options);
+            action.Invoke();
+            GUILayout.EndVertical();
+        }
 
-            for (int i = 0; i < rows; i++)
+        public static void HorizontalGroup(Action action, params GUILayoutOption[] options)
+        {
+            GUILayout.BeginHorizontal(options);
+            action.Invoke();
+            GUILayout.EndHorizontal();
+        }
+
+        public static void Button(string header, Action action, string buttonText = "General.Execute", params GUILayoutOption[] options)
+        {
+            HorizontalGroup(() =>
             {
-                GUILayout.BeginHorizontal();
-                for (int j = 0; j < numPerRow; j++)
+                string headerTranslated = TranslationUtil.Translate(header);
+                string buttonTranslated = TranslationUtil.Translate(buttonText);
+                if (!string.IsNullOrEmpty(buttonTranslated))
                 {
-                    int index = i * numPerRow + j;
-                    if (index >= filtered.Count) break;
-                    var obj = filtered[index];
-
-                    if (GUILayout.Button(textSelector((T)obj), GUILayout.Width(btnWidth))) action((T)obj);
+                    Label(headerTranslated);
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button(buttonTranslated, options)) action();
                 }
-                GUILayout.EndHorizontal();
+                else if (GUILayout.Button(headerTranslated, options)) action();
+            });
+        }
+
+        public static void Button(string[] header, Action action, string buttonText = "General.Execute", params GUILayoutOption[] options)
+        {
+            Button(TranslationUtil.Translate(header), action, buttonText, options);
+        }
+
+        public static void Toggle(string header, ref bool value, string enabled = "General.Enable", string disabled = "General.Disable", params GUILayoutOption[] options)
+        {
+            bool tempValue = value;
+            HorizontalGroup(() =>
+            {
+                Label(header);
+                GUILayout.FlexibleSpace();
+                if (!GUILayout.Button(TranslationUtil.Translate(tempValue ? disabled : enabled), options)) return;
+                tempValue = !tempValue;
+            });
+            value = tempValue;
+        }
+
+        public static void Toggle(string[] header, ref bool value, string enabled = "General.Enable", string disabled = "General.Disable", params GUILayoutOption[] options)
+        {
+            Toggle(TranslationUtil.Translate(header), ref value, enabled, disabled, options);
+        }
+
+        public static void ToggleSlider(string header, string displayValue, ref bool enable, ref float value, float min, float max)
+        {
+            bool tempEnable = enable;
+            float tempValue = value;
+            HorizontalGroup(() =>
+            {
+                Label($"{TranslationUtil.Translate(header)} ( {displayValue} )");
+                GUILayout.FlexibleSpace();
+                tempValue = GUILayout.HorizontalSlider(tempValue, min, max, new GUIStyle(GUI.skin.horizontalSlider)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fixedWidth = Settings.i_sliderWidth
+                }, GUI.skin.horizontalSliderThumb);
+                Checkbox("", ref tempEnable);
+            });
+            enable = tempEnable;
+            value = tempValue;
+        }
+
+        public static void ToggleSlider(string[] header, string displayValue, ref bool enable, ref float value, float min, float max)
+        {
+            ToggleSlider(TranslationUtil.Translate(header), displayValue, ref enable, ref value, min, max);
+        }
+
+        public static void ToggleSlider(ToggleCheat toggleCheat, string header, string displayValue, ref float value, float min, float max)
+        {
+            bool tempValue = toggleCheat.Enabled;
+            ToggleSlider(header, displayValue, ref tempValue, ref value, min, max);
+            toggleCheat.Enabled = tempValue;
+        }
+
+        public static void ToggleSlider(ToggleCheat toggleCheat, string[] header, string displayValue, ref float value, float min, float max)
+        {
+            ToggleSlider(toggleCheat, header, displayValue, ref value, min, max);
+        }
+
+        public static void Select(string header, ref int index, params UIOption[] options)
+        {
+            GUILayout.BeginHorizontal();
+            Label(header);
+            GUILayout.FlexibleSpace();
+            options[index].Draw();
+            if (GUILayout.Button(TranslationUtil.Translate("-"))) index = Mathf.Clamp(index - 1, 0, options.Length - 1);
+            if (GUILayout.Button(TranslationUtil.Translate("+"))) index = Mathf.Clamp(index + 1, 0, options.Length - 1);
+            GUILayout.EndHorizontal();
+        }
+
+        public static void ButtonGrid<T>(List<T> objects, Func<T, string> textSelector, string search, Action<T> action, int numPerRow, int width = 175)
+        {
+            List<T> filtered = objects.Where(x => textSelector(x).Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+            for (int i = 0; i < filtered.Count; i += numPerRow)
+            {
+                HorizontalGroup(() =>
+                {
+                    foreach (T obj in filtered.Skip(i).Take(numPerRow))
+                    {
+                        if (GUILayout.Button(textSelector(obj), GUILayout.Width(width))) action(obj);
+                    }
+                });
             }
         }
     }

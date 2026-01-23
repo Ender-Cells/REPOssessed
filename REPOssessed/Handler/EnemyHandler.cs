@@ -1,5 +1,5 @@
-﻿using REPOssessed.Extensions;
-using REPOssessed.Util;
+﻿using REPOssessed.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,58 +9,96 @@ namespace REPOssessed.Handler
     public class EnemyHandler
     {
         public static List<Enemy> PermaKilledEnemies = new List<Enemy>();
-        private Enemy enemy = null;
-        public EnemyHealth enemyHealth = null;
-        public EnemyParent enemyParent = null;
+        public static List<Enemy> NoEnemyOrbEnemies = new List<Enemy>();
+        public Enemy enemy;
+        public EnemyHealth? enemyHealth;
+        public EnemyParent? enemyParent;
+        public EnemyNavMeshAgent? enemyNavMeshAgent;
+        public EnemyRigidbody? enemyRigidbody;
 
         public EnemyHandler(Enemy enemy)
         {
             this.enemy = enemy;
-            this.enemyHealth = enemy.GetComponentHierarchy<EnemyHealth>();
-            this.enemyParent = enemy.GetComponentHierarchy<EnemyParent>();
+            this.enemyHealth = enemy.GetComponent<EnemyHealth>();
+            this.enemyParent = enemy.GetComponentInParent<EnemyParent>();
+            this.enemyNavMeshAgent = enemy.GetComponent<EnemyNavMeshAgent>();
+            this.enemyRigidbody = enemy.GetComponent<EnemyRigidbody>();
         }
 
-        public void Heal(int heal) => enemyHealth?.Reflect()?.Invoke("Hurt", -heal, new Vector3(0, 0, 0));
-        public void Hurt(int damage) => enemyHealth?.Reflect()?.Invoke("Hurt", damage, new Vector3(0, 0, 0));
-        public void Kill() => enemyHealth?.Reflect()?.Invoke("Death", new Vector3(0, 0, 0));
+        public void Heal(int heal)
+        {
+            if (!GameUtil.IsMasterClient()) return;
+            enemyHealth?.Heal(heal);
+        }
+        public void Hurt(int damage)
+        {
+            if (!GameUtil.IsMasterClient()) return;
+            enemyHealth?.Hurt(damage, Vector3.zero);
+        }
+        public void Kill(bool noEnemyOrb)
+        {
+            bool spawnValuable = enemyHealth?.spawnValuable ?? false;
+            if (enemy != null && !NoEnemyOrbEnemies.Contains(enemy) && noEnemyOrb && spawnValuable)
+            {
+                enemy.Handle()?.enemyHealth?.spawnValuable = false;
+                NoEnemyOrbEnemies.Add(enemy);
+            }
+            Hurt(GetHealth());
+        }
+        public void Freeze(float time)
+        {
+            if (!GameUtil.IsMasterClient()) return;
+            enemy.Freeze(time);
+        }
         public void PermaKill()
         {
-            Kill();
-            PermaKilledEnemies.Add(enemy);
+            if (!GameUtil.IsMasterClient()) return;
+            Kill(false);
+            if (!PermaKilledEnemies.Contains(enemy)) PermaKilledEnemies.Add(enemy);
         }
-        public void Lure(PlayerAvatar player)
+        public void Lure(Vector3 position)
         {
-            if (player == null) return;
-            enemy.SetChaseTarget(player);
+            if (!GameUtil.IsMasterClient()) return;
+            enemyNavMeshAgent?.SetDestination(position);
         }
-        public void Teleport(Vector3 position) => enemy.EnemyTeleported(position);
+        public void Teleport(Vector3 position)
+        {
+            if (!GameUtil.IsMasterClient()) return;
+            enemy.EnemyTeleported(position);
+        }
         public bool IsDisabled() => (!enemyParent?.EnableObject?.activeSelf ?? false) || (!enemyParent.Reflect()?.GetValue<bool>("Spawned") ?? false);
-        public bool IsDead() => enemyHealth != null && enemyHealth.Reflect().GetValue<bool>("dead");
-        public string GetName() => enemyParent != null ? enemyParent.enemyName : "Unknown";
-        public int GetHealth() => enemyHealth != null ? enemyHealth.Reflect().GetValue<int>("healthCurrent") : 0;
-        public int GetMaxHealth() => enemyHealth != null ? enemyHealth.health : 0;
-        public PlayerAvatar GetEnemyTarget() => enemy.Reflect().GetValue<PlayerAvatar>("TargetPlayerAvatar");
+        public bool IsDead() => enemyHealth?.Reflect().GetValue<bool>("dead") ?? false;
+        public string GetName() => enemyParent?.enemyName ?? "Unknown";
+        public int GetHealth() => enemyHealth?.Reflect().GetValue<int>("healthCurrent") ?? 0;
+        public int GetMaxHealth() => enemyHealth?.health ?? 0;
+        public PlayerAvatar? GetEnemyTarget() => enemy.Reflect()?.GetValue<PlayerAvatar>("TargetPlayerAvatar");
+        public PlayerAvatar? GetPlayerGrabbing() => enemyRigidbody?.Reflect().GetValue<PlayerAvatar>("onGrabbedPlayerAvatar");
     }
 
-    public static class EnemyExtensions
+    public static class EnemyHandlerExtensions
     {
-        public static Dictionary<Enemy, EnemyHandler> EnemyHandlers = new Dictionary<Enemy, EnemyHandler>();
-
-        public static EnemyHandler Handle(this Enemy enemy)
+        public static Dictionary<int, EnemyHandler> EnemyHandlers = new Dictionary<int, EnemyHandler>(); 
+        
+        public static EnemyHandler? Handle(this Enemy enemy)
         {
-            if (enemy == null)
+            if (enemy == null) return null; 
+            int id = enemy.GetInstanceID(); 
+            if (!EnemyHandlers.TryGetValue(id, out EnemyHandler enemyHandler))
             {
-                if (EnemyHandlers.ContainsKey(enemy)) EnemyHandlers.Remove(enemy);
-                return null;
-            }
-            if (!EnemyHandlers.TryGetValue(enemy, out var handler))
-            {
-                handler = new EnemyHandler(enemy);
-                EnemyHandlers[enemy] = handler;
-            }
-            return handler;
+                enemyHandler = new EnemyHandler(enemy);
+                EnemyHandlers[id] = enemyHandler; }
+            return enemyHandler; 
         }
 
-        public static string GetName(this EnemySetup enemy) => enemy.spawnObjects.Select(o => o?.GetComponentHierarchy<EnemyParent>()).FirstOrDefault(e => e != null).enemyName;
+        public static string GetName(this EnemySetup enemySetup)
+        {
+            if (enemySetup == null) return "Unknown";
+            PrefabRef? prefabRef = enemySetup.spawnObjects?.FirstOrDefault(p => p?.IsValid() == true && p.Prefab?.GetComponent<EnemyParent>() != null);
+            EnemyParent? enemyParent = prefabRef?.Prefab?.GetComponent<EnemyParent>();
+            if (enemyParent == null) return enemySetup.name ?? "Unknown";
+            string name = enemyParent.enemyName ?? "Unknown";
+            string? prefabName = prefabRef?.PrefabName?.Replace("Enemy -", "").Trim();
+            return !string.IsNullOrEmpty(prefabName) && !string.Equals(prefabName, name, StringComparison.OrdinalIgnoreCase) ? $"{name} ({prefabName})" : name;
+        }
     }
 }

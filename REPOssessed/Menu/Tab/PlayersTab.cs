@@ -1,7 +1,4 @@
-﻿using REPOssessed.Cheats;
-using REPOssessed.Cheats.Core;
-using REPOssessed.Handler;
-using REPOssessed.Language;
+﻿using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
@@ -16,21 +13,20 @@ namespace REPOssessed.Menu.Tab
 
         private Vector2 scrollPos = Vector2.zero;
         private Vector2 scrollPos2 = Vector2.zero;
-        public static PlayerAvatar selectedPlayer = null;
+        public static PlayerAvatar? selectedPlayer;
         private string message = "REPOssessed on top!";
-        private int color = -1;
-        private int heal = 1;
-        private int damage = 1;
-        private int objectDamage = 1;
-        private float flingforce = 1f;
-
+        private string heal = "100";
+        private string damage = "50";
+        private string objectDamage = "1000";
+   
         public override void Draw()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos, () =>
             {
                 PlayersList();
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.3f - HackMenu.Instance.spaceFromLeft));
-            UI.VerticalSpace(ref scrollPos2, () =>
+            UI.VerticalGroup(ref scrollPos2, () =>
             {
                 GeneralActions();
                 PlayerActions();
@@ -39,82 +35,77 @@ namespace REPOssessed.Menu.Tab
 
         private void GeneralActions()
         {
-            UI.Header("PlayersTab.GeneralActions");
+            if (HackMenu.Instance == null) return;
+            UI.Label("PlayersTab.GeneralActions", null, true, -1, true);
 
-            UI.Button("PlayersTab.ReviveAll", () => GameObjectManager.players.Where(p => p != null && p.Handle().IsDead()).ToList().ForEach(p => p.Handle().RevivePlayer()));
-            UI.Button("PlayersTab.ReviveOthers", () => GameObjectManager.players.Where(p => p != null && p.Handle().IsDead() && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.Handle().RevivePlayer()));
-            UI.Button("PlayersTab.KillAll", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.PlayerDeath(-1)));
-            UI.Button("PlayersTab.KillOthers", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.PlayerDeath(-1)));
-            UI.TextboxAction("PlayersTab.ChatMessageAll", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.ChatMessageSend(message))));
-            UI.TextboxAction("PlayersTab.ChatMessageOthers", ref message, 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.ChatMessageSend(message))));
-            UI.TextboxAction("PlayersTab.ChangeAllColors", ref color, 3, new UIButton("General.Set", () => GameObjectManager.players.Where(p => p != null).ToList().ForEach(p => p.PlayerAvatarSetColor(color))));
-            UI.TextboxAction("PlayersTab.ChangeOthersColors", ref color, 3, new UIButton("General.Set", () => GameObjectManager.players.Where(p => p != null && !p.Handle().IsLocalPlayer()).ToList().ForEach(p => p.PlayerAvatarSetColor(color))));
-            UI.Label("PlayersTab.Colors");
-            UI.Label(string.Join(", ", Enumerable.Range(0, AssetManager.instance.playerColors.Count).Select(i => i)));
+            UI.Button(["PlayersTab.ReviveAll", "General.HostTag"], () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null && h.IsDead()).ToList().ForEach(h => h?.RevivePlayer()));
+            UI.Button(["PlayersTab.ReviveOthers", "General.HostTag"], () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null && h.IsDead() && !h.IsLocalPlayer()).ToList().ForEach(h => h?.RevivePlayer()));
+            UI.Button(["PlayersTab.KillAll", "General.HostTag"], () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.Kill()));
+            UI.Button(["PlayersTab.KillOthers", "General.HostTag"], () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null && !h.IsLocalPlayer()).ToList().ForEach(h => h?.Kill()));
+            UI.Textbox(["PlayersTab.ChatMessageAll", "General.HostTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.SendMessage(message))));
+            UI.Textbox(["PlayersTab.ChatMessageOthers", "General.HostTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null && !h.IsLocalPlayer()).ToList().ForEach(h => h?.SendMessage(message))));
         }
 
         private void PlayerActions()
         {
-            if (selectedPlayer == null || selectedPlayer.Handle() == null) return;
+            if (selectedPlayer == null) return;
+            PlayerHandler? selectedPlayerHandler = selectedPlayer.Handle();
+            if (selectedPlayerHandler == null) return;
 
-            string PhysGrabObject = selectedPlayer.Handle().physGrabObject == null ? "General.None".Localize() : selectedPlayer.Handle().physGrabObject.Handle().GetName();
+            ObjectHandler? objectHandler = selectedPlayerHandler.GetHeldPhysGrabObject()?.Handle(); 
 
-            UI.Header("PlayersTab.PlayerActions");
+            UI.Label("PlayersTab.PlayerActions", null, true, -1, true);
 
-            UI.Label("PlayersTab.SteamId", selectedPlayer.Handle().GetSteamID().ToString());
-            UI.Label("PlayersTab.Status", selectedPlayer.Handle().IsDead() ? "Dead" : "Alive");
-            UI.Label("PlayersTab.Health", selectedPlayer.Handle().GetHealth().ToString());
-            UI.Label("PlayersTab.MaxHealth", selectedPlayer.Handle().GetMaxHealth().ToString());
-            UI.Label("PlayersTab.HoldingItem", PhysGrabObject);
-            UI.Label("PlayersTab.IsMasterClient", selectedPlayer.Handle().IsMasterClient().ToString());
-            UI.Label("PlayersTab.REPOssessedUser", selectedPlayer.Handle().IsREPOssessedUser().ToString());
-            UI.Label("PlayersTab.Crowned", selectedPlayer.Handle().IsCrowned().ToString());
-            UI.Button("PlayersTab.Heal", () => selectedPlayer.playerHealth.Heal(selectedPlayer.Handle().GetMaxHealth(), false));
-            UI.Button("PlayersTab.Crown", () => PunManager.instance.CrownPlayerSync(selectedPlayer.Handle().GetSteamID()));
-            UI.Button("PlayersTab.Kill", () => selectedPlayer.PlayerDeath(-1));
-            UI.Button("PlayersTab.Revive", () => selectedPlayer.Handle().RevivePlayer());
-            UI.Button("PlayersTab.ForceTumble", () => selectedPlayer.Handle().ForceTumble());
-            UI.ExecuteSlider("PlayersTab.Fling", flingforce.ToString("F1"), () => selectedPlayer.Handle().Fling(flingforce), ref flingforce, 1f, 1000f);
-            UI.TextboxAction("PlayersTab.Heal", ref heal, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Heal(heal)));
-            UI.TextboxAction("PlayersTab.Damage", ref damage, 3, new UIButton("General.Set", () => selectedPlayer.Handle().Hurt(damage)));
-            UI.Button("PlayersTab.BreakHeldObject", () =>
-            {
-                if (selectedPlayer.Handle().physGrabObject != null) selectedPlayer.Handle().physGrabObject.Handle().Break();
-            });
-            UI.TextboxAction("PlayersTab.DamageHeldObject", ref objectDamage, 3, new UIButton("General.Set", () =>
-            {
-                if (selectedPlayer.Handle().physGrabObject != null) selectedPlayer.Handle().physGrabObject.Handle().Damage(objectDamage);
-            }));
-            UI.TextboxAction("PlayersTab.ChangeColor", ref color, 2, new UIButton("General.Set", () => selectedPlayer.PlayerAvatarSetColor(color)));
-            UI.TextboxAction("PlayersTab.ChatMessage", ref message, 100, new UIButton("PlayersTab.Send", () => selectedPlayer.ChatMessageSend(message)));
-            if (!selectedPlayer.Handle().IsLocalPlayer())
+            UI.Label("PlayersTab.SteamId", selectedPlayerHandler.GetSteamID()?.ToString() ?? "0");
+            UI.Label("PlayersTab.Status", selectedPlayerHandler.IsDead() ? "Dead" : "Alive");
+            UI.Label("PlayersTab.Health", selectedPlayerHandler.GetHealth().ToString());
+            UI.Label("PlayersTab.MaxHealth", selectedPlayerHandler.GetMaxHealth().ToString());
+            UI.Label("PlayersTab.HoldingItem", objectHandler?.GetName() ?? TranslationUtil.Translate("General.None"));
+            UI.Label("PlayersTab.IsMasterClient", selectedPlayerHandler.IsMasterClient().ToString());
+            UI.Label("PlayersTab.Crowned", selectedPlayerHandler.IsCrowned().ToString());
+            UI.Button("PlayersTab.OpenProfile", () => Application.OpenURL($"https://steamcommunity.com/profiles/{selectedPlayerHandler.GetSteamID()}"));
+            UI.Button("PlayersTab.Heal", () => selectedPlayerHandler.Heal(selectedPlayerHandler.GetMaxHealth()));
+            UI.Button(["PlayersTab.Crown", "General.HostTag"], () => selectedPlayerHandler.Crown());
+            UI.Button(["PlayersTab.Kill", "General.HostOrLocalTag"], () => selectedPlayerHandler.Kill());
+            UI.Button(["PlayersTab.Revive", "General.HostTag"], () => selectedPlayerHandler.RevivePlayer());
+            UI.Button("PlayersTab.ForceTumble", () => selectedPlayerHandler.ForceTumble());
+            UI.Textbox("PlayersTab.Heal", ref heal, @"[^0-9]", 3, new UIButton("General.Set", () => selectedPlayerHandler.Heal(int.Parse(heal))));
+            UI.Textbox(["PlayersTab.Damage", "General.HostOrLocalTag"], ref damage, @"[^0-9]", 3, new UIButton("General.Set", () => selectedPlayerHandler.Hurt(int.Parse(damage))));
+            UI.Button(["PlayersTab.BreakHeldObject", "General.HostTag"], () => objectHandler?.Break(false));
+            UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
+            UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
+            if (!selectedPlayerHandler.IsLocalPlayer())
             {
                 UI.Button("PlayersTab.TeleportToPlayer", () =>
                 {
-                    if (selectedPlayer != null && selectedPlayer.transform != null) GameObjectManager.LocalPlayer.Handle().Teleport(selectedPlayer.transform.position, selectedPlayer.transform.rotation);
+                    Transform? transform = selectedPlayer.transform;
+                    if (transform != null) GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
-                UI.Button("PlayersTab.TeleportPlayerToYou", () =>
+                UI.Button(["PlayersTab.TeleportPlayerToYou", "General.HostTag"], () =>
                 {
-                    if (selectedPlayer != null && selectedPlayer.transform != null) selectedPlayer.Handle().Teleport(SemiFunc.MainCamera().transform.position, SemiFunc.MainCamera().transform.rotation);
+                    Transform? transform = SemiFunc.MainCamera()?.transform;
+                    if (transform != null) selectedPlayerHandler.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
-                UI.Button("PlayersTab.BlockRPCs", () => selectedPlayer.Handle().ToggleRPCBlock(), selectedPlayer.Handle().IsRPCBlocked() ? "PlayersTab.Unblock" : "PlayersTab.Block");
+                UI.Button("PlayersTab.BlockRPCs", () => selectedPlayerHandler.ToggleRPCBlock(), selectedPlayerHandler.IsRPCBlocked() ? "PlayersTab.Unblock" : "PlayersTab.Block");
             }
         }
 
         private void PlayersList()
         {
+            if (HackMenu.Instance == null) return;
             float width = HackMenu.Instance.contentWidth * 0.3f - HackMenu.Instance.spaceFromLeft * 2;
             float height = HackMenu.Instance.contentHeight - 20;
-            Rect rect = new Rect(0, 0, width, height);
-            GUI.Box(rect, "PlayersTab.PlayerList".Localize());
+            GUI.Box(new Rect(0, 0, width, height), TranslationUtil.Translate("PlayersTab.PlayerList"));
             GUILayout.BeginVertical(GUILayout.Width(width), GUILayout.Height(height));
             GUILayout.Space(25);
             foreach (PlayerAvatar player in GameObjectManager.players.Where(p => p != null))
             {
-                if (selectedPlayer == null) selectedPlayer = player;
-                if (selectedPlayer.GetInstanceID() == player.GetInstanceID()) GUI.contentColor = Settings.c_success.GetColor();
-                string name = player.Handle().IsREPOssessedUser() && Cheat.Instance<DisplayREPOssessedUsers>().Enabled ? $"[REPOssessed] {player.Handle().GetName()}" : player.Handle().GetName();
-                if (GUILayout.Button(name, GUI.skin.label)) selectedPlayer = player;
+                if (player == null) continue;
+                PlayerHandler? playerHandler = player.Handle();
+                if (playerHandler == null) continue;
+                selectedPlayer ??= player;
+                GUI.contentColor = selectedPlayer.GetInstanceID() == player.GetInstanceID() ? Settings.c_success.GetColor() : Settings.c_menuText.GetColor();
+                if (GUILayout.Button(playerHandler.GetName(), GUI.skin.label)) selectedPlayer = player;
                 GUI.contentColor = Settings.c_menuText.GetColor();
             }
             GUILayout.EndVertical();

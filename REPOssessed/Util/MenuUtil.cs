@@ -25,6 +25,7 @@ namespace REPOssessed.Util
 
         public static void WarpCursor()
         {
+            if (HackMenu.Instance == null) return;
             float currentX = HackMenu.Instance.windowRect.x + HackMenu.Instance.windowRect.width;
             float currentY = Screen.height - (HackMenu.Instance.windowRect.y + HackMenu.Instance.windowRect.height);
             Mouse.current.WarpCursorPosition(new Vector2(currentX, currentY));
@@ -32,7 +33,7 @@ namespace REPOssessed.Util
 
         public static void ResizeMenu()
         {
-            if (!resizing) return;
+            if (!resizing || HackMenu.Instance == null) return;
 
             if (Input.GetMouseButtonDown(0))
             {

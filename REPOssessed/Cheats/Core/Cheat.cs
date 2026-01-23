@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using REPOssessed.Util;
 
 namespace REPOssessed.Cheats.Core
 {
     public class Cheat : MonoBehaviour
     {
         public static List<Cheat> instances = new List<Cheat>();
-        public static T Instance<T>() where T : Cheat => instances.Find(x => x is T) as T;
+        public static T Instance<T>() where T : Cheat => (instances.Find(x => x is T) as T)!;
 
         public KeyCode defaultKeybind = KeyCode.None;
         public KeyCode keybind = KeyCode.None;

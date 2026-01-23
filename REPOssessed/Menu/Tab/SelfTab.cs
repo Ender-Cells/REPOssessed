@@ -1,8 +1,6 @@
-using REPOssessed.Cheats;
 using REPOssessed.Cheats.Core;
-using REPOssessed.Extensions;
+using REPOssessed.Cheats.SelfTab;
 using REPOssessed.Handler;
-using REPOssessed.Language;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
@@ -25,72 +23,69 @@ namespace REPOssessed.Menu.Tab
 
         public void SelfContent()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos, () =>
             {
-                UI.Header("SelfTab.Title");
+                UI.Label("SelfTab.Title", null, true, -1, true);
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());
                 UI.Checkbox("SelfTab.NoTumble", Cheat.Instance<NoTumble>());
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
-                UI.Checkbox("SelfTab.Invisibility", Cheat.Instance<Invisibility>());
                 UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());
                 UI.Checkbox("SelfTab.NoGunSpread", Cheat.Instance<NoGunSpread>());
                 UI.Checkbox("SelfTab.NoGunCooldown", Cheat.Instance<NoGunCooldown>());
-                UI.CheatToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1f, 50f);
+                UI.ToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1, 50);
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
-                UI.Checkbox("SelfTab.HearAllDeadPlayers", Cheat.Instance<HearAllDeadPlayers>());
-                UI.Checkbox("SelfTab.NoAntiCharge", Cheat.Instance<NoAntiCharge>());
-                UI.CheatToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
-                UI.Checkbox("SelfTab.UseSpoofedName", Cheat.Instance<NameSpoofer>());
-                UI.Textbox("SelfTab.SpoofedName", ref NameSpoofer.Value, true, 100);
-                UI.Checkbox(["SelfTab.NoObjectMoneyLoss", "General.HostTag"], Cheat.Instance<NoObjectMoneyLoss>());
-                UI.CheatToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 20f);
-                UI.CheatToggleSlider(Cheat.Instance<SuperSpeed>(), "SelfTab.SuperSpeed", SuperSpeed.Value.ToString("F1"), ref SuperSpeed.Value, 5f, 100f);
+                UI.Checkbox("SelfTab.NoOverCharge", Cheat.Instance<NoOverCharge>());
+                UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
+                UI.ToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 50f);
+                UI.ToggleSlider(Cheat.Instance<SuperSpeed>(), "SelfTab.SuperSpeed", SuperSpeed.Value.ToString("F1"), ref SuperSpeed.Value, 5f, 100f);
+                UI.Checkbox("SelfTab.UnlimitedDeathHeadEnergy", Cheat.Instance<UnlimitedDeathHeadEnergy>());
+                UI.Checkbox(["SelfTab.NameSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<NameSpoofer>());
+                UI.Textbox("SelfTab.SpoofedName", ref NameSpoofer.Value, "", 100);
+                UI.Checkbox(["SelfTab.SteamIDSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<SteamIDSpoofer>());
+                UI.Textbox("SelfTab.SpoofedSteamID", ref SteamIDSpoofer.Value, @"[^0-9]", 100);
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 
         public void TeleportContent()
         {
-            UI.VerticalSpace(ref scrollPos2, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos2, () =>
             {
-                UI.Header("SelfTab.TeleportTitle");
-                UI.Button("SelfTab.Truck", () => TeleportToTruck(), "SelfTab.Teleport");
+                UI.Label("SelfTab.TeleportTitle", null, true, -1, true);
+                UI.Button("SelfTab.Truck", () =>
+                {
+                    Transform? transform = Object.FindObjectsOfType<SpawnPoint>()?.FirstOrDefault(s => s != null)?.transform;
+                    if (transform != null) GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation);
+                }, "SelfTab.Teleport");
                 CartsTeleportContent();
                 ExtractionsTeleportContent();
 
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 
-        private void TeleportToTruck()
-        {
-            PlayerAvatar player = GameObjectManager.LocalPlayer;
-            if (player == null) return;
-            SpawnPoint spawnPoint = Object.FindObjectsOfType<SpawnPoint>().FirstOrDefault(s => s != null);
-            if (spawnPoint == null || spawnPoint.transform == null) return;
-            player.Handle().Teleport(spawnPoint.transform.position, spawnPoint.transform.rotation);
-        }
-
         private void CartsTeleportContent()
         {
-            PlayerAvatar player = GameObjectManager.LocalPlayer;
-            if (player == null) return;
             int Index = 1;
-            GameObjectManager.carts.Where(c => c != null && c.transform != null).ToList().ForEach(c =>
+            string cartTranslation = TranslationUtil.Translate("SelfTab.Cart");
+            GameObjectManager.carts.Where(c => c != null).ToList().ForEach(c =>
             {
-                UI.Button($"{"SelfTab.Cart".Localize()} {Index++}", () => player.Handle().Teleport(c.transform.position, c.transform.rotation), "SelfTab.Teleport");
+                Transform transform = c.transform;
+                if (transform != null) UI.Button($"{cartTranslation} {Index++}", () => GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation), "SelfTab.Teleport");
             });
         }
 
         private void ExtractionsTeleportContent()
         {
-            PlayerAvatar player = GameObjectManager.LocalPlayer;
-            if (player == null) return;
             int Index = 1;
-            GameObjectManager.extractions.Where(e => e != null && e.transform != null && !e.Reflect().GetValue<bool>("isShop") && !e.StateIs(ExtractionPoint.State.Complete)).ToList().ForEach(e =>
+            string extractionTranslation = TranslationUtil.Translate("General.Extraction");
+            GameObjectManager.extractions.Where(e => e != null && e?.Handle() is ExtractionPointHandler h && !h.IsShop() && !h.IsCompleted()).ToList().ForEach(e =>
             {
-                UI.Button($"{"SelfTab.Extraction".Localize()} {Index++}", () => player.Handle().Teleport(e.transform.position, e.transform.rotation), "SelfTab.Teleport");
+                Transform transform = e.transform;
+                if (transform != null) UI.Button($"{extractionTranslation} {Index++}", () => GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation), "SelfTab.Teleport");
             });
         }
     }

@@ -1,0 +1,22 @@
+﻿using Photon.Pun;
+using REPOssessed.Cheats.Core;
+using REPOssessed.Util;
+
+namespace REPOssessed.Cheats.ServerTab
+{
+    internal class SetCurrency : ExecutableCheat
+    {
+        public static int Currency = 3;
+
+        public override void Execute()
+        {
+            if (!GameUtil.IsMasterClient()) return;
+            if (SemiFunc.IsMultiplayer())
+            {
+                StatsManager.instance.runStats["currency"] = Currency;
+                PunManager.instance.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("SetRunStatRPC", RpcTarget.Others, "currency", Currency);
+            }
+            else StatsManager.instance.runStats["currency"] = Currency;
+        }
+    }
+}

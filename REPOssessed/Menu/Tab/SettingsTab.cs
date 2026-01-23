@@ -1,6 +1,5 @@
-﻿using REPOssessed.Cheats;
-using REPOssessed.Cheats.Core;
-using REPOssessed.Language;
+﻿using REPOssessed.Cheats.Core;
+using REPOssessed.Cheats.SettingsTab;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
 using System;
@@ -23,75 +22,102 @@ namespace REPOssessed.Menu.Tab
 
         private string s_kbSearch = "";
 
-        private string s_primaryColor = Settings.c_primary.GetHexCode();
-        private string s_menuText = Settings.c_menuText.GetHexCode();
-        private string s_espPlayer = Settings.c_espPlayer.GetHexCode();
-        private string s_espItem = Settings.c_espItem.GetHexCode();
-        private string s_espEnemy = Settings.c_espEnemy.GetHexCode();
-        private string s_espCart = Settings.c_espCart.GetHexCode();
-        private string s_espExtraction = Settings.c_espExtraction.GetHexCode();
-        private string s_espDeathHead = Settings.c_espDeathHead.GetHexCode();
-        private string s_espTruck = Settings.c_espTruck.GetHexCode();
+        private string s_primaryColor = Settings.c_primary?.GetHexCode() ?? "";
+        private string s_menuText = Settings.c_menuText?.GetHexCode() ?? "";
+        private string s_espPlayer = Settings.c_espPlayer?.GetHexCode() ?? "";
+        private string s_espItem = Settings.c_espItem?.GetHexCode() ?? "";
+        private string s_espEnemy = Settings.c_espEnemy?.GetHexCode() ?? "";
+        private string s_espCart = Settings.c_espCart?.GetHexCode() ?? "";
+        private string s_espExtraction = Settings.c_espExtraction?.GetHexCode() ?? "";
+        private string s_espDeathHead = Settings.c_espDeathHead?.GetHexCode() ?? "";
+        private string s_espTruck = Settings.c_espTruck?.GetHexCode() ?? "";
 
         private string s_lootTierColors = string.Join(",", Array.ConvertAll(Settings.c_valuableValueColors, x => x.GetHexCode()));
         private string s_lootTiers = string.Join(",", Settings.i_valuableValueThresholds);
 
         public override void Draw()
         {
-            if (i_languageIndex == -1) i_languageIndex = Array.IndexOf(LanguageUtil.GetLanguages(), LanguageUtil.Language.Name);
-            if (i_themeIndex == -1) i_themeIndex = Array.IndexOf(ThemeUtil.GetThemes(), ThemeUtil.name);
+            if (i_languageIndex == -1) i_languageIndex = Array.IndexOf(TranslationUtil.GetLanguages(), Settings.Language);
+            if (i_themeIndex == -1) i_themeIndex = Array.IndexOf(ThemeUtil.GetThemes(), ThemeUtil.Name);
             MenuContent();
             KeybindContent();
         }
 
         private void MenuContent()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos, () =>
             {
-                UI.Header("SettingsTab.Title");
+                UI.Label("SettingsTab.Title", null, true, -1, true);
 
-                UI.Actions(
-                    new UIButton("SettingsTab.ResetSettings", () => Settings.Config.RegenerateConfig()),
-                    new UIButton("SettingsTab.SaveSettings", () => Settings.Config.SaveConfig()),
-                    new UIButton("SettingsTab.ReloadSettings", () => Settings.Config.LoadConfig())
-                );
+                UI.HorizontalGroup(() =>
+                {
+                    UI.Button("SettingsTab.ResetSettings", () => Settings.Config.RegenerateConfig(), "");
+                    UI.Button("SettingsTab.SaveSettings", () => Settings.Config.SaveConfig(), "");
+                    UI.Button("SettingsTab.ReloadSettings", () => Settings.Config.LoadConfig(), "");
+                });
+                UI.Button("SettingsTab.OpenSettings", () => Settings.Config.OpenConfig(), "");
 
-                UI.Actions(
-                    new UIButton("SettingsTab.OpenSettings", () => Settings.Config.OpenConfig())
-                );
-
-                UI.Header("SettingsTab.GeneralSettings");
+                UI.Label("SettingsTab.GeneralSettings", null, true, -1, true);
 
                 UI.Select("SettingsTab.Theme", ref i_themeIndex, ThemeUtil.GetThemes().Select(x => new UIOption(x, () => ThemeUtil.SetTheme(x))).ToArray());
-                UI.Select("SettingsTab.Language", ref i_languageIndex, LanguageUtil.GetLanguages().Select(x => new UIOption(x, () => LanguageUtil.SetLanguage(x))).ToArray());
+                UI.Select("SettingsTab.Language", ref i_languageIndex, TranslationUtil.GetLanguages().Select(x => new UIOption(x, () => Settings.Language = x)).ToArray());
 
                 UI.Checkbox("SettingsTab.FPSCounter", Cheat.Instance<FPSCounter>());
-                UI.Checkbox("SettingsTab.DisplayREPOssessedUsers", Cheat.Instance<DisplayREPOssessedUsers>());
-                UI.Toggle("SettingsTab.DebugMode", ref Settings.b_DebugMode, "General.Enable", "General.Disable", HackMenu.Instance.ToggleDebugTab);
+                UI.Checkbox("SettingsTab.DebugMode", Cheat.Instance<DebugMode>());
 
-                UI.Header("SettingsTab.Colors");
-                UI.TextboxAction("SettingsTab.MenuText", ref s_menuText, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_menuText, s_menuText)));
-                UI.TextboxAction("SettingsTab.Primary", ref s_primaryColor, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_primary, s_primaryColor)));
-                UI.TextboxAction("SettingsTab.PlayerColor", ref s_espPlayer, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espPlayer, s_espPlayer)));
-                UI.TextboxAction("SettingsTab.ItemColor", ref s_espItem, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espItem, s_espItem)));
-                UI.TextboxAction("SettingsTab.EnemyColor", ref s_espEnemy, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espEnemy, s_espEnemy)));
-                UI.TextboxAction("SettingsTab.CartColor", ref s_espCart, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espCart, s_espCart)));
-                UI.TextboxAction("SettingsTab.ExtractionColor", ref s_espExtraction, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espExtraction, s_espExtraction)));
-                UI.TextboxAction("SettingsTab.DeathHeadColor", ref s_espDeathHead, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espDeathHead, s_espDeathHead)));
-                UI.TextboxAction("SettingsTab.TruckColor", ref s_espTruck, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => SetColor(ref Settings.c_espTruck, s_espTruck)));
+                UI.Label("SettingsTab.Colors", null, true, -1, true);
+                UI.Textbox("SettingsTab.MenuText", ref s_menuText, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                {
+                    if (Settings.c_menuText != null) SetColor(ref Settings.c_menuText, s_menuText); 
+                }));
+                UI.Textbox("SettingsTab.Primary", ref s_primaryColor, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                {
+                    if (Settings.c_primary != null) SetColor(ref Settings.c_primary, s_primaryColor);
+                }));
+                UI.Textbox("SettingsTab.PlayerColor", ref s_espPlayer, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                { 
+                    if (Settings.c_espPlayer != null) SetColor(ref Settings.c_espPlayer, s_espPlayer); 
+                }));
+                UI.Textbox("SettingsTab.ItemColor", ref s_espItem, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                { 
+                    if (Settings.c_espItem != null) SetColor(ref Settings.c_espItem, s_espItem); 
+                }));
+                UI.Textbox("SettingsTab.EnemyColor", ref s_espEnemy, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                { 
+                    if (Settings.c_espEnemy != null) SetColor(ref Settings.c_espEnemy, s_espEnemy);
+                }));
+                UI.Textbox("SettingsTab.CartColor", ref s_espCart, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                {
+                    if (Settings.c_espCart != null) SetColor(ref Settings.c_espCart, s_espCart);
+                }));
+                UI.Textbox("SettingsTab.ExtractionColor", ref s_espExtraction, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                {
+                    if (Settings.c_espExtraction != null) SetColor(ref Settings.c_espExtraction, s_espExtraction); 
+                }));
+                UI.Textbox("SettingsTab.DeathHeadColor", ref s_espDeathHead, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                { 
+                    if (Settings.c_espDeathHead != null) SetColor(ref Settings.c_espDeathHead, s_espDeathHead);
+                }));
+                UI.Textbox("SettingsTab.TruckColor", ref s_espTruck, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                {
+                    if (Settings.c_espTruck != null) SetColor(ref Settings.c_espTruck, s_espTruck); 
+                }));
                 UI.Button(["SettingsTab.TieredLootColors", $"({GetTiersColored()})"], () => EditTierColors(), "General.Set");
-                UI.Textbox("SettingsTab.Tiers", ref s_lootTiers, @"[^0-9,]");
-                UI.Textbox("SettingsTab.TierColors", ref s_lootTierColors, @"[^0-9A-Za-z,]");
+                UI.Textbox("SettingsTab.Tiers", ref s_lootTiers, @"[^0-9,]", 50);
+                UI.Textbox("SettingsTab.TierColors", ref s_lootTierColors, @"[^0-9A-Za-z,]", 50);
 
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.55f - HackMenu.Instance.spaceFromLeft));
         }
 
+        // come backl
         private void KeybindContent()
         {
-            UI.VerticalSpace(ref scrollPos3, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos3, async () =>
             {
-                UI.Header("SettingsTab.Keybinds");
-                UI.Textbox("SettingsTab.Search", ref s_kbSearch, big: false);
+                UI.Label("SettingsTab.Keybinds", null, true, -1, true);
+                UI.Textbox("SettingsTab.Search", ref s_kbSearch, "", 50);
                 List<Cheat> cheats = Cheat.instances.FindAll(c => !c.Hidden);
                 foreach (Cheat cheat in cheats)
                 {
@@ -100,11 +126,10 @@ namespace REPOssessed.Menu.Tab
                     UI.Label(cheat.GetType().Name);
                     GUILayout.FlexibleSpace();
                     if (cheat.HasKeybind && GUILayout.Button("-")) cheat.keybind = KeyCode.None;
-                    string btnText = cheat.WaitingForKeybind ? "General.Waiting" : cheat.HasKeybind ? cheat.keybind.ToString() : "General.None".Localize();
+                    string btnText = cheat.WaitingForKeybind ? TranslationUtil.Translate("General.Waiting") : cheat.HasKeybind ? cheat.keybind.ToString() : TranslationUtil.Translate("General.None");
                     if (GUILayout.Button(btnText, GUILayout.Width(85)))
                     {
-                        GUI.FocusControl(null);
-                        KBUtil.BeginChangeKeybind(cheat);
+                        await KBUtil.BeginChangeKeybind(cheat);
                     }
                     GUILayout.EndHorizontal();
                 }

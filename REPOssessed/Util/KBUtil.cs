@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using REPOssessed.Cheats.Core;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using REPOssessed.Cheats.Core;
 
 namespace REPOssessed.Util
 {
@@ -40,55 +38,30 @@ namespace REPOssessed.Util
             KeyCode.LeftShift
         };
 
-        public static void BeginChangeKeybind(Cheat cheat, params Action[] callbacks)
+        public static async Task BeginChangeKeybind(Cheat cheat)
         {
             if (Cheat.instances.Where(c => c.WaitingForKeybind).Count() > 0) return;
-
             cheat.WaitingForKeybind = true;
-            _ = TryGetPressedKeyTask(new KBCallback(cheat).Invoke, callbacks);
+            cheat.keybind = await WaitForKey();
+            cheat.WaitingForKeybind = false;
+
         }
-
-        private static async Task TryGetPressedKeyTask(Action<KeyCode> callback, params Action[] otherCallbacks)
+        private static async Task<KeyCode> WaitForKey()
         {
-            await Task.Run(async () =>
+            float startTime = Time.time;
+            KeyCode key = KeyCode.None;
+            while (key == KeyCode.None && Time.time - startTime < 15f)
             {
-                await Task.Delay(250);
-
-                float startTime = Time.time;
-                KeyCode key = KeyCode.None;
-                do
-                {
-                    KeyCode pressed = GetPressedKey();
-
-
-                    if (pressed != KeyCode.None && !KeyCodeBlackList.Contains(pressed)) key = pressed;
-
-
-                    if (Time.time - startTime > 15f) break;
-                } while (key == KeyCode.None);
-
-                if (key == KeyCode.None) return;
-
-                callback?.Invoke(key);
-                otherCallbacks.ToList().ForEach(cb => cb?.Invoke());
-            });
-
-
+                KeyCode pressed = GetPressedKey();
+                if (pressed != KeyCode.None && !KeyCodeBlackList.Contains(pressed)) key = pressed;
+                await Task.Yield(); 
+            }
+            return key;
         }
 
         private static KeyCode GetPressedKey()
         {
-            List<KeyCode> allKeys = Enum.GetValues(typeof(KeyCode)).Cast<KeyCode>().ToList();
-
-            foreach (KeyCode key in allKeys)
-            {
-                if (Input.GetKeyDown(key))
-                {
-                    return key;
-                }
-            }
-
-            return KeyCode.None;
+            return Enum.GetValues(typeof(KeyCode)).Cast<KeyCode>().FirstOrDefault(k => Input.GetKeyDown(k));
         }
     }
 }

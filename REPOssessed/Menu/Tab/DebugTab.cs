@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
-using REPOssessed.Extensions;
+using REPOssessed.Handler;
+using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
 using System.Linq;
@@ -21,18 +22,9 @@ namespace REPOssessed.Menu.Tab
 
         private void MenuContent()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            UI.VerticalGroup(ref scrollPos, () =>
             {
-
-                if (GUILayout.Button("Clear Debug Message")) Settings.s_DebugMessage = "";
-                GUILayout.TextArea(Settings.s_DebugMessage, GUILayout.Height(100));
-
-
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Master Client: ");
-                GUILayout.FlexibleSpace();
-                GUILayout.Label(PhotonNetwork.IsMasterClient ? "Yes" : "No");
-                GUILayout.EndHorizontal();
+                UI.Label("Is MasterClient:", GameUtil.IsMasterClient().ToString());
                 UI.Button("Log RPCS", () => PhotonNetwork.PhotonServerSettings.RpcList.ToList().ForEach(r => Debug.Log(r)));
 
                 UI.Button("Debug all prefabs", () =>
@@ -40,16 +32,29 @@ namespace REPOssessed.Menu.Tab
                     Object[] prefabs = Resources.LoadAll("", typeof(GameObject));
                     if (prefabs.Length == 0) return;
                     Debug.Log($"Found {prefabs.Length} prefabs!");
-                    prefabs.Where(p => p != null).ToList().ForEach(p => Debug.Log($"Prefab: {p.name}"));
+                    prefabs.Where(p => p != null).ToList().ForEach(p => Debug.Log(p.name));
                 });
 
                 UI.Button("Raycast", () =>
                 {
-                    foreach (RaycastHit hit in PlayerController.instance.cameraAim.transform.SphereCastForward())
+                    Transform? cameraAimTransform = PlayerController.instance.cameraAim?.transform;
+                    if (cameraAimTransform == null) return;
+                    foreach (RaycastHit hit in Physics.SphereCastAll(cameraAimTransform.position + (cameraAimTransform.forward * 2.75f), 1f, cameraAimTransform.forward, float.MaxValue) ?? [])
                     {
                         Collider collider = hit.collider;
-                        Settings.s_DebugMessage += $"Hit: {collider.GetType().Name} => {collider.gameObject.GetType().Name} => Layer {LayerMask.LayerToName(collider.gameObject.layer)} {collider.gameObject.layer}\n";
+                        Debug.Log($"Hit: {collider.GetType().Name} => {collider.gameObject.GetType().Name} => Layer {LayerMask.LayerToName(collider.gameObject.layer)} {collider.gameObject.layer}\n");
                     }
+                });
+
+                UI.Button("Test", () =>
+                {
+                    GameObjectManager.enemies.Select(e => e?.Handle()).ToList().ForEach(h =>
+                    {
+                        Debug.Log(h?.GetName());
+                        Debug.Log(h?.IsDead());
+                        Debug.Log(h?.IsDisabled());
+                        Debug.Log(h == null);
+                    });
                 });
             });
         }

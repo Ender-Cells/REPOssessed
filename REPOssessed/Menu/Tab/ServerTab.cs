@@ -1,8 +1,6 @@
-﻿using REPOssessed.Cheats;
-using REPOssessed.Cheats.Core;
-using REPOssessed.Extensions;
+﻿using REPOssessed.Cheats.Core;
+using REPOssessed.Cheats.ServerTab;
 using REPOssessed.Handler;
-using REPOssessed.Language;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
@@ -18,7 +16,7 @@ namespace REPOssessed.Menu.Tab
         private Vector2 scrollPos2 = Vector2.zero;
         private Vector2 scrollPos3 = Vector2.zero;
         private Vector2 scrollPos4 = Vector2.zero;
-        private int currency = 3000;
+        private string currency = "3000";
 
         public override void Draw()
         {
@@ -34,27 +32,28 @@ namespace REPOssessed.Menu.Tab
 
         private void ServerMenuContent()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos, () =>
             {
-                UI.Header("ServerTab.ServerCheats");
-                UI.TextboxAction("ServerTab.SetCurrency", ref currency, 10, new UIButton("General.Set", () =>
+                UI.Label("ServerTab.ServerCheats", null, true, -1, true);
+                UI.Textbox(["ServerTab.SetCurrency", "General.HostTag"], ref currency, @"[^0-9]", 10, new UIButton("General.Set", () =>
                 {
-                    SetCurrency.Currency = currency / 1000;
+                    SetCurrency.Currency = int.Parse(currency) / 1000;
                     Cheat.Instance<SetCurrency>().Execute();
                 }));
-                UI.Button("ServerTab.BreakAllObjects", () => GameObjectManager.items.Where(i => i != null && i.Handle() != null).ToList().ForEach(i => i.Handle().Break()));
+                UI.Button(["ServerTab.BreakAllObjects", "General.HostTag"], () => GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.Break(false)));
                 UI.Button(["ServerTab.ForceThiefPunishment", "General.HostTag"], () => Cheat.Instance<ForceThiefPunishment>().Execute());
-
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 
 
         private void ExtractionContent()
         {
-            UI.VerticalSpace(ref scrollPos2, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos2, () =>
             {
-                UI.Header("ServerTab.Extraction");
-                UI.Button("ServerTab.CompleteAllExtractions", () => GameObjectManager.extractions.Where(e => e != null && !e.StateIs(ExtractionPoint.State.Complete)).ToList().ForEach(e => e.CompleteExtraction()));
+                UI.Label(["ServerTab.Extractions", "General.HostTag"], null, true, -1, true);
+                UI.Button("ServerTab.CompleteAllExtractions", () => GameObjectManager.extractions.Select(e => e?.Handle()).ToList().ForEach(h => h?.CompleteExtraction()));
                 ExtractionsCompleteContent();
 
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
@@ -62,9 +61,10 @@ namespace REPOssessed.Menu.Tab
 
         private void InfoMenuContent()
         {
-            UI.VerticalSpace(ref scrollPos3, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos3, () =>
             {
-                UI.Header("ServerTab.InfoDisplay");
+                UI.Label("ServerTab.InfoDisplay", null, true, -1, true);
                 UI.Checkbox("ServerTab.ToggleInfoDisplay", Cheat.Instance<InfoDisplay>());
                 UI.Button("ServerTab.ToggleAllInfoDisplays", InfoDisplay.ToggleAll);
                 UI.Checkbox("ServerTab.DisplayMapObjects", ref Settings.b_DisplayMapObjects);
@@ -76,9 +76,10 @@ namespace REPOssessed.Menu.Tab
 
         private void ManagersContent()
         {
-            UI.VerticalSpace(ref scrollPos4, () =>
+            if (HackMenu.Instance == null) return;
+            UI.VerticalGroup(ref scrollPos4, () =>
             {
-                UI.Header("ServerTab.Managers");
+                UI.Label("ServerTab.Managers", null, true, -1, true);
                 UI.Toggle("LootManager.Title", ref HackMenu.Instance.LootManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("ItemManager.Title", ref HackMenu.Instance.ItemManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("LevelManager.Title", ref HackMenu.Instance.LevelManagerWindow.isOpen, "General.Open", "General.Close");
@@ -88,10 +89,8 @@ namespace REPOssessed.Menu.Tab
         private void ExtractionsCompleteContent()
         {
             int Index = 1;
-            GameObjectManager.extractions.Where(e => e != null && e.transform != null && !e.Reflect().GetValue<bool>("isShop") && !e.StateIs(ExtractionPoint.State.Complete)).ToList().ForEach(e =>
-            {
-                UI.Button($"{"ServerTab.Extraction".Localize()} {Index++}", () => e.CompleteExtraction(), "General.Complete");
-            });
+            string extractionTranslation = TranslationUtil.Translate("General.Extraction");
+            GameObjectManager.extractions.Select(e => e?.Handle()).Where(e => e != null && !e.IsShop() && e.GetCurrentState() != ExtractionPoint.State.Complete).ToList().ForEach(h => UI.Button($"{extractionTranslation} {Index++}", () => h?.CompleteExtraction(), "General.Complete"));
         }
     }
 }

@@ -2,7 +2,6 @@
 using Photon.Pun;
 using REPOssessed.Handler;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,59 +12,41 @@ namespace REPOssessed.Manager
     [HarmonyPatch]
     public static class GameObjectManager
     {
-        private static Queue<Action> ObjectQueue = new Queue<Action>();
-        private static bool CoroutineStarted = false;
+        private static PlayerAvatar? localPlayer;
 
-        private static PlayerAvatar localPlayer = null;
-
-        public static PlayerAvatar LocalPlayer
+        public static PlayerAvatar? LocalPlayer
         {
             get
             {
-                if (localPlayer == null) localPlayer = players.FirstOrDefault(p => p != null && p.Handle() != null && p.Handle().IsLocalPlayer());
+                if (localPlayer == null) localPlayer = players.FirstOrDefault(p => p?.Handle()?.IsLocalPlayer() == true);
                 return localPlayer;
             }
         }
 
-        public static List<PlayerAvatar> REPOssessedPlayers = new List<PlayerAvatar>();
         public static List<Enemy> enemies = new List<Enemy>();
         public static List<PlayerAvatar> players = new List<PlayerAvatar>();
         public static List<PhysGrabObject> items = new List<PhysGrabObject>();
         public static List<ExtractionPoint> extractions = new List<ExtractionPoint>();
-        public static List<PlayerDeathHead> deathHeads = new List<PlayerDeathHead>();
         public static List<PhysGrabCart> carts = new List<PhysGrabCart>();
-        public static TruckScreenText truck;
+        public static TruckScreenText? truck;
 
         [HarmonyPatch(typeof(PhysGrabObject), "Awake"), HarmonyPrefix]
-        public static void Awake(PhysGrabObject __instance) => AddToObjectQueue(() => items.Add(__instance));
+        public static void Awake(PhysGrabObject __instance) => items.Add(__instance);
 
         [HarmonyPatch(typeof(PlayerAvatar), "Awake"), HarmonyPrefix]
-        public static void Awake(PlayerAvatar __instance) => AddToObjectQueue(() => players.Add(__instance));
+        public static void Awake(PlayerAvatar __instance) => players.Add(__instance);
 
         [HarmonyPatch(typeof(Enemy), "Awake"), HarmonyPrefix]
-        public static void Awake(Enemy __instance) => AddToObjectQueue(() => enemies.Add(__instance));
+        public static void Awake(Enemy __instance) => enemies.Add(__instance);
 
         [HarmonyPatch(typeof(ExtractionPoint), "Start"), HarmonyPrefix]
-        public static void Start(ExtractionPoint __instance) => AddToObjectQueue(() => extractions.Add(__instance));
-
-        [HarmonyPatch(typeof(PlayerDeathHead), "Start"), HarmonyPrefix]
-        public static void Start(PlayerDeathHead __instance) => AddToObjectQueue(() => deathHeads.Add(__instance));
+        public static void Start(ExtractionPoint __instance) => extractions.Add(__instance);
 
         [HarmonyPatch(typeof(PhysGrabCart), "Start"), HarmonyPrefix]
-        public static void Start(PhysGrabCart __instance) => AddToObjectQueue(() => carts.Add(__instance));
+        public static void Start(PhysGrabCart __instance) => carts.Add(__instance);
 
         [HarmonyPatch(typeof(TruckScreenText), "Start"), HarmonyPrefix]
-        public static void Start(TruckScreenText __instance) => AddToObjectQueue(() => truck = __instance);
-
-        [HarmonyPatch(typeof(PlayerAvatar), "ChatMessageSendRPC"), HarmonyPrefix]
-        public static void ChatMessageSendRPC(PlayerAvatar __instance, string _message)
-        {
-            if (_message == "" && !REPOssessedPlayers.Contains(__instance))
-            {
-                REPOssessedPlayers.Add(__instance);
-                if (!__instance.Handle().IsLocalPlayer()) REPOssessed.Instance.AlertUsingREPOssessed();
-            }
-        }
+        public static void Start(TruckScreenText __instance) => truck = __instance;
 
         [HarmonyPatch(typeof(PhotonNetwork), "RemoveInstantiatedGO"), HarmonyPrefix]
         public static void RemoveInstantiatedGO(GameObject go, bool localOnly)
@@ -74,7 +55,6 @@ namespace REPOssessed.Manager
             if (go?.GetComponent<PlayerAvatar>() is { } playerAvatar && players.Contains(playerAvatar)) players.Remove(playerAvatar);
             if (go?.GetComponent<Enemy>() is { } enemy && enemies.Contains(enemy)) enemies.Remove(enemy);
             if (go?.GetComponent<ExtractionPoint>() is { } extractionPoint && extractions.Contains(extractionPoint)) extractions.Remove(extractionPoint);
-            if (go?.GetComponent<PlayerDeathHead>() is { } playerDeathHead && deathHeads.Contains(playerDeathHead)) deathHeads.Remove(playerDeathHead);
             if (go?.GetComponent<PhysGrabCart>() is { } physGrabCart && carts.Contains(physGrabCart)) carts.Remove(physGrabCart);
         }
 
@@ -84,42 +64,33 @@ namespace REPOssessed.Manager
             CollectObjects(players);
             CollectObjects(items);
             CollectObjects(extractions);
-            CollectObjects(deathHeads);
             CollectObjects(carts);
             truck = Object.FindAnyObjectByType<TruckScreenText>();
         }
 
         public static void ClearObjects()
         {
-            enemies?.Clear();
-            items?.Clear();
-            extractions?.Clear();
-            deathHeads?.Clear();
-            carts?.Clear();
+            players.Clear();
+            enemies.Clear();
+            items.Clear();
+            extractions.Clear();
+            carts.Clear();
             truck = null;
         }
 
-        private static void CollectObjects<T>(List<T> list, Func<T, bool> filter = null) where T : MonoBehaviour
+        public static void CleanUpObjects()
+        {
+            players.RemoveAll(p => p == null);
+            enemies.RemoveAll(e => e == null);
+            items.RemoveAll(i => i == null);
+            extractions.RemoveAll(e => e == null);
+            carts.RemoveAll(c => c == null);
+        }
+
+        private static void CollectObjects<T>(List<T> list, Func<T, bool>? filter = null) where T : MonoBehaviour
         {
             list.Clear();
             list.AddRange(filter == null ? Object.FindObjectsOfType<T>() : Object.FindObjectsOfType<T>().Where(filter));
-        }
-
-        public static void AddToObjectQueue(Action action)
-        {
-            ObjectQueue.Enqueue(action);
-            if (!CoroutineStarted) REPOssessed.Instance.StartCoroutine(RunObjectQueue());
-        }
-
-        private static IEnumerator RunObjectQueue()
-        {
-            CoroutineStarted = true;
-            while (ObjectQueue.Count > 0)
-            {
-                yield return new WaitForSeconds(0.1f * 0.1f);
-                ObjectQueue.Dequeue()?.Invoke();
-            }
-            CoroutineStarted = false;
         }
     }
 }

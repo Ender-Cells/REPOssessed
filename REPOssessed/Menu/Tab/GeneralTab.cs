@@ -1,8 +1,8 @@
 ﻿using REPOssessed.Menu.Core;
 using REPOssessed.Util;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using SVersion = System.Version;
 
 namespace REPOssessed.Menu.Tab
 {
@@ -13,18 +13,20 @@ namespace REPOssessed.Menu.Tab
 
         public override void Draw()
         {
-            UI.VerticalSpace(ref scrollPos, () =>
+            UI.VerticalGroup(ref scrollPos, () =>
             {
-                UI.Header(Settings.c_primary.AsString("Welcome to REPOssessed!"), 30);
+                UI.Label(Settings.c_primary.AsString("Welcome to REPOssessed!"), null, true, 30, true); 
                 GUILayout.Space(20);
                 UI.Label("Developed by Dustin, receiving constant updates to better the menu!");
                 GUILayout.Space(20);
-                List<IGrouping<string, Settings.Changelog.Entry>> versions = Settings.Changelog.entries.GroupBy(e => e.Version).ToList();
-                for (int i = 0; i < versions.Count; i++)
+                Settings.Changelog.entries.GroupBy(e => e.Version).OrderByDescending(g => SVersion.Parse(g.Key)).ToList().ForEach(g =>
                 {
-                    UI.Label($"v{versions[i].Key}", bold: i == 0);
-                    versions[i].ToList().ForEach(e => UI.Label($"> {e.Type} {e.Name} - {e.Description}"));
-                }
+                    UI.Label($"v{g.Key}", null, true);
+                    g.ToList().ForEach(e =>
+                    {
+                        UI.Label(e.Type == "DevMessage" ? $"> {e.Name} - {e.Description}" : $"> {e.Type} {e.Name} - {e.Description}");
+                    });
+                });
             });
         }
     }

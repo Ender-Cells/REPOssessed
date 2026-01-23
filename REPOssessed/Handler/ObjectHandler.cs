@@ -1,37 +1,44 @@
 ﻿using Photon.Pun;
-using REPOssessed.Extensions;
 using REPOssessed.Manager;
 using REPOssessed.Util;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static PhysGrabInCart;
 
 namespace REPOssessed.Handler
 {
     public class ObjectHandler
     {
-        private PhysGrabObject physGrabObject = null;
-        public ItemAttributes itemAttributes = null;
-        public ValuableObject valuableObject = null;
-        public PhysGrabObjectImpactDetector physGrabObjectImpactDetector = null;
-        public Trap trap = null;
-        public EnemyRigidbody enemyRigidbody = null;
+        public PhysGrabObject? physGrabObject;
+        public ItemAttributes? itemAttributes;
+        public ValuableObject? valuableObject;
+        public PhysGrabObjectImpactDetector? physGrabObjectImpactDetector;
+        public Trap? trap;
+        public EnemyRigidbody? enemyRigidbody;
+        public ItemBattery? itemBattery;
 
         public ObjectHandler(PhysGrabObject physGrabObject)
         {
             this.physGrabObject = physGrabObject;
-            this.itemAttributes = physGrabObject?.GetComponentHierarchy<ItemAttributes>();
-            this.valuableObject = physGrabObject?.GetComponentHierarchy<ValuableObject>();
-            this.physGrabObjectImpactDetector = physGrabObject?.GetComponentHierarchy<PhysGrabObjectImpactDetector>();
-            this.trap = physGrabObject?.GetComponentHierarchy<Trap>();
-            this.enemyRigidbody = physGrabObject?.GetComponentHierarchy<EnemyRigidbody>();
+            this.itemAttributes = physGrabObject?.GetComponent<ItemAttributes>();
+            this.valuableObject = physGrabObject?.GetComponent<ValuableObject>();
+            this.physGrabObjectImpactDetector = physGrabObject?.GetComponent<PhysGrabObjectImpactDetector>();
+            this.trap = physGrabObject?.GetComponent<Trap>();
+            this.enemyRigidbody = physGrabObject?.GetComponent<EnemyRigidbody>();
+            this.itemBattery = physGrabObject?.GetComponent<ItemBattery>();
         }
 
-        public string GetName() => IsShopItem() ? itemAttributes?.item?.itemName : physGrabObject?.name.Replace("(Clone)", "").Replace("Valuable", "").Trim();
-        public void Break(bool effects = true)
+        public string GetName()
         {
-            if (IsEnemy() || IsPlayer()) return;
+            if (IsShopItem()) return itemAttributes?.item?.itemName ?? "Unknown";
+            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "") .Trim() ?? "Unknown";
+            int dash = name.IndexOf('-');
+            return dash < 0 ? name : $"{name[(dash + 1)..].Trim()} {name[..dash].Trim()}";
+        }
+
+        public void Break(bool effects)
+        {        
+            if (!GameUtil.IsMasterClient() || IsEnemy() || IsPlayer()) return;
             if (!SemiFunc.IsMultiplayer())
             {
                 physGrabObjectImpactDetector?.DestroyObjectRPC(effects);
@@ -41,7 +48,7 @@ namespace REPOssessed.Handler
         }
         public void Damage(int valueLost, int breakLevel = 1, bool loseValue = true)
         {
-            if (IsEnemy() || IsPlayer()) return;
+            if (!GameUtil.IsMasterClient() || IsEnemy() || IsPlayer()) return;
             if (!SemiFunc.IsMultiplayer())
             {
                 physGrabObjectImpactDetector?.Reflect()?.Invoke("BreakRPC", valueLost, Vector3.zero, breakLevel, loseValue);
@@ -51,38 +58,49 @@ namespace REPOssessed.Handler
         }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
-        public float GetValue() => valuableObject != null ? valuableObject.Reflect().GetValue<float>("dollarValueCurrent") : 0f;
-        public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false;
+        public float GetValue() => valuableObject?.Reflect().GetValue<float>("dollarValueCurrent") ?? 0f;
+        public void SetValue(float value)
+        {
+            if (!GameUtil.IsMasterClient() || !IsValuable()) return;
+            if (!SemiFunc.IsMultiplayer())
+            {
+                valuableObject?.DollarValueSetRPC(value);
+                return;
+            }
+            valuableObject?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DollarValueSetRPC", RpcTarget.All, value);
+        }
+        public int GetMaxBattery() => StatsManager.instance?.GetBatteryLevel(itemAttributes?.Reflect()?.GetValue<string>("instanceName")) ?? 0;
+        public void ChargeBattery(int chargeAmount)
+        {
+            if (!GameUtil.IsMasterClient()) return; 
+            itemBattery?.SetBatteryLife(chargeAmount);
+        }
+        public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false || (physGrabObject?.Reflect()?.GetValue<bool>("isPlayer") ?? false);
         public bool IsEnemy() => enemyRigidbody != null || (physGrabObject?.Reflect()?.GetValue<bool>("isEnemy") ?? false);
         public bool IsValuable() => physGrabObject?.Reflect().GetValue<bool>("isValuable") ?? false;
         public bool IsNonValuable() => physGrabObject?.Reflect().GetValue<bool>("isNonValuable") ?? false;
         public bool IsHinge() => physGrabObject?.Reflect().GetValue<bool>("hasHinge") ?? false;
         public bool IsCart() => physGrabObject?.Reflect().GetValue<bool>("isCart") ?? false;
-        public Vector3 GetPosition() => physGrabObject?.transform?.position ?? Vector3.zero;
-        public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
+        public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<PhysGrabInCart.CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
         public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;
         public bool CurrentlyHeld() => (physGrabObject?.grabbed ?? false) || (physGrabObject?.grabbedLocal ?? false);
-        public PlayerAvatar GetLastPlayerHeld() => Patches.LastGrabbedPhysObjects?.ToList().FirstOrDefault(p => p.Key == physGrabObject).Value ?? null;
     }
 
-    public static class ObjectExtensions
+    public static class ObjectHandlerExtensions
     {
-        public static Dictionary<PhysGrabObject, ObjectHandler> ObjectHandlers = new Dictionary<PhysGrabObject, ObjectHandler>();
+        public static Dictionary<int, ObjectHandler> ObjectHandlers = new Dictionary<int, ObjectHandler>();
 
-        public static ObjectHandler Handle(this PhysGrabObject physGrabObject)
+        public static ObjectHandler? Handle(this PhysGrabObject physGrabObject)
         {
-            if (physGrabObject == null)
+            if (physGrabObject == null) return null;
+            int id = physGrabObject.GetInstanceID();
+            if (!ObjectHandlers.TryGetValue(id, out ObjectHandler objectHandler))
             {
-                if (ObjectHandlers.ContainsKey(physGrabObject)) ObjectHandlers.Remove(physGrabObject);
-                return null;
+                objectHandler = new ObjectHandler(physGrabObject);
+                ObjectHandlers[id] = objectHandler;
             }
-            if (!ObjectHandlers.TryGetValue(physGrabObject, out var handler))
-            {
-                handler = new ObjectHandler(physGrabObject);
-                ObjectHandlers[physGrabObject] = handler;
-            }
-            return handler;
+            return objectHandler;
         }
     }
 }

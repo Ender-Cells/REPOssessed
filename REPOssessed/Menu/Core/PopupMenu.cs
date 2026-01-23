@@ -1,4 +1,4 @@
-﻿using REPOssessed.Language;
+﻿using REPOssessed.Util;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ namespace REPOssessed.Menu.Core
 
         public PopupMenu(string name, Rect size, int id)
         {
-            this.name = name.Localize();
+            this.name = TranslationUtil.Translate(name);
             this.windowRect = size;
             this.id = id;
         }

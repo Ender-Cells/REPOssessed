@@ -2,7 +2,7 @@
 using REPOssessed.Util;
 using UnityEngine;
 
-namespace REPOssessed.Cheats
+namespace REPOssessed.Cheats.Executable
 {
     internal class ToggleMenu : ExecutableCheat
     {

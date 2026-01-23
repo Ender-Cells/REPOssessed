@@ -1,15 +1,14 @@
-﻿using REPOssessed.Language;
+﻿using REPOssessed.Util;
 
 namespace REPOssessed.Menu.Core
 {
     internal class MenuTab : MenuFragment
     {
-
-        public string name;
+        public string Name;
         
         public MenuTab(string name)
         {
-            this.name = name.Localize();
+            this.Name = TranslationUtil.Translate(name);
         }
 
         public virtual void Draw() { }
