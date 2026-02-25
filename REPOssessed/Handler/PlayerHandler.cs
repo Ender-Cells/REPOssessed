@@ -1,4 +1,4 @@
-﻿using Photon.Pun;
+using Photon.Pun;
 using Photon.Realtime;
 using REPOssessed.Cheats.Components;
 using REPOssessed.Manager;
@@ -6,6 +6,7 @@ using REPOssessed.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -20,6 +21,7 @@ namespace REPOssessed.Handler
         public PhotonView? photonView;
         public Player? photonPlayer;
         public Rigidbody? rigidbody;
+        private PlayerTumble? playerTumble;
         private PlayerDeathHead? playerDeathHead;
 
         public PlayerHandler(PlayerAvatar player)
@@ -29,6 +31,7 @@ namespace REPOssessed.Handler
             this.photonPlayer = photonView?.Owner;
             this.playerDeathHead = player.playerDeathHead;
             this.rigidbody = player.tumble?.Reflect().GetValue<Rigidbody>("rb");
+            this.playerTumble = player.tumble;
         }
 
         public static void ClearRPCHistory() => rpcHistory.Clear();
@@ -142,9 +145,33 @@ namespace REPOssessed.Handler
             if (!GameUtil.IsMasterClient() || !IsDead()) return;
             player.Revive();
         }
-        public void ForceTumble() => player.tumble?.TumbleRequest(true, false); 
+        public void ForceTumble() => player.tumble?.TumbleRequest(true, false);
+
+        public void glitch() // моя фукнция =)
+        {
+            int count = 0;
+            ForceTumble();
+            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true && count<10) 
+            {
+                count = count + 1;
+                Task.Delay(200); 
+            }
+            PhysGrabObject? phys = player.tumble?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+            phys?.DestroyPhysGrabObject();
+            count = 0;
+        }
+ 
         public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() : photonPlayer?.IsMasterClient ?? false;
         public void Heal(int amount) => player.playerHealth?.HealOther(amount, false);
+
+        //public void DemiGod()
+        //{
+        //    if (GetHealth() != GetMaxHealth())
+        //    { 
+        //        Heal(GetMaxHealth() - GetHealth());
+        //    }
+            
+        //}
         public void Hurt(int amount)
         {
             if (!GameUtil.IsMasterClient() && !IsLocalPlayer()) return;
@@ -153,24 +180,37 @@ namespace REPOssessed.Handler
         public void Kill() => Hurt(GetHealth());
         public void Teleport(Vector3 position, Quaternion rotation)
         {
-            if (!GameUtil.IsMasterClient())
+            if (player.Reflect().GetValue<bool>("deadSet")) 
             {
-                if (IsLocalPlayer())
-                {
-                    PlayerController.instance?.transform?.SetPositionAndRotation(position, rotation);
-                    player.Reflect()?.SetValue("clientPosition", position);
-                    player.Reflect()?.SetValue("clientPositionCurrent", position);
-                    player.Reflect()?.SetValue("clientRotation", rotation);
-                    player.Reflect()?.SetValue("clientRotationCurrent", rotation);
-                    player.transform?.SetPositionAndRotation(position, rotation);
-                    rigidbody?.MovePosition(position);
-                    rigidbody?.MoveRotation(rotation);
-                    player.Reflect()?.SetValue("spawnPosition", position);
-                    player.Reflect()?.SetValue("spawnRotation", rotation);
-                    player.playerAvatarVisuals?.Reflect()?.SetValue("visualPosition", position);
-                }
+                Debug.LogWarning("Can't teleport a dead player!");
+                return; 
             }
-            else player.Spawn(position, rotation);
+
+            if (IsLocalPlayer())
+            {
+                PlayerController.instance?.transform?.SetPositionAndRotation(position, rotation);
+                player.Reflect()?.SetValue("clientPosition", position);
+                player.Reflect()?.SetValue("clientPositionCurrent", position);
+                player.Reflect()?.SetValue("clientRotation", rotation);
+                player.Reflect()?.SetValue("clientRotationCurrent", rotation);
+                player.transform?.SetPositionAndRotation(position, rotation);
+                rigidbody?.MovePosition(position);
+                rigidbody?.MoveRotation(rotation);
+                player.Reflect()?.SetValue("spawnPosition", position);
+                player.Reflect()?.SetValue("spawnRotation", rotation);
+                player.playerAvatarVisuals?.Reflect()?.SetValue("visualPosition", position);
+            }
+            ForceTumble();
+            int count = 0;
+            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true && count<10) 
+            {
+                count = count + 1;
+                Task.Delay(200); 
+            }
+            PhysGrabObject? phys = player.tumble?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+            phys?.Teleport(position, rotation);
+
+            //else player.Spawn(position, rotation);
         }
         public void Crown()
         {
