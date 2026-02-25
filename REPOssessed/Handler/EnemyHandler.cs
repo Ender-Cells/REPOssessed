@@ -1,4 +1,4 @@
-﻿using REPOssessed.Util;
+using REPOssessed.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +43,26 @@ namespace REPOssessed.Handler
                 enemy.Handle()?.enemyHealth?.spawnValuable = false;
                 NoEnemyOrbEnemies.Add(enemy);
             }
-            Hurt(GetHealth());
+            //Hurt(GetHealth());
+            //PhysGrabObject? phys = enemyRigidbody?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+            //if (phys != null)
+            //{
+            //Rigidbody? rig = enemyRigidbody?.Reflect().GetValue<Rigidbody>("rb"); 
+            //if (rig == null) 
+            //{ 
+            //    Debug.Log("rig is null"); 
+            //    return; 
+            //}
+            //Vector3 pos_old = rig.position;
+            Vector3 pos = new Vector3(0, -100, 0);
+            //phys.Teleport(pos, Quaternion.identity);
+            enemy?.EnemyTeleported(pos);
+            //}
+            //else
+            //{
+            //    Debug.Log("phys is null");
+            //    return;
+            //}
         }
         public void Freeze(float time)
         {
@@ -52,18 +71,16 @@ namespace REPOssessed.Handler
         }
         public void PermaKill()
         {
-            if (!GameUtil.IsMasterClient()) return;
+            //if (!GameUtil.IsMasterClient()) return;
             Kill(false);
             if (!PermaKilledEnemies.Contains(enemy)) PermaKilledEnemies.Add(enemy);
         }
         public void Lure(Vector3 position)
         {
-            if (!GameUtil.IsMasterClient()) return;
             enemyNavMeshAgent?.SetDestination(position);
         }
         public void Teleport(Vector3 position)
         {
-            if (!GameUtil.IsMasterClient()) return;
             enemy.EnemyTeleported(position);
         }
         public bool IsDisabled() => (!enemyParent?.EnableObject?.activeSelf ?? false) || (!enemyParent.Reflect()?.GetValue<bool>("Spawned") ?? false);
