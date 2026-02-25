@@ -1,5 +1,31 @@
 {
   "Changelog": {
+    "1.0.2": {
+      "Added": [
+        {
+          "Name": "DemiGod",
+          "Description": "Just auto heal for Player y selected"
+        },
+        {
+          "Name": "Strength",
+          "Description": "i try to make super Strength from telepot object(yea im lazy and dont make rotate object AND it work better when y host)"
+        },
+        {
+          "Name": "Glitch",
+          "Description": "Tumbled person and force them to stuck"
+        }
+      ],
+      "Changed": [
+        {
+          "Name": "Teleport PLayer",
+          "Description": "Now it works through Tumblr and works when not hosted."
+        },
+        {
+          "Name": "Destroy Object",
+          "Description": "Now it works when you are not hosting, and you can also destroy everything(i mean button in server tab)."
+        }
+      ]
+    },
     "1.0.1": {
       "DevMessage": [
         {
@@ -9,6 +35,10 @@
         {
           "Name": "Small things",
           "Description": "I made a ton of small fixes and changes to improve the menu which are too tiny to mention here"
+        },
+        {
+          "Name": "=)",
+          "Description": "пока у Дастина пропал интерес к REPO, я решил немного поработать над меню пока у меня еще есть интерес к игре"
         }
       ],
       "Added": [
