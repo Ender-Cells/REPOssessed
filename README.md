@@ -61,12 +61,12 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Safe God Mode:** Allows you to take damage unless it'll kill you  
   - **No Tumble:** Removes tumble  
   - **Infinite Jump:** Lets you jump forever  
-  - **Unlimited Battery:** Makes item batteries unlimited  
   - **No Gun Spread:** Removes gun spread  
   - **No Gun Cooldown:** Removes gun cooldown  
   - **Gun Bullet Amount:** Lets you change how many bullets your gun shoots  
   - **Non Enemy Targetable:** Makes enemies not target you  
   - **Always Show Level:** Shows the current level  
+  - **Strength:** Teleports object in to your look point
   - **Hear All Dead Players:** Lets you hear dead players  
   - **No Over Charge:** Disables overcharge effects  
   - **Rainbow Suit:** Makes your suit change colors like a rainbow   
@@ -107,6 +107,7 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Crown:** Crowns them  
   - **Kill:** Kills them  
   - **Revive:** Revives them  
+  - **Demi_god:** Auto heal for player that y select 
   - **Force Tumble:** Forces them to tumble  
   - **Heal Amount:** Heal by a specific amount  
   - **Damage Amount:** Damage by a specific amount  
@@ -122,6 +123,7 @@ Thank you for contributing to the development of this mod by sharing your feedba
   - **Kill Others:** Kills other players excluding you  
   - **Chat Message All:** Makes every player send a chat  
   - **Chat Message Others:** Makes every player excluding you send a chat  
+  - **Glitch:** Allow y to "stuck" players
 
   #### Enemy Tab
   - **Kill All:** Kills every enemy  
@@ -169,7 +171,7 @@ Thank you for contributing to the development of this mod by sharing your feedba
 | Unload Menu  | <kbd>Pause</kbd> | Completely unload the cheat |
 | NoClip Controls  | <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Space</kbd><kbd>LCTRL</kbd> | Movement Controls while using NoClip |
 
-## Changelog | v1.0.1
+## Changelog | v1.0.2
   - You can view all updates, changes, and fixes with descriptions for all versions at this [link](https://raw.githubusercontent.com/IcyRelic/REPOssessed/refs/heads/main/REPOssessed/Resources/Changelog.json)
 
 ## Helpful Links
