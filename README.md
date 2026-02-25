@@ -172,7 +172,7 @@ Thank you for contributing to the development of this mod by sharing your feedba
 | NoClip Controls  | <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Space</kbd><kbd>LCTRL</kbd> | Movement Controls while using NoClip |
 
 ## Changelog | v1.0.2
-  - You can view all updates, changes, and fixes with descriptions for all versions at this [link](https://raw.githubusercontent.com/IcyRelic/REPOssessed/refs/heads/main/REPOssessed/Resources/Changelog.json)
+  - You can view all updates, changes, and fixes with descriptions for all versions at this [link](https://raw.githubusercontent.com/Ender-Cells/REPOssessed/refs/heads/main/REPOssessed/Resources/Changelog.json)
 
 ## Helpful Links
   - [HTML Color Wheel (With Alpha Support)](https://rgbacolorpicker.com/color-wheel-picker)
