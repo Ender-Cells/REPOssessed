@@ -1,4 +1,4 @@
-﻿using Photon.Pun;
+using Photon.Pun;
 using REPOssessed.Manager;
 using REPOssessed.Util;
 using System.Collections.Generic;
@@ -38,13 +38,8 @@ namespace REPOssessed.Handler
 
         public void Break(bool effects)
         {        
-            if (!GameUtil.IsMasterClient() || IsEnemy() || IsPlayer()) return;
-            if (!SemiFunc.IsMultiplayer())
-            {
-                physGrabObjectImpactDetector?.DestroyObjectRPC(effects);
-                return;
-            }
-            physGrabObjectImpactDetector?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DestroyObjectRPC", RpcTarget.All, effects);
+            if (IsEnemy() || IsPlayer()) return;
+            physGrabObject?.DestroyPhysGrabObject();
         }
         public void Damage(int valueLost, int breakLevel = 1, bool loseValue = true)
         {
