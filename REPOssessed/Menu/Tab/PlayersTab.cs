@@ -67,7 +67,7 @@ namespace REPOssessed.Menu.Tab
             UI.Button("PlayersTab.OpenProfile", () => Application.OpenURL($"https://steamcommunity.com/profiles/{selectedPlayerHandler.GetSteamID()}"));
             UI.Button("PlayersTab.Heal", () => selectedPlayerHandler.Heal(selectedPlayerHandler.GetMaxHealth()));
 
-            // Переключатель DemiGod — запоминаем для конкретного игрока
+            // ������������� DemiGod � ���������� ��� ����������� ������
             bool isDemi = DemiGod.IsPlayerDemiGod(selectedPlayerHandler);
             bool newVal = isDemi;
             UI.Checkbox("DemiGod", ref newVal);

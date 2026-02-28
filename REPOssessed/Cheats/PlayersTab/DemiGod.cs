@@ -10,7 +10,7 @@ namespace REPOssessed.Cheats.PlayersTab
 {
     internal class DemiGod : ToggleCheat
     {
-        // Список steamID игроков, для которых включён DemiGod (запоминаем между переключениями)
+        // ������ steamID �������, ��� ������� ������� DemiGod (���������� ����� ��������������)
         private static HashSet<string> DemiGodPlayers = new HashSet<string>();
 
         public static bool IsPlayerDemiGod(PlayerHandler? handler)
@@ -38,13 +38,13 @@ namespace REPOssessed.Cheats.PlayersTab
             else DemiGodPlayers.Add(steam);
         }
 
-        // Выполняется в основном игровом цикле — подлечиваем всех "запомненных" игроков
+        // ����������� � �������� ������� ����� � ����������� ���� "�����������" �������
         public override void Update()
         {
-            // если никто не в списке — не тратим цикл
+            // ���� ����� �� � ������ � �� ������ ����
             if (DemiGodPlayers.Count == 0) return;
 
-            // Очистка списка от ушедших/исчезнувших игроков:
+            // ������� ������ �� �������/����������� �������:
             var currentSteam = GameObjectManager.players
                 .Where(p => p != null)
                 .Select(p => p.Handle())
@@ -53,13 +53,13 @@ namespace REPOssessed.Cheats.PlayersTab
                 .Where(s => !string.IsNullOrEmpty(s))
                 .ToHashSet();
 
-            // Удаляем те steamID, которых уже нет в текущем списке игроков
+            // ������� �� steamID, ������� ��� ��� � ������� ������ �������
             DemiGodPlayers.RemoveWhere(s => !currentSteam.Contains(s));
 
-            // Если после очистки список опустел — выходим
+            // ���� ����� ������� ������ ������� � �������
             if (DemiGodPlayers.Count == 0) return;
 
-            // Подлечиваем всех игроков, чей steamID в множестве
+            // ����������� ���� �������, ��� steamID � ���������
             foreach (PlayerAvatar? p in GameObjectManager.players.Where(x => x != null))
             {
                 if (p == null) continue;

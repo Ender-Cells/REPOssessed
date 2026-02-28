@@ -1,9 +1,4 @@
-﻿//using HarmonyLib;
-//using REPOssessed.Cheats.Core;
-//using REPOssessed.Handler;
-//using REPOssessed.Manager;
-//using REPOssessed.Util;
-
+﻿
 //namespace REPOssessed.Cheats.SelfTab
 //{
 //    [HarmonyPatch]

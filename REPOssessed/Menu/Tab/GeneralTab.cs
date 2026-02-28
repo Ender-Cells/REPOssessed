@@ -17,7 +17,6 @@ namespace REPOssessed.Menu.Tab
             {
                 UI.Label(Settings.c_primary.AsString("Welcome to REPOssessed!)"), null, true, 30, true); 
                 GUILayout.Space(20);
-                UI.Label("Developed by Dustin(and Ender_Cells yea just few functions), receiving constant updates to better the menu!");
                 GUILayout.Space(20);
                 Settings.Changelog.entries.GroupBy(e => e.Version).OrderByDescending(g => SVersion.Parse(g.Key)).ToList().ForEach(g =>
                 {

@@ -111,8 +111,6 @@ namespace REPOssessed.Menu.Tab
         {
             UI.Label("EnemyTab.GeneralActions", null, true, -1, true);
 
-            UI.Button(["EnemyTab.KillAll"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.Kill(noEnemyOrb)));
-            UI.Button(["EnemyTab.PermaKillAll"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.PermaKill()));
             UI.Checkbox("EnemyTab.NoEnemyOrb", ref noEnemyOrb);
             UI.Button(["EnemyTab.TeleportAllEnemies", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h =>
             {
@@ -153,12 +151,10 @@ namespace REPOssessed.Menu.Tab
                 if (playerTransform != null) enemyHandler.Lure(playerTransform.position);
             });
             UI.Button("EnemyTab.TeleportToEnemy", () => GameObjectManager.LocalPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
-            UI.Button(["EnemyTab.TeleportEnemyToPlayer"], () =>
             {
                 Transform? playerTransform = selectedPlayer?.transform;
                 if (playerTransform != null) enemyHandler.Teleport(playerTransform.position);
             });
-            UI.Button(["EnemyTab.TeleportPlayerToEnemy"], () => selectedPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
             UI.Textbox(["EnemyTab.Damage", "General.HostTag"], ref damage, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Hurt(int.Parse(damage))));
             UI.Textbox(["EnemyTab.Heal", "General.HostTag"], ref heal, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Heal(int.Parse(heal))));
             UI.Textbox(["EnemyTab.Freeze", "General.HostTag"], ref freeze, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Freeze(int.Parse(freeze))));
