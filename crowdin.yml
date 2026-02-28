@@ -1,0 +1,3 @@
+files:
+  - source: REPOssessed/Resources/Languages/English.json
+    translation: REPOssessed/Resources/Languages/%language%.son

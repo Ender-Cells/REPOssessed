@@ -1,0 +1,362 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using REPOssessed.Cheats.Core;
+using REPOssessed.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
+
+namespace REPOssessed
+{
+    internal class Settings
+    {
+
+        /* *    
+         * Menu Settings
+         * */
+        public static string s_Version = "v1.0.1";
+        public static string Language = "English";
+        public static bool b_IsFirstLaunch = true;
+
+        public static bool b_isMenuOpen = false;
+        public static int i_menuFontSize = 14;
+        public static int i_menuWidth = 810;
+        public static int i_menuHeight = 410;
+        public static int i_sliderWidth = 100;
+        public static int i_textboxWidth = 85;
+        public static float f_menuAlpha = 1f;
+
+        /* *    
+         * Color Settings
+         * */
+        public static RGBAColor c_primary = new RGBAColor(165, 55, 253, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_success = new RGBAColor(0, 255, 0, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_error = new RGBAColor(255, 0, 0, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_menuText = new RGBAColor(255, 255, 255, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espPlayer = new RGBAColor(0, 255, 0, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espItem = new RGBAColor(255, 255, 255, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espEnemy = new RGBAColor(255, 0, 0, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espCart = new RGBAColor(0, 0, 255, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espExtraction = new RGBAColor(255, 165, 0, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espDeathHead = new RGBAColor(128, 0, 128, 1f) ?? RGBAColor.Default;
+        public static RGBAColor c_espTruck = new RGBAColor(0, 255, 255, 1f) ?? RGBAColor.Default;
+
+        public static bool b_PlayerESP = false;
+        public static bool b_EnemyESP = false;
+        public static bool b_ItemESP = false;
+        public static bool b_CartESP = false;
+        public static bool b_ExtractionESP = false;
+        public static bool b_DeathHeadESP = false;
+        public static bool b_TruckESP = false;
+
+        public static bool b_useValuableTiers = false;
+
+        public static bool b_DisplayMapObjects = false;
+        public static bool b_DisplayDeathHeads = false;
+        public static bool b_DisplayPlayers = false;
+        public static bool b_DisplayEnemies = false;
+
+        public static int[] i_valuableValueThresholds = new int[] { 1000, 5000, 10000, 20000 };
+
+        public static RGBAColor[] c_valuableValueColors = new RGBAColor[]
+        {
+            new RGBAColor(0.5f, 0.5f, 0.5f, 1f),
+            new RGBAColor(10, 187, 10, 1f),
+            new RGBAColor(255, 0, 255, 1f),
+            new RGBAColor(255, 165, 0, 1f),
+        };
+
+        internal class Config
+        {
+            private static string config = "REPOssessed.config.json";
+            private static string defaultConf = "REPOssessed.default.config.json";
+            public static void CreateConfigIfNotExists()
+            {
+                if (HasConfig()) return;
+                SaveConfig();
+            }
+
+            public static void SaveDefaultConfig()
+            {
+                SaveConfig(defaultConf);
+            }
+            public static bool HasConfig()
+            {
+                return config != null && File.Exists(config);
+            }
+
+            public static void SaveConfig()
+            {
+                SaveConfig(config);
+            }
+
+            public static void SaveConfig(string conf)
+            {
+                Dictionary<string, string> keybinds = new Dictionary<string, string>();
+                Dictionary<string, string> toggles = new Dictionary<string, string>();
+                Dictionary<string, string> values = new Dictionary<string, string>();
+
+                Cheat.instances.FindAll(c => !c.Hidden).ForEach(c =>
+                {
+                    if (c.HasKeybind) keybinds.Add(c.GetType().Name, c.keybind.ToString());
+                    if (c is ToggleCheat tc) toggles.Add(c.GetType().Name, tc.Enabled.ToString());
+
+                    if (c.GetType().GetInterface(typeof(IVariableCheat<>).FullName) != null)
+                    {
+                        FieldInfo valueField = c.GetType().GetField("Value", BindingFlags.Static | BindingFlags.Public);
+                        values.Add(c.GetType().Name, valueField.GetValue(c).ToString());
+                    }
+                });
+
+
+                JObject json = new JObject();
+                JObject settings = new JObject();
+                JObject colors = new JObject();
+                JObject cheatSettings = new JObject();
+
+                colors["MenuText"] = JsonConvert.SerializeObject(c_menuText);
+                colors["ESPPlayer"] = JsonConvert.SerializeObject(c_espPlayer);
+                colors["ESPItem"] = JsonConvert.SerializeObject(c_espItem);
+                colors["ESPCart"] = JsonConvert.SerializeObject(c_espCart);
+                colors["ESPEnemy"] = JsonConvert.SerializeObject(c_espEnemy);
+                colors["ESPExtraction"] = JsonConvert.SerializeObject(c_espExtraction);
+                colors["ESPDeathHead"] = JsonConvert.SerializeObject(c_espDeathHead);
+                colors["ESPTruck"] = JsonConvert.SerializeObject(c_espTruck);
+
+                settings["Theme"] = ThemeUtil.Name;
+                settings["Language"] = Language.ToString();
+                settings["MenuFontSize"] = i_menuFontSize.ToString();
+                settings["MenuWidth"] = i_menuWidth.ToString();
+                settings["MenuHeight"] = i_menuHeight.ToString();
+                settings["SliderWidth"] = i_sliderWidth.ToString();
+                settings["TextboxWidth"] = i_textboxWidth.ToString();
+                settings["MenuAlpha"] = f_menuAlpha.ToString();
+
+                cheatSettings["IsFirstLaunch"] = b_IsFirstLaunch.ToString();
+                cheatSettings["UseValuableTiers"] = b_useValuableTiers.ToString();
+                cheatSettings["PlayerESP"] = b_PlayerESP.ToString();
+                cheatSettings["EnemyESP"] = b_EnemyESP.ToString();
+                cheatSettings["ItemESP"] = b_ItemESP.ToString();
+                cheatSettings["CartESP"] = b_CartESP.ToString();
+                cheatSettings["ExtractionESP"] = b_ExtractionESP.ToString();
+                cheatSettings["DeathHeadESP"] = b_DeathHeadESP.ToString();
+                cheatSettings["TruckESP"] = b_TruckESP.ToString();
+                cheatSettings["DisplayMapObjects"] = b_DisplayMapObjects.ToString();
+                cheatSettings["DisplayDeathHeads"] = b_DeathHeadESP.ToString();
+                cheatSettings["DisplayPlayers"] = b_DisplayPlayers.ToString();
+                cheatSettings["DisplayEnemies"] = b_DisplayEnemies.ToString();
+
+                json["KeyBinds"] = JObject.FromObject(keybinds);
+                json["Toggles"] = JObject.FromObject(toggles);
+                json["Values"] = JObject.FromObject(values);
+                json["CheatSettings"] = cheatSettings;
+                json["Colors"] = colors;
+                json["MenuSettings"] = settings;
+
+                File.WriteAllText(conf, json.ToString());
+            }
+
+            public static void LoadConfig()
+            {
+                CreateConfigIfNotExists();
+
+                string jsonStr = File.ReadAllText(config);
+                JObject json = JObject.Parse(jsonStr);
+
+                Debug.Log("Loading Keybinds");
+                if (json.TryGetValue("KeyBinds", out JToken? keybindsToken))
+                {
+                    Cheat.instances.ForEach(c => c.keybind = c.defaultKeybind);
+                    Dictionary<string, string>? keybinds = keybindsToken.ToObject<Dictionary<string, string>>();
+                    if (keybinds != null)
+                    {
+                        foreach (KeyValuePair<string, string> keybind in keybinds)
+                        {
+                            Cheat.instances.Find(c => c.GetType().Name == keybind.Key).keybind = Enum.Parse<KeyCode>(keybind.Value);
+                        }
+                    }
+                }
+
+                Debug.Log("Loading Toggles");
+                if (json.TryGetValue("Toggles", out JToken? togglesToken))
+                {
+                    Dictionary<string, string>? toggles = togglesToken.ToObject<Dictionary<string, string>>();
+                    if (toggles != null)
+                    {
+                        foreach (KeyValuePair<string, string> toggle in toggles)
+                        {
+                            if (bool.TryParse(toggle.Value, out bool result) && result)
+                            {
+                                ToggleCheat? toggleCheat = Cheat.instances.OfType<ToggleCheat>().FirstOrDefault(c => c.GetType().Name == toggle.Key);
+                                if (toggleCheat != null && !toggleCheat.Enabled) toggleCheat.Toggle();
+                            }
+                        }
+                    }
+                }
+
+                Debug.Log("Loading Values");
+                if (json.TryGetValue("Values", out JToken? valuesToken))
+                {
+                    Dictionary<string, string>? values = valuesToken.ToObject<Dictionary<string, string>>();
+                    if (values != null)
+                    {
+                        foreach (KeyValuePair<string, string> value in values)
+                        {
+                            Cheat cheat = Cheat.instances.Find(c => c.GetType().Name == value.Key);
+                            if (cheat.GetType().GetInterface(typeof(IVariableCheat<>).FullName) != null)
+                            {
+                                FieldInfo valueField = cheat.GetType().GetField("Value", BindingFlags.Static | BindingFlags.Public);
+                                valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
+                            }
+                        }
+                    }
+                }
+
+                Debug.Log("Loading Cheat Settings");
+                if (json.TryGetValue("CheatSettings", out JToken? cSettingsToken))
+                {
+                    JObject? cheatSettings = cSettingsToken.ToObject<JObject>();
+
+                    if (cheatSettings != null)
+                    {
+                        if (cheatSettings.TryGetValue("IsFirstLaunch", out JToken? isFirstLaunchToken))
+                            b_IsFirstLaunch = bool.Parse(isFirstLaunchToken.ToString());
+                        if (cheatSettings.TryGetValue("UseValuableTiers", out JToken? useValuableTiersToken))
+                            b_useValuableTiers = bool.Parse(useValuableTiersToken.ToString());
+                        if (cheatSettings.TryGetValue("PlayerESP", out JToken? playerESPToken))
+                            b_PlayerESP = bool.Parse(playerESPToken.ToString());
+                        if (cheatSettings.TryGetValue("EnemyESP", out JToken? enemyESPToken))
+                            b_EnemyESP = bool.Parse(enemyESPToken.ToString());
+                        if (cheatSettings.TryGetValue("ItemESP", out JToken? itemESPToken))
+                            b_ItemESP = bool.Parse(itemESPToken.ToString());
+                        if (cheatSettings.TryGetValue("CartESP", out JToken? cartESPToken))
+                            b_CartESP = bool.Parse(cartESPToken.ToString());
+                        if (cheatSettings.TryGetValue("ExtractionESP", out JToken? extractionESPToken))
+                            b_ExtractionESP = bool.Parse(extractionESPToken.ToString());
+                        if (cheatSettings.TryGetValue("DeathHeadESP", out JToken? deathHeadESPToken))
+                            b_DeathHeadESP = bool.Parse(deathHeadESPToken.ToString());
+                        if (cheatSettings.TryGetValue("TruckESP", out JToken? truckESPToken))
+                            b_TruckESP = bool.Parse(truckESPToken.ToString());
+                        if (cheatSettings.TryGetValue("DisplayMapObjects", out JToken? displayMapObjectsToken))
+                            b_DisplayMapObjects = bool.Parse(displayMapObjectsToken.ToString());
+                        if (cheatSettings.TryGetValue("DisplayDeathHeads", out JToken? displayDeathHeadsToken))
+                            b_DisplayDeathHeads = bool.Parse(displayDeathHeadsToken.ToString());
+                        if (cheatSettings.TryGetValue("DisplayPlayers", out JToken? displayPlayersToken))
+                            b_DisplayPlayers = bool.Parse(displayPlayersToken.ToString());
+                        if (cheatSettings.TryGetValue("DisplayEnemies", out JToken? displayEnemiesToken))
+                            b_DisplayEnemies = bool.Parse(displayEnemiesToken.ToString());
+                    }
+                }
+
+                Debug.Log("Loading Colors");
+                if (json.TryGetValue("Colors", out JToken? colorsToken))
+                {
+                    JObject? colors = colorsToken.ToObject<JObject>();
+                    if (colors != null)
+                    {
+
+                        if (colors.TryGetValue("MenuText", out JToken? menuTextToken))
+                            c_menuText = JsonConvert.DeserializeObject<RGBAColor>(menuTextToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPPlayer", out JToken? espPlayerToken))
+                            c_espPlayer = JsonConvert.DeserializeObject<RGBAColor>(espPlayerToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPItem", out JToken? espItemToken))
+                            c_espItem = JsonConvert.DeserializeObject<RGBAColor>(espItemToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPEnemy", out JToken? espEnemyToken))
+                            c_espEnemy = JsonConvert.DeserializeObject<RGBAColor>(espEnemyToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPExtraction", out JToken? espExtractionToken))
+                            c_espExtraction = JsonConvert.DeserializeObject<RGBAColor>(espExtractionToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPDeathHead", out JToken? espDeatHeadToken))
+                            c_espDeathHead = JsonConvert.DeserializeObject<RGBAColor>(espDeatHeadToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPTruck", out JToken? espTruckToken))
+                            c_espTruck = JsonConvert.DeserializeObject<RGBAColor>(espTruckToken.ToString()) ?? RGBAColor.Default;
+                        if (colors.TryGetValue("ESPCart", out JToken? espCartToken))
+                            c_espCart = JsonConvert.DeserializeObject<RGBAColor>(espCartToken.ToString()) ?? RGBAColor.Default;
+                    }
+                }
+
+                Debug.Log("Loading Menu Settings");
+                if (json.TryGetValue("MenuSettings", out JToken? settingsToken))
+                {
+                    JObject? settings = settingsToken.ToObject<JObject>();
+                    if (settings != null)
+                    {
+                        if (settings.TryGetValue("Language", out JToken? languageToken))
+                            Language = languageToken.ToString() ?? "English";
+                        if (settings.TryGetValue("Theme", out JToken? themeToken))
+                            ThemeUtil.SetTheme(themeToken.ToString());
+                        if (settings.TryGetValue("MenuFontSize", out JToken? menuFontSizeToken))
+                            i_menuFontSize = int.Parse(menuFontSizeToken.ToString());
+                        if (settings.TryGetValue("MenuWidth", out JToken? menuWidthToken))
+                            i_menuWidth = int.Parse(menuWidthToken.ToString());
+                        if (settings.TryGetValue("MenuHeight", out JToken? menuHeightToken))
+                            i_menuHeight = int.Parse(menuHeightToken.ToString());
+                        if (settings.TryGetValue("SliderWidth", out JToken? sliderWidthToken))
+                            i_sliderWidth = int.Parse(sliderWidthToken.ToString());
+                        if (settings.TryGetValue("TextboxWidth", out JToken? textboxWidthToken))
+                            i_textboxWidth = int.Parse(textboxWidthToken.ToString());
+                        if (settings.TryGetValue("MenuAlpha", out JToken? menuAlphaToken))
+                            f_menuAlpha = float.Parse(menuAlphaToken.ToString());
+                    }
+                }
+            }
+
+            public static void OpenConfig()
+            {
+                CreateConfigIfNotExists();
+                Process.Start("explorer.exe", config);
+            }
+
+            public static void RegenerateConfig()
+            {
+                if (HasConfig()) File.Delete(config);
+                File.Copy(defaultConf, config);
+                Cheat.instances.ForEach(c => c.keybind = c.defaultKeybind);
+                LoadConfig();
+            }
+        }
+
+        internal class Changelog
+        {
+            public class Entry
+            {
+                public string? Version;
+                public string? Type;
+                public string? Name;
+                public string? Description;
+            }
+
+            public static List<Entry> entries = new List<Entry>();
+
+            public static void ReadChanges()
+            {
+                using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("REPOssessed.Resources.Changelog.json");
+                using StreamReader streamReader = new StreamReader(stream);
+                JObject? changelogObject = JObject.Parse(streamReader.ReadToEnd())["Changelog"] as JObject;
+                if (changelogObject != null)
+                {
+                    foreach (JProperty versionProperty in changelogObject.Properties())
+                    {
+                        foreach (JProperty typeProperty in ((JObject)versionProperty.Value).Properties())
+                        {
+                            foreach (JObject entry in ((JArray)typeProperty.Value))
+                            {
+                                entries.Add(new Entry
+                                {
+                                    Version = versionProperty.Name,
+                                    Type = typeProperty.Name,
+                                    Name = entry["Name"]?.ToString(),
+                                    Description = entry["Description"]?.ToString()
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

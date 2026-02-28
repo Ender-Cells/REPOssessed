@@ -1,0 +1,63 @@
+﻿using REPOssessed.Cheats.Core;
+using REPOssessed.Handler;
+using REPOssessed.Manager;
+using REPOssessed.Util;
+using System.Linq;
+using UnityEngine;
+
+namespace REPOssessed.Cheats.ServerTab
+{
+    internal class InfoDisplay : ToggleCheat
+    {
+        public InfoDisplay() : base() { }
+
+        public static void ToggleAll()
+        {
+            Settings.b_DisplayMapObjects = !Settings.b_DisplayMapObjects;
+            Settings.b_DisplayDeathHeads = !Settings.b_DisplayDeathHeads;
+            Settings.b_DisplayPlayers = !Settings.b_DisplayPlayers;
+            Settings.b_DisplayEnemies = !Settings.b_DisplayEnemies;
+        }
+
+
+        private static string info = "";
+        private void Format(string label, params object[] args) => info += $"{string.Format(TranslationUtil.Translate(label), args)}\n";
+
+        public override void OnGui()
+        {
+            info = "";
+
+            if (Settings.b_DisplayMapObjects) Format("Cheats.Info.DisplayMapObjects", GetMapObjectsCount(), GetMapObjectsValueCount());
+            if (Settings.b_DisplayDeathHeads) Format("Cheats.Info.DisplayDeathHeads", GetDeathHeadsCount());
+            if (Settings.b_DisplayPlayers) Format("Cheats.Info.DisplayPlayers", GetPlayersCount());
+            if (Settings.b_DisplayEnemies) Format("Cheats.Info.DisplayEnemies", GetEnemiesCount());
+
+            VisualUtil.DrawString(new Vector2(Screen.width - 200, 10), info, Settings.c_primary, false, false, false, Settings.i_menuFontSize);
+        }
+
+        private int GetEnemiesCount()
+        {
+            return GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).Count();
+        }
+
+        private int GetPlayersCount()
+        {
+            return GameObjectManager.players.Where(p => p != null && p.Handle() != null).Count();
+        }
+
+        private float GetMapObjectsValueCount()
+        {
+            return GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null && h.IsValuable()).Sum(h => h?.GetValue()) ?? 0f;
+        }
+
+        private int GetMapObjectsCount()
+        {
+            return GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null && h.IsValuable()).Count(); 
+        }
+
+        private int GetDeathHeadsCount()
+        {
+            return GameObjectManager.players.Select(p => p?.Handle()).Where(h => h != null && h.GetPlayerDeathHead() != null).Count();
+        }
+    }
+}
