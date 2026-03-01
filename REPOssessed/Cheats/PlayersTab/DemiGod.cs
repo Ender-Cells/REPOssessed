@@ -10,7 +10,6 @@ namespace REPOssessed.Cheats.PlayersTab
 {
     internal class DemiGod : ToggleCheat
     {
-        // ������ steamID �������, ��� ������� ������� DemiGod (���������� ����� ��������������)
         private static HashSet<string> DemiGodPlayers = new HashSet<string>();
 
         public static bool IsPlayerDemiGod(PlayerHandler? handler)
@@ -38,13 +37,10 @@ namespace REPOssessed.Cheats.PlayersTab
             else DemiGodPlayers.Add(steam);
         }
 
-        // ����������� � �������� ������� ����� � ����������� ���� "�����������" �������
         public override void Update()
         {
-            // ���� ����� �� � ������ � �� ������ ����
             if (DemiGodPlayers.Count == 0) return;
 
-            // ������� ������ �� �������/����������� �������:
             var currentSteam = GameObjectManager.players
                 .Where(p => p != null)
                 .Select(p => p.Handle())
@@ -53,13 +49,10 @@ namespace REPOssessed.Cheats.PlayersTab
                 .Where(s => !string.IsNullOrEmpty(s))
                 .ToHashSet();
 
-            // ������� �� steamID, ������� ��� ��� � ������� ������ �������
             DemiGodPlayers.RemoveWhere(s => !currentSteam.Contains(s));
 
-            // ���� ����� ������� ������ ������� � �������
             if (DemiGodPlayers.Count == 0) return;
 
-            // ����������� ���� �������, ��� steamID � ���������
             foreach (PlayerAvatar? p in GameObjectManager.players.Where(x => x != null))
             {
                 if (p == null) continue;

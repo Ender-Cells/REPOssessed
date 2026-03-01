@@ -3,6 +3,10 @@
     "1.0.2": {
       "Added": [
         {
+          "Name": "Hear Dead player",
+          "Description": "Just hear all dead player, yea..."
+        },
+        {
           "Name": "DemiGod",
           "Description": "Just auto heal for Player y selected"
         },

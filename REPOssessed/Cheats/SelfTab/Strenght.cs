@@ -20,14 +20,11 @@ namespace REPOssessed.Cheats.SelfTab
             PhysGrabObject? phys = GameObjectManager.LocalPlayer?.Handle()?.GetHeldPhysGrabObject();
             if (phys == null)
             {
-                Task.Delay(700);
                 return;
             }
             PhysGrabber? grab = player?.physGrabber;   
             if (grab == null)
             {
-                Debug.Log("phys grabber is null");
-                Task.Delay(500);
                 return;
             }
             Vector3 pos = grab.physGrabPointPullerPosition;
