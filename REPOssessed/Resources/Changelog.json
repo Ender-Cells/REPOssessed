@@ -27,6 +27,10 @@
         {
           "Name": "Destroy Object",
           "Description": "Now it works when you are not hosting, and you can also destroy everything(i mean button in server tab)."
+        },
+        {
+          "Name": "Kill enemy",
+          "Description": "Now it works when you are not hosting BUT the orb will spawn in your track"
         }
       ]
     },
