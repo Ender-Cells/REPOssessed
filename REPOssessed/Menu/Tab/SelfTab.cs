@@ -27,7 +27,7 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalGroup(ref scrollPos, () =>
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
-                UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<Hear_dead>());
+                UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());

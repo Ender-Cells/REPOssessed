@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace REPOssessed.Cheats.SelfTab
 {
-    internal class Hear_dead : ToggleCheat
+    internal class HearAllPlayer : ToggleCheat
     {
         public override void Update()
         {
