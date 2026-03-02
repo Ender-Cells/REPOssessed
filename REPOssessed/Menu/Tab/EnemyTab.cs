@@ -111,6 +111,8 @@ namespace REPOssessed.Menu.Tab
         {
             UI.Label("EnemyTab.GeneralActions", null, true, -1, true);
 
+            UI.Button(["EnemyTab.KillAll", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.Kill(noEnemyOrb)));
+            UI.Button(["EnemyTab.PermaKillAll", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.PermaKill()));
             UI.Checkbox("EnemyTab.NoEnemyOrb", ref noEnemyOrb);
             UI.Button(["EnemyTab.TeleportAllEnemies", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h =>
             {
