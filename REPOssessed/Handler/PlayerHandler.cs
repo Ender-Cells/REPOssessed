@@ -200,8 +200,13 @@ namespace REPOssessed.Handler
                 player.Reflect()?.SetValue("spawnRotation", rotation);
                 player.playerAvatarVisuals?.Reflect()?.SetValue("visualPosition", position);
             }
+            int count = 0;
             ForceTumble();
-            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true) { Task.Delay(100) ;}
+            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true && count < 10)
+            {
+                count = count + 1;
+                Task.Delay(200);
+            }
             PhysGrabObject? phys = player.tumble?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
             phys?.Teleport(position, rotation);
 

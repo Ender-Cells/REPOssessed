@@ -151,10 +151,11 @@ namespace REPOssessed.Menu.Tab
                 if (playerTransform != null) enemyHandler.Lure(playerTransform.position);
             });
             UI.Button("EnemyTab.TeleportToEnemy", () => GameObjectManager.LocalPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
+            UI.Button(["EnemyTab.TeleportEnemyToPlayer", "General.HostTag"], () =>
             {
                 Transform? playerTransform = selectedPlayer?.transform;
                 if (playerTransform != null) enemyHandler.Teleport(playerTransform.position);
-            };
+            });
             UI.Textbox(["EnemyTab.Damage", "General.HostTag"], ref damage, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Hurt(int.Parse(damage))));
             UI.Textbox(["EnemyTab.Heal", "General.HostTag"], ref heal, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Heal(int.Parse(heal))));
             UI.Textbox(["EnemyTab.Freeze", "General.HostTag"], ref freeze, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Freeze(int.Parse(freeze))));

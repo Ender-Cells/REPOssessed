@@ -43,26 +43,8 @@ namespace REPOssessed.Handler
                 enemy.Handle()?.enemyHealth?.spawnValuable = false;
                 NoEnemyOrbEnemies.Add(enemy);
             }
-            //Hurt(GetHealth());
-            //PhysGrabObject? phys = enemyRigidbody?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
-            //if (phys != null)
-            //{
-            //Rigidbody? rig = enemyRigidbody?.Reflect().GetValue<Rigidbody>("rb"); 
-            //if (rig == null) 
-            //{ 
-            //    Debug.Log("rig is null"); 
-            //    return; 
-            //}
-            //Vector3 pos_old = rig.position;
             Vector3 pos = new Vector3(0, -100, 0);
-            //phys.Teleport(pos, Quaternion.identity);
             enemy?.EnemyTeleported(pos);
-            //}
-            //else
-            //{
-            //    Debug.Log("phys is null");
-            //    return;
-            //}
         }
         public void Freeze(float time)
         {
@@ -71,7 +53,6 @@ namespace REPOssessed.Handler
         }
         public void PermaKill()
         {
-            //if (!GameUtil.IsMasterClient()) return;
             Kill(false);
             if (!PermaKilledEnemies.Contains(enemy)) PermaKilledEnemies.Add(enemy);
         }
