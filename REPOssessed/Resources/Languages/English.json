@@ -75,6 +75,8 @@
   "LootManager.IgnoreExtractionItems": "Ignore Extraction Items",
   "LootManager.TeleportAllItems": "Teleport All Items",
   "LootManager.Title": "Loot Manager",
+  "UpgradeManager.Title": "Upgrade Manager",
+  "UpgradeManager.UseAllUpgrades": "Use all upgrades (use twise)",
   "PlayersTab.Block": "Block",
   "PlayersTab.BlockRPCs": "Block RPCs",
   "PlayersTab.BreakHeldObject": "Break Held Object",

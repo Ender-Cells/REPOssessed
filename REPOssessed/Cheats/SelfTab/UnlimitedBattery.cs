@@ -1,4 +1,9 @@
-﻿
+﻿//using HarmonyLib;
+//using REPOssessed.Cheats.Core;
+//using REPOssessed.Handler;
+//using REPOssessed.Manager;
+//using REPOssessed.Util;
+
 //namespace REPOssessed.Cheats.SelfTab
 //{
 //    [HarmonyPatch]
@@ -10,7 +15,7 @@
 //            PhysGrabObject? physGrabObject = __instance.Reflect()?.GetValue<PhysGrabObject>("physGrabObject");
 //            if (!Instance<UnlimitedBattery>().Enabled || GameObjectManager.LocalPlayer?.Handle()?.GetHeldPhysGrabObject() != physGrabObject) return;
 //            ObjectHandler? objectHandler = physGrabObject?.Handle();
-//            objectHandler?.ChargeBattery(objectHandler.GetMaxBattery());
+//            objectHandler?.ChargeBattery(100);
 //        }
 //    }
 //}

@@ -3,6 +3,10 @@
     "1.0.2": {
       "Added": [
         {
+          "Name": "Upgrade Manager",
+          "Description": "Lets you use upgrades in the shop (you need use this twise idk why)"
+        },
+        {
           "Name": "Hear All player",
           "Description": "Just hear all player, yea..."
         },

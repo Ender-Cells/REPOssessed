@@ -16,6 +16,7 @@ namespace REPOssessed.Menu.Core
         public PopupMenu ItemManagerWindow = new ItemManagerWindow(2);
         public PopupMenu LootManagerWindow = new LootManagerWindow(3);
         public PopupMenu LevelManagerWindow = new LevelManagerWindow(4);
+        public PopupMenu UpgradeManagerWindow = new UpgradeManagerWindow(5);
 
         private Vector2 scrollPos = Vector2.zero;
         private int selectedTab = 1;
@@ -101,6 +102,7 @@ namespace REPOssessed.Menu.Core
                 ItemManagerWindow.Draw();
                 LootManagerWindow.Draw();
                 LevelManagerWindow.Draw();
+                UpgradeManagerWindow.Draw();
                 GUI.color = Color.white;
             }
             if (!Cursor.visible) Cursor.visible = true;

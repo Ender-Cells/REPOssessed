@@ -31,7 +31,7 @@ namespace REPOssessed.Handler
         public string GetName()
         {
             if (IsShopItem()) return itemAttributes?.item?.itemName ?? "Unknown";
-            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "") .Trim() ?? "Unknown";
+            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "").Trim() ?? "Unknown";
             int dash = name.IndexOf('-');
             return dash < 0 ? name : $"{name[(dash + 1)..].Trim()} {name[..dash].Trim()}";
         }
@@ -67,7 +67,6 @@ namespace REPOssessed.Handler
         public int GetMaxBattery() => StatsManager.instance?.GetBatteryLevel(itemAttributes?.Reflect()?.GetValue<string>("instanceName")) ?? 0;
         public void ChargeBattery(int chargeAmount)
         {
-            if (!GameUtil.IsMasterClient()) return; 
             itemBattery?.SetBatteryLife(chargeAmount);
         }
         public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false || (physGrabObject?.Reflect()?.GetValue<bool>("isPlayer") ?? false);
@@ -76,6 +75,7 @@ namespace REPOssessed.Handler
         public bool IsNonValuable() => physGrabObject?.Reflect().GetValue<bool>("isNonValuable") ?? false;
         public bool IsHinge() => physGrabObject?.Reflect().GetValue<bool>("hasHinge") ?? false;
         public bool IsCart() => physGrabObject?.Reflect().GetValue<bool>("isCart") ?? false;
+        public bool IsUpgrade() => physGrabObject?.GetComponentInParent<ItemUpgrade>() ?? false;
         public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<PhysGrabInCart.CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
         public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;
