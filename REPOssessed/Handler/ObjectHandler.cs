@@ -16,6 +16,7 @@ namespace REPOssessed.Handler
         public Trap? trap;
         public EnemyRigidbody? enemyRigidbody;
         public ItemBattery? itemBattery;
+        private PhotonView? photonview;
 
         public ObjectHandler(PhysGrabObject physGrabObject)
         {
@@ -26,6 +27,7 @@ namespace REPOssessed.Handler
             this.trap = physGrabObject?.GetComponent<Trap>();
             this.enemyRigidbody = physGrabObject?.GetComponent<EnemyRigidbody>();
             this.itemBattery = physGrabObject?.GetComponent<ItemBattery>();
+            this.photonview = itemBattery?.GetComponent<PhotonView>();
         }
 
         public string GetName()
@@ -64,10 +66,20 @@ namespace REPOssessed.Handler
             }
             valuableObject?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DollarValueSetRPC", RpcTarget.All, value);
         }
-        public int GetMaxBattery() => StatsManager.instance?.GetBatteryLevel(itemAttributes?.Reflect()?.GetValue<string>("instanceName")) ?? 0;
         public void ChargeBattery(int chargeAmount)
         {
-            itemBattery?.SetBatteryLife(chargeAmount);
+            if (!SemiFunc.IsMultiplayer())
+            {
+                itemBattery?.SetBatteryLife(chargeAmount);
+            }
+            else
+            {
+                int batteryBars = itemBattery.batteryBars;
+                float batteryLife = chargeAmount;
+                int batteryLifeInt = (int)Mathf.Round(batteryLife / (float)(100 / batteryBars));
+                batteryLifeInt = Mathf.Min(batteryLifeInt, batteryBars);
+                photonview?.RPC("BatteryFullPercentChangeRPC", RpcTarget.All, batteryLifeInt, false);
+            }
         }
         public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false || (physGrabObject?.Reflect()?.GetValue<bool>("isPlayer") ?? false);
         public bool IsEnemy() => enemyRigidbody != null || (physGrabObject?.Reflect()?.GetValue<bool>("isEnemy") ?? false);

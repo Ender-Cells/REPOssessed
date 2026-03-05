@@ -36,7 +36,7 @@ namespace REPOssessed.Menu.Tab
                 //UI.Checkbox("SelfTab.STR", Cheat.Instance<STR_patch>());
                 UI.Checkbox("SelfTab.NoTumble", Cheat.Instance<NoTumble>());
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
-                //UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());
+                UI.Checkbox(["SelfTab.UnlimitedBattery"], Cheat.Instance<UnlimitedBattery>());
                 UI.Checkbox("SelfTab.NoGunSpread", Cheat.Instance<NoGunSpread>());
                 UI.Checkbox("SelfTab.NoGunCooldown", Cheat.Instance<NoGunCooldown>());
                 UI.ToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1, 50);

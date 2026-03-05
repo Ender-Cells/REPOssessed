@@ -35,6 +35,10 @@
         {
           "Name": "Kill enemy",
           "Description": "Now it works when you are not hosting BUT the orb will spawn in your track"
+        },
+        {
+          "Name": "UnlimitedBattery",
+          "Description": "Now it works when you are not hosting(and fixed bug were its not change battery)"
         }
       ]
     },
