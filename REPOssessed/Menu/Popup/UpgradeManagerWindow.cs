@@ -68,11 +68,19 @@ namespace REPOssessed.Menu.Popup
                 }
                 if (toggle == null) return;
                 toggle.enabled = true;
+                PhotonView photon = item.GetComponent<PhotonView>();
+
                 int player = SemiFunc.PhotonViewIDPlayerAvatarLocal();
-                int count = 0;
                 if (toggle.enabled)
                 {
-                    toggle?.ToggleItem(true, player);
+                    if (!SemiFunc.IsMultiplayer())
+                    {
+                        toggle?.ToggleItem(true, player);
+                    }
+                    else
+                    {
+                        photon?.RPC("ToggleItemRPC", RpcTarget.All, true, player);
+                    }
                 }
             }
             catch (Exception e)

@@ -76,7 +76,7 @@
   "LootManager.TeleportAllItems": "Teleport All Items",
   "LootManager.Title": "Loot Manager",
   "UpgradeManager.Title": "Upgrade Manager",
-  "UpgradeManager.UseAllUpgrades": "Use all upgrades (use twise)",
+  "UpgradeManager.UseAllUpgrades": "Use all upgrades",
   "PlayersTab.Block": "Block",
   "PlayersTab.BlockRPCs": "Block RPCs",
   "PlayersTab.BreakHeldObject": "Break Held Object",
