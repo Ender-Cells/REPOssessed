@@ -1,10 +1,12 @@
-﻿using REPOssessed.Handler;
+﻿using REPOssessed.Cheats.PlayersTab;
+using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using UnityEngine;
-using REPOssessed.Cheats.PlayersTab;
 
 namespace REPOssessed.Menu.Tab
 {
@@ -58,6 +60,7 @@ namespace REPOssessed.Menu.Tab
             UI.Label("PlayersTab.PlayerActions", null, true, -1, true);
 
             UI.Label("PlayersTab.SteamId", selectedPlayerHandler.GetSteamID()?.ToString() ?? "0");
+            UI.Label("PlayersTab.ViewId", selectedPlayerHandler.photonView?.ViewID.ToString());
             UI.Label("PlayersTab.Status", selectedPlayerHandler.IsDead() ? "Dead" : "Alive");
             UI.Label("PlayersTab.Health", selectedPlayerHandler.GetHealth().ToString());
             UI.Label("PlayersTab.MaxHealth", selectedPlayerHandler.GetMaxHealth().ToString());
@@ -84,6 +87,25 @@ namespace REPOssessed.Menu.Tab
             UI.Button(["PlayersTab.BreakHeldObject"], () => objectHandler?.Break(false));
             UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
             UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
+            UI.Button("PlayersTab.DropItems", () =>
+            {
+                List<PhysGrabObject> items = GameObjectManager.items?.Where(i => i != null && i.Handle() is ObjectHandler h && (h.IsEquiped())).ToList() ?? new List<PhysGrabObject>();
+                Dictionary<string, List<PhysGrabObject>> groupedItems = items.GroupBy(i => i.Handle()?.GetName() ?? "Unknown").ToDictionary(g => g.Key, g => g.ToList());
+
+                List<PhysGrabObject>? phys_list = items?.Where(i => i != null).ToList();
+                PhysGrabObject phys = phys_list.Where(i => i != null).FirstOrDefault();
+                int equip_id = phys.GetComponent<ItemEquippable>().Reflect().GetValue<int>("ownerPlayerId");
+                items?.Where(i => i != null).ToList().ForEach(p => items?.ForEach(p =>
+                {
+                    var eq = p.GetComponent<ItemEquippable>();
+                    if (eq == null) return;
+
+                    if (eq.Reflect()?.GetValue<int>("ownerPlayerId") == selectedPlayerHandler.photonView.ViewID)
+                    {
+                        eq.RequestUnequip();
+                    }
+                }));
+            });
             if (!selectedPlayerHandler.IsLocalPlayer())
             {
                 UI.Button("PlayersTab.TeleportToPlayer", () =>

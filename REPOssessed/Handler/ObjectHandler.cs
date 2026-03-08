@@ -55,6 +55,27 @@ namespace REPOssessed.Handler
         }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
+        public bool IsEquippable() => physGrabObject?.GetComponent<ItemEquippable>() != null;
+        public bool IsEquiped() => physGrabObject?.GetComponent<ItemEquippable>()?.Reflect().GetValue<bool>("isEquipped") ?? false;
+        public bool IsEquipedByMe() 
+        {
+            if (!IsEquiped()) return false;
+            if (!SemiFunc.IsMultiplayer())
+            {
+                return IsEquiped();
+            }
+            int slot = physGrabObject.GetComponent<ItemEquippable>().Reflect().GetValue<int>("ownerPlayerId");
+            int id = GameObjectManager.LocalPlayer.photonView.ViewID;
+            if (slot == id)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
         public float GetValue() => valuableObject?.Reflect().GetValue<float>("dollarValueCurrent") ?? 0f;
         public void SetValue(float value)
         {

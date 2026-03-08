@@ -17,8 +17,7 @@ namespace REPOssessed.Cheats.SelfTab
             {
                 return;
             }
-            bool game = SemiFunc.RunIsLobbyMenu();
-            if (game == true)
+            if (SemiFunc.RunIsLobbyMenu())
             {
                 return;
             }
@@ -58,14 +57,29 @@ namespace REPOssessed.Cheats.SelfTab
                 {
                     continue;
                 }
+                PlayerDeathHead head = player.playerDeathHead;
                 bool isDead = player.Handle()?.IsDead() ?? false;
                 if (isDead)
                 {
-                    voice.ToggleMixer(true);
+                    if (head.Reflect().GetValue<bool>("spectated"))
+                    {
+                        voice.ToggleMixer(false);
+                    }
+                    else
+                    {
+                        voice.ToggleMixer(true);
+                    }
                 }
                 else
                 {
-                    voice.ToggleMixer(false);
+                    if (SemiFunc.RunIsLobbyMenu())
+                    {
+                        voice.ToggleMixer(true);
+                    }
+                    else
+                    {
+                        voice.ToggleMixer(false);
+                    }
                 }
             }
         }

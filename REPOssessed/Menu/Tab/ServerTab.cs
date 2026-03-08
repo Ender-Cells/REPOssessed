@@ -84,6 +84,7 @@ namespace REPOssessed.Menu.Tab
                 UI.Toggle("ItemManager.Title", ref HackMenu.Instance.ItemManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("LevelManager.Title", ref HackMenu.Instance.LevelManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("UpgradeManager.Title", ref HackMenu.Instance.UpgradeManagerWindow.isOpen, "General.Open", "General.Close");
+                UI.Toggle("EquipManager.Title", ref HackMenu.Instance.EquipManagerWindow.isOpen, "General.Open", "General.Close");
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 

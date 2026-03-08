@@ -3,6 +3,14 @@
     "1.0.2": {
       "Added": [
         {
+          "Name": "Equip Manager",
+          "Description": "Equip manager allow y to equip item AND steal iteams for other player Inventory",
+        },
+        {
+          "Name": "Drop Items",
+          "Description": "selected player will drop all equiped items"
+        },
+        {
           "Name": "Upgrade Manager",
           "Description": "Lets you use upgrades in the shop"
         },
