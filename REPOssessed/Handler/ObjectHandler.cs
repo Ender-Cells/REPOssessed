@@ -77,6 +77,7 @@ namespace REPOssessed.Handler
             
         }
         public float GetValue() => valuableObject?.Reflect().GetValue<float>("dollarValueCurrent") ?? 0f;
+        public float GetOriginalValue() => valuableObject?.Reflect().GetValue<float>("dollarValueOriginal") ?? 0f;
         public void SetValue(float value)
         {
             if (!GameUtil.IsMasterClient() || !IsValuable()) return;

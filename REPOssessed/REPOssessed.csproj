@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Remove="Resources\Changelog.json" />
     <None Remove="Resources\0Harmony.dll" />
+    <None Remove="Resources\Languages\Russian.json" />
     <None Remove="Resources\Newtonsoft.Json.dll" />
     <None Remove="Resources\Theme\Blue.skin" />
     <None Remove="Resources\Theme\Default.skin" />
@@ -28,6 +29,7 @@
     <EmbeddedResource Include="Resources\Changelog.json" />
     <EmbeddedResource Include="Resources\Languages\English.json" />
     <EmbeddedResource Include="Resources\0Harmony.dll" />
+    <EmbeddedResource Include="Resources\Languages\Russian.json" />
     <EmbeddedResource Include="Resources\Newtonsoft.Json.dll" />
     <EmbeddedResource Include="Resources\Theme\Blue.skin" />
     <EmbeddedResource Include="Resources\Theme\Default.skin" />

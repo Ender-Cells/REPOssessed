@@ -1,13 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using REPOssessed.Handler;
+﻿using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

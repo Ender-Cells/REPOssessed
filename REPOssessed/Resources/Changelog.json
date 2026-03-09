@@ -3,6 +3,10 @@
     "1.0.2": {
       "Added": [
         {
+          "Name": "Invincible items",
+          "Description": "auto heal items and variation for all items"
+        },
+        {
           "Name": "Equip Manager",
           "Description": "Equip manager allow y to equip item AND steal iteams for other player Inventory",
         },

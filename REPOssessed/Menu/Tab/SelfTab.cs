@@ -31,6 +31,8 @@ namespace REPOssessed.Menu.Tab
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());
+                UI.Checkbox("SelfTab.GODitems", Cheat.Instance<GODitems>());
+                UI.Checkbox("SelfTab.AllItemsGOD", Cheat.Instance<AllItemsGOD>());
                 //UI.Checkbox("SelfTab.Invis", Cheat.Instance<Invis>());
                 UI.Checkbox("SelfTab.Strength", Cheat.Instance<Strength>());
                 //UI.Checkbox("SelfTab.STR", Cheat.Instance<STR_patch>());

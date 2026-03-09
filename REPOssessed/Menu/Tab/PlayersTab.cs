@@ -5,7 +5,6 @@ using REPOssessed.Menu.Core;
 using REPOssessed.Util;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using UnityEngine;
 
 namespace REPOssessed.Menu.Tab
@@ -72,7 +71,7 @@ namespace REPOssessed.Menu.Tab
 
             bool isDemi = DemiGod.IsPlayerDemiGod(selectedPlayerHandler);
             bool newVal = isDemi;
-            UI.Checkbox("DemiGod", ref newVal);
+            UI.Checkbox("PlayersTab.DemiGod", ref newVal);
             if (newVal != isDemi)
             {
                 DemiGod.SetPlayerDemiGod(selectedPlayerHandler, newVal);
