@@ -17,6 +17,7 @@ namespace REPOssessed.Menu.Tab
         private Vector2 scrollPos3 = Vector2.zero;
         private Vector2 scrollPos4 = Vector2.zero;
         private string currency = "3000";
+        private string Time = "10";
 
         public override void Draw()
         {
@@ -43,6 +44,12 @@ namespace REPOssessed.Menu.Tab
                 }));
                 UI.Button(["ServerTab.BreakAllObjects", "General.HostTag"], () => GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.Break(false)));
                 UI.Button(["ServerTab.ForceThiefPunishment", "General.HostTag"], () => Cheat.Instance<ForceThiefPunishment>().Execute());
+                UI.Textbox("ServerTab.WizardStaff", ref Time, @"[^0-9]", 10, new UIButton("General.Set", () =>
+                {
+                    WizardStaff.time = int.Parse(Time);
+                    Cheat.Instance<WizardStaff>().Execute();
+                }));
+                UI.Button("ServerTab.RubberDuck", () => Cheat.Instance<RubberDuck>().Execute());
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 
@@ -85,6 +92,7 @@ namespace REPOssessed.Menu.Tab
                 UI.Toggle("LevelManager.Title", ref HackMenu.Instance.LevelManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("UpgradeManager.Title", ref HackMenu.Instance.UpgradeManagerWindow.isOpen, "General.Open", "General.Close");
                 UI.Toggle("EquipManager.Title", ref HackMenu.Instance.EquipManagerWindow.isOpen, "General.Open", "General.Close");
+                UI.Toggle("BatteryManager.Title", ref HackMenu.Instance.BatteryManagerWindow.isOpen, "General.Open", "General.Close");
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 

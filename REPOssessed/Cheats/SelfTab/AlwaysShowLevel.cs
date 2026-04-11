@@ -6,7 +6,7 @@ namespace REPOssessed.Cheats.SelfTab
 {
     internal class AlwaysShowLevel : ToggleCheat
     {
-        public override void OnGui()
+        public override void Updade()
         {
             if (!Enabled) return;
             string levelsCompleted = $"LEVEL {RunManager.instance?.levelsCompleted + 1 ?? 0}";

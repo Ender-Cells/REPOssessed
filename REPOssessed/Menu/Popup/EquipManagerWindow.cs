@@ -1,4 +1,6 @@
-﻿using REPOssessed.Handler;
+﻿using REPOssessed.Cheats.Core;
+using REPOssessed.Cheats.SelfTab;
+using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
@@ -61,11 +63,21 @@ namespace REPOssessed.Menu.Popup
             if (!Inventory.instance.IsSpotOccupied(free_slot))
             {
                 equip?.RequestEquip(free_slot, SemiFunc.PhotonViewIDPlayerAvatarLocal());
-            }
+            }        
         }
         private static void Unequip()
         {
+            bool loose = false;
+            if (Cheat.Instance<DontLooseItems>().Enabled)
+            {
+                Cheat.Instance<DontLooseItems>().Enabled = false;
+                loose = true;
+            }
             Inventory.instance?.ForceUnequip();
+            if (loose)
+            {
+                Cheat.Instance<DontLooseItems>().Enabled = true;
+            }
         }
     }
 }

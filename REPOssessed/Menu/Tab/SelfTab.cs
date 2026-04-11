@@ -27,7 +27,13 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalGroup(ref scrollPos, () =>
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
+                //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
+                UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
                 UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
+                UI.Checkbox("SelfTab.DontLooseItems", Cheat.Instance<DontLooseItems>());
+                //UI.Checkbox("SelfTab.Jackpot_auto", Cheat.Instance<Jackpot_auto>());
+                //UI.Textbox("SelfTab.Jackpot.User", ref Jackpot_auto.Id_string, @"[^0-9]", 100);
+                //UI.Select("SelfTab.JackpotPrize", ref SettingsTab.i_prizeIndex, Jackpot_auto.prizes.Select(x => new UIOption(x, () => Jackpot_auto.prize = x)).ToArray());
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());
@@ -49,6 +55,8 @@ namespace REPOssessed.Menu.Tab
                 UI.ToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 50f);
                 UI.ToggleSlider(Cheat.Instance<SuperSpeed>(), "SelfTab.SuperSpeed", SuperSpeed.Value.ToString("F1"), ref SuperSpeed.Value, 5f, 100f);
                 UI.Checkbox("SelfTab.UnlimitedDeathHeadEnergy", Cheat.Instance<UnlimitedDeathHeadEnergy>());
+                //UI.Checkbox(["SelfTab.ValueSet", "General.HostTag"], Cheat.Instance<ValueSeter>());
+                //UI.Textbox("SelfTab.ValueSet.NewValue", ref ValueSeter.STRValue, @"[^0-9]", 100);
                 UI.Checkbox(["SelfTab.NameSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<NameSpoofer>());
                 UI.Textbox("SelfTab.SpoofedName", ref NameSpoofer.Value, "", 100);
                 UI.Checkbox(["SelfTab.SteamIDSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<SteamIDSpoofer>());

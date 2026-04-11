@@ -162,16 +162,9 @@ namespace REPOssessed.Handler
         }
  
         public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() : photonPlayer?.IsMasterClient ?? false;
+        public void PhysDisable() => player.physGrabber?.OverrideGrabRelease(0, 1);
+        
         public void Heal(int amount) => player.playerHealth?.HealOther(amount, false);
-
-        //public void DemiGod()
-        //{
-        //    if (GetHealth() != GetMaxHealth())
-        //    { 
-        //        Heal(GetMaxHealth() - GetHealth());
-        //    }
-            
-        //}
         public void Hurt(int amount)
         {
             if (!GameUtil.IsMasterClient() && !IsLocalPlayer()) return;

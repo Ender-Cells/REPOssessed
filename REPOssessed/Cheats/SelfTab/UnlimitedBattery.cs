@@ -15,6 +15,7 @@ namespace REPOssessed.Cheats.SelfTab
             PhysGrabObject? physGrabObject = __instance.Reflect()?.GetValue<PhysGrabObject>("physGrabObject");
             if (!Instance<UnlimitedBattery>().Enabled || GameObjectManager.LocalPlayer?.Handle()?.GetHeldPhysGrabObject() != physGrabObject) return;
             ObjectHandler? objectHandler = physGrabObject?.Handle();
+            if (physGrabObject?.GetComponent<ItemBattery>().batteryBars == physGrabObject?.GetComponent<ItemBattery>().Reflect().GetValue<int>("currentBars")) return;
             objectHandler?.ChargeBattery(100);
         }
     }

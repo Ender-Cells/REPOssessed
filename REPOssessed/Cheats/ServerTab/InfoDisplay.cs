@@ -23,7 +23,7 @@ namespace REPOssessed.Cheats.ServerTab
         private static string info = "";
         private void Format(string label, params object[] args) => info += $"{string.Format(TranslationUtil.Translate(label), args)}\n";
 
-        public override void OnGui()
+        public override void Updade()
         {
             info = "";
 

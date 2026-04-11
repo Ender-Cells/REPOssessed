@@ -58,6 +58,12 @@
     <Reference Include="PhotonUnityNetworking">
       <HintPath>Resources\BaseGame\PhotonUnityNetworking.dll</HintPath>
     </Reference>
+    <Reference Include="RepoCasino">
+      <HintPath>D:\ProgramFiles\Gale\repo\profiles\Default\BepInEx\plugins\y_meny_IJJu3a-RepoCasino\RepoCasino.dll</HintPath>
+    </Reference>
+    <Reference Include="REPOGambling">
+      <HintPath>D:\ProgramFiles\Gale\repo\profiles\Default\BepInEx\plugins\DirtyGames-REPOGambling\REPOGambling.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>Resources\BaseGame\Unity.InputSystem.dll</HintPath>
     </Reference>

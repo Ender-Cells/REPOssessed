@@ -55,6 +55,7 @@ namespace REPOssessed.Handler
         }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
+        public bool HasBattery() => physGrabObject?.GetComponent<ItemBattery>() != null;
         public bool IsEquippable() => physGrabObject?.GetComponent<ItemEquippable>() != null;
         public bool IsEquiped() => physGrabObject?.GetComponent<ItemEquippable>()?.Reflect().GetValue<bool>("isEquipped") ?? false;
         public bool IsEquipedByMe() 

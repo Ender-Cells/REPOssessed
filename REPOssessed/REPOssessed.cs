@@ -106,7 +106,7 @@ namespace REPOssessed
                     }
                     if (Cheat.Instance<DebugMode>().Enabled) VisualUtil.DrawString(new Vector2(5f, 20f), "[DEBUG MODE]", new RGBAColor(50, 205, 50, 1f), false, false, true, 10);
                 }
-                if (GameUtil.IsInGame()) cheats?.Where(c => c.Enabled).ToList().ForEach(c => c.OnGui());
+                if (GameUtil.IsInGame()) cheats?.Where(c => c.Enabled).ToList().ForEach(c => c.Updade());
                 hackMenu?.Draw();
             }
             catch (Exception e)

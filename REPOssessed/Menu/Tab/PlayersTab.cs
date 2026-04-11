@@ -1,4 +1,7 @@
-﻿using REPOssessed.Cheats.PlayersTab;
+﻿using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
+using REPOssessed.Cheats.PlayersTab;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
@@ -68,16 +71,9 @@ namespace REPOssessed.Menu.Tab
             UI.Label("PlayersTab.Crowned", selectedPlayerHandler.IsCrowned().ToString());
             UI.Button("PlayersTab.OpenProfile", () => Application.OpenURL($"https://steamcommunity.com/profiles/{selectedPlayerHandler.GetSteamID()}"));
             UI.Button("PlayersTab.Heal", () => selectedPlayerHandler.Heal(selectedPlayerHandler.GetMaxHealth()));
-
-            bool isDemi = DemiGod.IsPlayerDemiGod(selectedPlayerHandler);
-            bool newVal = isDemi;
-            UI.Checkbox("PlayersTab.DemiGod", ref newVal);
-            if (newVal != isDemi)
-            {
-                DemiGod.SetPlayerDemiGod(selectedPlayerHandler, newVal);
-            }
-
+            UI.Button("PlayersTab.DemiGod", () => DemiGod.SetPlayerDemiGod(selectedPlayerHandler, !DemiGod.IsPlayerDemiGod(selectedPlayerHandler)), DemiGod.IsPlayerDemiGod(selectedPlayerHandler) ? "PlayersTab.DemiGod.Disable" : "PlayersTab.DemiGod.Enable");
             UI.Button(["PlayersTab.Crown", "General.HostTag"], () => selectedPlayerHandler.Crown());
+            UI.Button("PlayersTab.PhysDisabler", () => PhysDisable.SetPlayerPhys(selectedPlayerHandler, !PhysDisable.IsPlayerPhys(selectedPlayerHandler)), PhysDisable.IsPlayerPhys(selectedPlayerHandler) ? "PlayersTab.PhysDisabler.Disable" : "PlayersTab.PhysDisabler.Enable");
             UI.Button(["PlayersTab.Kill", "General.HostOrLocalTag"], () => selectedPlayerHandler.Kill());
             UI.Button(["PlayersTab.Revive", "General.HostTag"], () => selectedPlayerHandler.RevivePlayer());
             UI.Button("PlayersTab.ForceTumble", () => selectedPlayerHandler.ForceTumble());
@@ -118,6 +114,7 @@ namespace REPOssessed.Menu.Tab
                     if (transform != null) selectedPlayerHandler.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
                 UI.Button("PlayersTab.BlockRPCs", () => selectedPlayerHandler.ToggleRPCBlock(), selectedPlayerHandler.IsRPCBlocked() ? "PlayersTab.Unblock" : "PlayersTab.Block");
+                
                 UI.Button("PlayersTab.Glitch", () => selectedPlayerHandler.glitch());
             }
         }

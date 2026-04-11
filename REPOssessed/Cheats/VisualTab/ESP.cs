@@ -13,7 +13,7 @@ namespace REPOssessed.Cheats.VisualTab
     {
         public static float Value = 5000f;
 
-        public override void OnGui()
+        public override void Updade()
         {
             if (!Enabled) return;
             try

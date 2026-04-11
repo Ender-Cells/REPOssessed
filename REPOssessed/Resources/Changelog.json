@@ -1,7 +1,32 @@
+
 {
   "Changelog": {
     "1.0.2": {
       "Added": [
+        {
+          "Name": "Phys Disable on player",
+          "Description": "Disables physgrabber for the selected player"
+        },
+        {
+          "Name": "Rubber Duck and Wizzrad Staff RPC",
+          "Description": "Expload duck, shoot whith Wizzrad Staff (exload/shoot the one in your hands or the ones on the map)"
+        },
+        {
+          "Name": "Save item on death",
+          "Description": "You dont gona loose items on death"
+        },
+        {
+          "Name": "Super Melle",
+          "Description": "Just spamm swing (Host Only)"
+        },
+        {
+          "Name": "Mods support (RepoCasino and REPOGambling)",
+          "Description": "For whell and ruolette, mb im gona change this in future"
+        },
+        {
+          "Name": "Battery Manager",
+          "Description": "Allows to charge specific tool"
+        },
         {
           "Name": "Invincible items",
           "Description": "auto heal items and variation for all items"

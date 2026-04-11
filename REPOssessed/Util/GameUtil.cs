@@ -84,7 +84,7 @@ namespace REPOssessed.Util
 
         public static bool IsInGame()
         {
-            return !SemiFunc.IsMainMenu() && !SemiFunc.RunIsLobby();
+            return !SemiFunc.IsMainMenu() && !SemiFunc.RunIsLobbyMenu();
         }
 
         public static bool IsMasterClient()

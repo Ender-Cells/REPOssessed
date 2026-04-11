@@ -19,6 +19,7 @@ namespace REPOssessed.Menu.Tab
 
         private int i_languageIndex = -1;
         private int i_themeIndex = -1;
+        public static int i_prizeIndex = 0;
 
         private string s_kbSearch = "";
 
