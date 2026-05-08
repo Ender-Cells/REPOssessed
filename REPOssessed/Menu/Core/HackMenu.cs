@@ -16,6 +16,9 @@ namespace REPOssessed.Menu.Core
         public PopupMenu ItemManagerWindow = new ItemManagerWindow(2);
         public PopupMenu LootManagerWindow = new LootManagerWindow(3);
         public PopupMenu LevelManagerWindow = new LevelManagerWindow(4);
+        public PopupMenu UpgradeManagerWindow = new UpgradeManagerWindow(5);
+        public PopupMenu EquipManagerWindow = new EquipManagerWindow(6);
+        public PopupMenu BatteryManagerWindow = new BatteryManagerWindow(7);
 
         private Vector2 scrollPos = Vector2.zero;
         private int selectedTab = 1;
@@ -34,6 +37,7 @@ namespace REPOssessed.Menu.Core
             tabs.Add(new GeneralTab());
             tabs.Add(new SelfTab());
             tabs.Add(new VisualTab());
+            tabs.Add(new REPOGabling());
             tabs.Add(new PlayersTab());
             tabs.Add(new EnemyTab());
             tabs.Add(new ServerTab());
@@ -101,6 +105,9 @@ namespace REPOssessed.Menu.Core
                 ItemManagerWindow.Draw();
                 LootManagerWindow.Draw();
                 LevelManagerWindow.Draw();
+                UpgradeManagerWindow.Draw();
+                EquipManagerWindow.Draw();
+                BatteryManagerWindow.Draw();
                 GUI.color = Color.white;
             }
             if (!Cursor.visible) Cursor.visible = true;

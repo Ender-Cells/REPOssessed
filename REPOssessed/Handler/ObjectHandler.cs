@@ -16,6 +16,7 @@ namespace REPOssessed.Handler
         public Trap? trap;
         public EnemyRigidbody? enemyRigidbody;
         public ItemBattery? itemBattery;
+        private PhotonView? photonview;
 
         public ObjectHandler(PhysGrabObject physGrabObject)
         {
@@ -26,25 +27,21 @@ namespace REPOssessed.Handler
             this.trap = physGrabObject?.GetComponent<Trap>();
             this.enemyRigidbody = physGrabObject?.GetComponent<EnemyRigidbody>();
             this.itemBattery = physGrabObject?.GetComponent<ItemBattery>();
+            this.photonview = itemBattery?.GetComponent<PhotonView>();
         }
 
         public string GetName()
         {
             if (IsShopItem()) return itemAttributes?.item?.itemName ?? "Unknown";
-            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "") .Trim() ?? "Unknown";
+            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "").Trim() ?? "Unknown";
             int dash = name.IndexOf('-');
             return dash < 0 ? name : $"{name[(dash + 1)..].Trim()} {name[..dash].Trim()}";
         }
 
         public void Break(bool effects)
         {        
-            if (!GameUtil.IsMasterClient() || IsEnemy() || IsPlayer()) return;
-            if (!SemiFunc.IsMultiplayer())
-            {
-                physGrabObjectImpactDetector?.DestroyObjectRPC(effects);
-                return;
-            }
-            physGrabObjectImpactDetector?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DestroyObjectRPC", RpcTarget.All, effects);
+            if (IsEnemy() || IsPlayer()) return;
+            physGrabObject?.DestroyPhysGrabObject();
         }
         public void Damage(int valueLost, int breakLevel = 1, bool loseValue = true)
         {
@@ -58,7 +55,30 @@ namespace REPOssessed.Handler
         }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
+        public bool HasBattery() => physGrabObject?.GetComponent<ItemBattery>() != null;
+        public bool IsEquippable() => physGrabObject?.GetComponent<ItemEquippable>() != null;
+        public bool IsEquiped() => physGrabObject?.GetComponent<ItemEquippable>()?.Reflect().GetValue<bool>("isEquipped") ?? false;
+        public bool IsEquipedByMe() 
+        {
+            if (!IsEquiped()) return false;
+            if (!SemiFunc.IsMultiplayer())
+            {
+                return IsEquiped();
+            }
+            int slot = physGrabObject.GetComponent<ItemEquippable>().Reflect().GetValue<int>("ownerPlayerId");
+            int id = GameObjectManager.LocalPlayer.photonView.ViewID;
+            if (slot == id)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
         public float GetValue() => valuableObject?.Reflect().GetValue<float>("dollarValueCurrent") ?? 0f;
+        public float GetOriginalValue() => valuableObject?.Reflect().GetValue<float>("dollarValueOriginal") ?? 0f;
         public void SetValue(float value)
         {
             if (!GameUtil.IsMasterClient() || !IsValuable()) return;
@@ -69,11 +89,20 @@ namespace REPOssessed.Handler
             }
             valuableObject?.Reflect()?.GetValue<PhotonView>("photonView")?.RPC("DollarValueSetRPC", RpcTarget.All, value);
         }
-        public int GetMaxBattery() => StatsManager.instance?.GetBatteryLevel(itemAttributes?.Reflect()?.GetValue<string>("instanceName")) ?? 0;
         public void ChargeBattery(int chargeAmount)
         {
-            if (!GameUtil.IsMasterClient()) return; 
-            itemBattery?.SetBatteryLife(chargeAmount);
+            if (!SemiFunc.IsMultiplayer())
+            {
+                itemBattery?.SetBatteryLife(chargeAmount);
+            }
+            else
+            {
+                int batteryBars = itemBattery.batteryBars;
+                float batteryLife = chargeAmount;
+                int batteryLifeInt = (int)Mathf.Round(batteryLife / (float)(100 / batteryBars));
+                batteryLifeInt = Mathf.Min(batteryLifeInt, batteryBars);
+                photonview?.RPC("BatteryFullPercentChangeRPC", RpcTarget.All, batteryLifeInt, false);
+            }
         }
         public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false || (physGrabObject?.Reflect()?.GetValue<bool>("isPlayer") ?? false);
         public bool IsEnemy() => enemyRigidbody != null || (physGrabObject?.Reflect()?.GetValue<bool>("isEnemy") ?? false);
@@ -81,6 +110,7 @@ namespace REPOssessed.Handler
         public bool IsNonValuable() => physGrabObject?.Reflect().GetValue<bool>("isNonValuable") ?? false;
         public bool IsHinge() => physGrabObject?.Reflect().GetValue<bool>("hasHinge") ?? false;
         public bool IsCart() => physGrabObject?.Reflect().GetValue<bool>("isCart") ?? false;
+        public bool IsUpgrade() => physGrabObject?.GetComponentInParent<ItemUpgrade>() ?? false;
         public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<PhysGrabInCart.CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
         public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;

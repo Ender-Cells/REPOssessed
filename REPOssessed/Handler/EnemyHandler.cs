@@ -43,7 +43,8 @@ namespace REPOssessed.Handler
                 enemy.Handle()?.enemyHealth?.spawnValuable = false;
                 NoEnemyOrbEnemies.Add(enemy);
             }
-            Hurt(GetHealth());
+            Vector3 pos = new Vector3(0, -100, 0);
+            enemy?.EnemyTeleported(pos);
         }
         public void Freeze(float time)
         {
@@ -52,18 +53,15 @@ namespace REPOssessed.Handler
         }
         public void PermaKill()
         {
-            if (!GameUtil.IsMasterClient()) return;
             Kill(false);
             if (!PermaKilledEnemies.Contains(enemy)) PermaKilledEnemies.Add(enemy);
         }
         public void Lure(Vector3 position)
         {
-            if (!GameUtil.IsMasterClient()) return;
             enemyNavMeshAgent?.SetDestination(position);
         }
         public void Teleport(Vector3 position)
         {
-            if (!GameUtil.IsMasterClient()) return;
             enemy.EnemyTeleported(position);
         }
         public bool IsDisabled() => (!enemyParent?.EnableObject?.activeSelf ?? false) || (!enemyParent.Reflect()?.GetValue<bool>("Spawned") ?? false);

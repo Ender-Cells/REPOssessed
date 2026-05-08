@@ -7,7 +7,7 @@ namespace REPOssessed.Cheats.SelfTab
     {
         public override void Update()
         {
-            if (!Enabled || !GameUtil.IsMasterClient()) return;
+            if (!Enabled) return;
             PlayerController.instance?.DebugNoTumble = true;
         }
 

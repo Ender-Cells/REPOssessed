@@ -22,7 +22,7 @@ namespace REPOssessed.Cheats.Core
         public ToggleCheat(KeyCode defaultKeybind) : base(defaultKeybind) { }
 
         public virtual void Toggle() => Enabled = !Enabled;
-        public virtual void OnGui() { }
+        public virtual void Updade() { }
         public virtual void Update() { }
         public virtual void FixedUpdate() { }
         public virtual void OnEnable() { }

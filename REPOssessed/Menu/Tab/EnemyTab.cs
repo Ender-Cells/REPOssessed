@@ -28,7 +28,7 @@ namespace REPOssessed.Menu.Tab
         private string heal = "10";
         private string freeze = "5";
         public List<EnemySetup> enemySetups = new List<EnemySetup>();
-        private bool noEnemyOrb = true;
+        private bool noEnemyOrb = false;
 
         private PlayerAvatar? selectedPlayer => PlayersTab.selectedPlayer;
 
@@ -111,10 +111,10 @@ namespace REPOssessed.Menu.Tab
         {
             UI.Label("EnemyTab.GeneralActions", null, true, -1, true);
 
-            UI.Button(["EnemyTab.KillAll", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.Kill(noEnemyOrb)));
-            UI.Button(["EnemyTab.PermaKillAll", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.PermaKill()));
+            UI.Button(["EnemyTab.KillAll"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.Kill(noEnemyOrb)));
+            UI.Button(["EnemyTab.PermaKillAll"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h => h?.PermaKill()));
             UI.Checkbox("EnemyTab.NoEnemyOrb", ref noEnemyOrb);
-            UI.Button(["EnemyTab.TeleportAllEnemies", "General.HostTag"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h =>
+            UI.Button(["EnemyTab.TeleportAllEnemies"], () => GameObjectManager.enemies.Select(e => e?.Handle()).Where(h => h != null && !h.IsDead() && !h.IsDisabled()).ToList().ForEach(h =>
             {
                 Transform? playerTransform = selectedPlayer?.transform;
                 if (playerTransform != null) h?.Teleport(playerTransform.position);
@@ -140,20 +140,20 @@ namespace REPOssessed.Menu.Tab
             UI.Label("EnemyTab.Health", enemyHandler.GetHealth().ToString());
             UI.Label("EnemyTab.MaxHealth", enemyHandler.GetMaxHealth().ToString());
             UI.Label("EnemyTab.EnemyTarget", enemyHandler.GetEnemyTarget()?.Handle()?.GetName() ?? TranslationUtil.Translate("General.None"));
-            UI.Button(["EnemyTab.Kill", "General.HostTag"], () => enemyHandler.Kill(noEnemyOrb));
-            UI.Button(["EnemyTab.PermaKill", "General.HostTag"], () => enemyHandler.PermaKill());
+            UI.Button(["EnemyTab.Kill"], () => enemyHandler.Kill(noEnemyOrb));
+            UI.Button(["EnemyTab.PermaKill"], () => enemyHandler.PermaKill());
             UI.Button(["EnemyTab.Lure", "General.HostTag"], () =>
             {
                 Transform? playerTransform = selectedPlayer?.transform;
                 if (playerTransform != null) enemyHandler.Lure(playerTransform.position);
             });
             UI.Button("EnemyTab.TeleportToEnemy", () => GameObjectManager.LocalPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
-            UI.Button(["EnemyTab.TeleportEnemyToPlayer", "General.HostTag"], () =>
+            UI.Button(["EnemyTab.TeleportEnemyToPlayer"], () =>
             {
                 Transform? playerTransform = selectedPlayer?.transform;
                 if (playerTransform != null) enemyHandler.Teleport(playerTransform.position);
             });
-            UI.Button(["EnemyTab.TeleportPlayerToEnemy", "General.HostOrLocalTag"], () => selectedPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
+            UI.Button(["EnemyTab.TeleportPlayerToEnemy"], () => selectedPlayer?.Handle()?.Teleport(enemyTransform.position, enemyTransform.rotation));
             UI.Textbox(["EnemyTab.Damage", "General.HostTag"], ref damage, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Hurt(int.Parse(damage))));
             UI.Textbox(["EnemyTab.Heal", "General.HostTag"], ref heal, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Heal(int.Parse(heal))));
             UI.Textbox(["EnemyTab.Freeze", "General.HostTag"], ref freeze, @"[^0-9]", 3, new UIButton("General.Set", () => enemyHandler.Freeze(int.Parse(freeze))));

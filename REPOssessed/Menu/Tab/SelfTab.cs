@@ -1,4 +1,5 @@
 using REPOssessed.Cheats.Core;
+using REPOssessed.Cheats.PlayersTab;
 using REPOssessed.Cheats.SelfTab;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
@@ -27,22 +28,37 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalGroup(ref scrollPos, () =>
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
+                //UI.Button("SelfTab.ReviveOnClient", () => Cheat.Instance<Revive>().Execute());
+                //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
+                UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
+                UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
+                UI.Checkbox("SelfTab.DontLooseItems", Cheat.Instance<DontLooseItems>());
+                //UI.Checkbox("SelfTab.Jackpot_auto", Cheat.Instance<Jackpot_auto>());
+                //UI.Textbox("SelfTab.Jackpot.User", ref Jackpot_auto.Id_string, @"[^0-9]", 100);
+                //UI.Select("SelfTab.JackpotPrize", ref SettingsTab.i_prizeIndex, Jackpot_auto.prizes.Select(x => new UIOption(x, () => Jackpot_auto.prize = x)).ToArray());
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());
+                UI.Checkbox("SelfTab.GODitems", Cheat.Instance<GODitems>());
+                UI.Checkbox("SelfTab.AllItemsGOD", Cheat.Instance<AllItemsGOD>());
+                //UI.Checkbox("SelfTab.Invis", Cheat.Instance<Invis>());
+                UI.Checkbox("SelfTab.Strength", Cheat.Instance<Strength>());
+                //UI.Checkbox("SelfTab.STR", Cheat.Instance<STR_patch>());
                 UI.Checkbox("SelfTab.NoTumble", Cheat.Instance<NoTumble>());
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
-                UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());
+                UI.Checkbox(["SelfTab.UnlimitedBattery"], Cheat.Instance<UnlimitedBattery>());
                 UI.Checkbox("SelfTab.NoGunSpread", Cheat.Instance<NoGunSpread>());
                 UI.Checkbox("SelfTab.NoGunCooldown", Cheat.Instance<NoGunCooldown>());
                 UI.ToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1, 50);
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
                 UI.Checkbox("SelfTab.NoOverCharge", Cheat.Instance<NoOverCharge>());
-                UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
+                //UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
                 UI.ToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 50f);
                 UI.ToggleSlider(Cheat.Instance<SuperSpeed>(), "SelfTab.SuperSpeed", SuperSpeed.Value.ToString("F1"), ref SuperSpeed.Value, 5f, 100f);
                 UI.Checkbox("SelfTab.UnlimitedDeathHeadEnergy", Cheat.Instance<UnlimitedDeathHeadEnergy>());
+                //UI.Checkbox(["SelfTab.ValueSet", "General.HostTag"], Cheat.Instance<ValueSeter>());
+                //UI.Textbox("SelfTab.ValueSet.NewValue", ref ValueSeter.STRValue, @"[^0-9]", 100);
                 UI.Checkbox(["SelfTab.NameSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<NameSpoofer>());
                 UI.Textbox("SelfTab.SpoofedName", ref NameSpoofer.Value, "", 100);
                 UI.Checkbox(["SelfTab.SteamIDSpoofer", "General.UseBeforeJoinTag"], Cheat.Instance<SteamIDSpoofer>());

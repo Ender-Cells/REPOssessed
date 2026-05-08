@@ -15,12 +15,18 @@ namespace REPOssessed.Util
             if (runManager != null)
             {
                 levels.AddRange(RunManager.instance.levels);
-                levels.Add(RunManager.instance.levelShop);
-                levels.Add(RunManager.instance.levelTutorial);
-                levels.Add(RunManager.instance.levelRecording);
-                levels.Add(RunManager.instance.levelArena);
-                levels.Add(RunManager.instance.levelLobby);
-                levels.Add(RunManager.instance.levelLobbyMenu);
+                if (RunManager.instance.levelShop != null && RunManager.instance.levelShop.Count > 0)
+                    levels.AddRange(RunManager.instance.levelShop);
+                if (RunManager.instance.levelTutorial != null)
+                    levels.Add(RunManager.instance.levelTutorial);
+                if (RunManager.instance.levelRecording != null)
+                    levels.Add(RunManager.instance.levelRecording);
+                if (RunManager.instance.levelArena != null && RunManager.instance.levelArena.Count > 0)
+                    levels.AddRange(RunManager.instance.levelArena);
+                if (RunManager.instance.levelLobby != null)
+                    levels.Add(RunManager.instance.levelLobby);
+                if (RunManager.instance.levelLobbyMenu != null)
+                    levels.Add(RunManager.instance.levelLobbyMenu);
             }
             return levels;
         }
@@ -84,7 +90,7 @@ namespace REPOssessed.Util
 
         public static bool IsInGame()
         {
-            return !SemiFunc.IsMainMenu() && !SemiFunc.RunIsLobby();
+            return !SemiFunc.IsMainMenu() && !SemiFunc.RunIsLobbyMenu();
         }
 
         public static bool IsMasterClient()

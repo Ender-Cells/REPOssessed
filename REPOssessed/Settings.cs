@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using REPOssessed.Cheats.Core;
 using REPOssessed.Util;
@@ -19,7 +19,7 @@ namespace REPOssessed
         /* *    
          * Menu Settings
          * */
-        public static string s_Version = "v1.0.1";
+        public static string s_Version = "v1.0.2";
         public static string Language = "English";
         public static bool b_IsFirstLaunch = true;
 
@@ -211,7 +211,7 @@ namespace REPOssessed
                             if (cheat.GetType().GetInterface(typeof(IVariableCheat<>).FullName) != null)
                             {
                                 FieldInfo valueField = cheat.GetType().GetField("Value", BindingFlags.Static | BindingFlags.Public);
-                                valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
+                                    valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
                             }
                         }
                     }
