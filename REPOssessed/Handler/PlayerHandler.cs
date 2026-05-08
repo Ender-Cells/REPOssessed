@@ -21,17 +21,14 @@ namespace REPOssessed.Handler
         public PhotonView? photonView;
         public Player? photonPlayer;
         public Rigidbody? rigidbody;
-        private PlayerTumble? playerTumble;
-        private PlayerDeathHead? playerDeathHead;
 
         public PlayerHandler(PlayerAvatar player)
         {
             this.player = player;
             this.photonView = player.photonView;
             this.photonPlayer = photonView?.Owner;
-            this.playerDeathHead = player.playerDeathHead;
-            this.rigidbody = player.tumble?.Reflect().GetValue<Rigidbody>("rb");
-            this.playerTumble = player.tumble;
+            var tumble = player.Reflect()?.GetValue<PlayerTumble>("tumble");
+            this.rigidbody = tumble?.Reflect().GetValue<Rigidbody>("rb");
         }
 
         public static void ClearRPCHistory() => rpcHistory.Clear();
@@ -139,24 +136,36 @@ namespace REPOssessed.Handler
         public int GetHealth() => player.playerHealth?.Reflect().GetValue<int>("health") ?? 0;
         public int GetMaxHealth() => player.playerHealth?.Reflect().GetValue<int>("maxHealth") ?? 0;
         public bool IsDead() => player.Reflect().GetValue<bool>("deadSet");
-        public bool IsCrowned() => SessionManager.instance?.Reflect()?.GetValue<string>("crownedPlayerSteamID") == GetSteamID();
+        public bool IsCrowned()
+        {
+            try
+            {
+                string? crownedSteamID = SessionManager.instance?.Reflect()?.GetValue<string>("crownedPlayerSteamID");
+                string? playerSteamID = GetSteamID();
+                return !string.IsNullOrEmpty(crownedSteamID) && crownedSteamID == playerSteamID;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public void RevivePlayer()
         {
             if (!GameUtil.IsMasterClient() || !IsDead()) return;
             player.Revive();
         }
-        public void ForceTumble() => player.tumble?.TumbleRequest(true, false);
+        public void ForceTumble() => player.Reflect()?.GetValue<PlayerTumble>("tumble")?.TumbleRequest(true, false);
 
         public void glitch() // моя фукнция =)
         {
             int count = 0;
             ForceTumble();
-            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true && count<10) 
+            while (player.Reflect()?.GetValue<PlayerTumble>("tumble")?.Reflect().GetValue<bool>("isTumbling") != true && count<10) 
             {
                 count = count + 1;
                 Task.Delay(200); 
             }
-            PhysGrabObject? phys = player.tumble?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+            PhysGrabObject? phys = player.Reflect()?.GetValue<PlayerTumble>("tumble")?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
             phys?.DestroyPhysGrabObject();
             count = 0;
         }
@@ -168,7 +177,7 @@ namespace REPOssessed.Handler
         public void Hurt(int amount)
         {
             if (!GameUtil.IsMasterClient() && !IsLocalPlayer()) return;
-            player.playerHealth?.HurtOther(amount, Vector2.zero, false);
+            player.playerHealth?.HurtOther(amount, Vector3.zero, false);
         }
         public void Kill() => Hurt(GetHealth());
         public void Teleport(Vector3 position, Quaternion rotation)
@@ -195,12 +204,12 @@ namespace REPOssessed.Handler
             }
             int count = 0;
             ForceTumble();
-            while (player.tumble?.Reflect().GetValue<bool>("isTumbling") != true && count < 10)
+            while (player.Reflect()?.GetValue<PlayerTumble>("tumble")?.Reflect().GetValue<bool>("isTumbling") != true && count < 10)
             {
                 count = count + 1;
                 Task.Delay(200);
             }
-            PhysGrabObject? phys = player.tumble?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
+            PhysGrabObject? phys = player.Reflect()?.GetValue<PlayerTumble>("tumble")?.Reflect().GetValue<PhysGrabObject>("physGrabObject");
             phys?.Teleport(position, rotation);
 
             //else player.Spawn(position, rotation);
@@ -219,7 +228,7 @@ namespace REPOssessed.Handler
         public bool IsTalking() => GetPlayerVoiceChat()?.Reflect().GetValue<bool>("isTalking") ?? false;
         public string GetName() => player.Reflect()?.GetValue<string>("playerName") ?? "Unknown";
         public PlayerVoiceChat? GetPlayerVoiceChat() => RunManager.instance?.Reflect()?.GetValue<List<PlayerVoiceChat>>("voiceChats")?.FirstOrDefault(v => v.Reflect()?.GetValue<PlayerAvatar>("playerAvatar") == player);
-        public PlayerDeathHead? GetPlayerDeathHead() => IsDead() ? playerDeathHead : null;
+        public PlayerDeathHead? GetPlayerDeathHead() => IsDead() ? player.Reflect()?.GetValue<PlayerDeathHead>("playerDeathHead") : null;
     }
 
     public static class PlayerHandlerExtensions

@@ -57,11 +57,11 @@ namespace REPOssessed.Cheats.SelfTab
                 {
                     continue;
                 }
-                PlayerDeathHead head = player.playerDeathHead;
+                PlayerDeathHead? head = player.Reflect()?.GetValue<PlayerDeathHead>("playerDeathHead");
                 bool isDead = player.Handle()?.IsDead() ?? false;
                 if (isDead)
                 {
-                    if (head.Reflect().GetValue<bool>("spectated"))
+                    if (head?.Reflect().GetValue<bool>("spectated") ?? false)
                     {
                         voice.ToggleMixer(false);
                     }

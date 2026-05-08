@@ -1,4 +1,5 @@
 using REPOssessed.Cheats.Core;
+using REPOssessed.Cheats.PlayersTab;
 using REPOssessed.Cheats.SelfTab;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
@@ -27,6 +28,7 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalGroup(ref scrollPos, () =>
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
+                //UI.Button("SelfTab.ReviveOnClient", () => Cheat.Instance<Revive>().Execute());
                 //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
                 UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
                 UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
@@ -51,7 +53,7 @@ namespace REPOssessed.Menu.Tab
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
                 UI.Checkbox("SelfTab.NoOverCharge", Cheat.Instance<NoOverCharge>());
-                UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
+                //UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
                 UI.ToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 50f);
                 UI.ToggleSlider(Cheat.Instance<SuperSpeed>(), "SelfTab.SuperSpeed", SuperSpeed.Value.ToString("F1"), ref SuperSpeed.Value, 5f, 100f);
                 UI.Checkbox("SelfTab.UnlimitedDeathHeadEnergy", Cheat.Instance<UnlimitedDeathHeadEnergy>());

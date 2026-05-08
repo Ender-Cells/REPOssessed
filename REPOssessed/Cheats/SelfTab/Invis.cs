@@ -16,18 +16,7 @@
 //    [HarmonyPatch]
 //    internal class Invis : ToggleCheat
 //    {
-//        public override void Update()
-//        {
-//            if (!Instance<Invis>().Enabled) 
-//            { 
-//                Invi = false;
-//            }
-//            else
-//            {
-//                Invi = true;
-//            }
-//        }
-        
+
 //        [HarmonyPatch(typeof(PlayerAvatar), "OnPhotonSerializeView"), HarmonyPrefix]
 //        private static bool OnPhotonSerializeView_Prefix(PlayerAvatar Player, PhotonStream stream)
 //        {
@@ -81,9 +70,9 @@
 //                    return true;
 //                }
 //            }
-//        return true;
+//            return true;
 //        }
-       
+
 
 //        static bool Invi = false;
 //    }

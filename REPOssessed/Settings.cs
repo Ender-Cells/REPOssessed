@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using REPOssessed.Cheats.Core;
 using REPOssessed.Util;
@@ -211,7 +211,7 @@ namespace REPOssessed
                             if (cheat.GetType().GetInterface(typeof(IVariableCheat<>).FullName) != null)
                             {
                                 FieldInfo valueField = cheat.GetType().GetField("Value", BindingFlags.Static | BindingFlags.Public);
-                                valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
+                                    valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
                             }
                         }
                     }
