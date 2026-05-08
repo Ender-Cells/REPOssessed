@@ -8,6 +8,10 @@ namespace REPOssessed.Util
 {
     public class GameUtil
     {
+        // Store resource paths for items that need special handling (like CosmeticWorldObjects)
+        private static Dictionary<GameObject, string> itemResourcePaths = new Dictionary<GameObject, string>();
+
+        public static Dictionary<GameObject, string> GetItemResourcePaths() => itemResourcePaths;
         public static List<Level> GetLevels()
         {
             List<Level> levels = new List<Level>();
@@ -61,6 +65,67 @@ namespace REPOssessed.Util
                 if (enemyValuableBig != null) items[enemyValuableBig] = "enemy";
             }
             StatsManager.instance?.itemDictionary?.Values?.Select(i => i?.prefab?.Prefab).Where(p => p != null).Cast<GameObject>().ToList().ForEach(p => items[p] = "shop");
+
+            // Add CosmeticWorldObjects
+            try
+            {
+                ValuableDirector? valuableDirector = ValuableDirector.instance;
+                if (valuableDirector != null)
+                {
+                    var cosmeticSetupsField = valuableDirector.GetType().GetField("cosmeticWorldObjectSetups", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    if (cosmeticSetupsField != null)
+                    {
+                        var cosmeticSetups = cosmeticSetupsField.GetValue(valuableDirector) as System.Collections.IList;
+                        if (cosmeticSetups != null && cosmeticSetups.Count > 0)
+                        {
+                            string[] rarityPaths = { "common", "uncommon", "rare", "ultrarare" };
+                            for (int i = 0; i < cosmeticSetups.Count && i < rarityPaths.Length; i++)
+                            {
+                                try
+                                {
+                                    var setup = cosmeticSetups[i];
+                                    if (setup == null) continue;
+
+                                    var setupType = setup.GetType();
+                                    var prefabField = setupType.GetField("prefab", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                                    if (prefabField != null)
+                                    {
+                                        var prefabRef = prefabField.GetValue(setup);
+                                        if (prefabRef != null)
+                                        {
+                                            var prefabRefType = prefabRef.GetType();
+                                            var prefabProperty = prefabRefType.GetProperty("Prefab", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                                            var resourcePathProperty = prefabRefType.GetProperty("ResourcePath", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+                                            if (prefabProperty != null && resourcePathProperty != null)
+                                            {
+                                                GameObject? prefab = prefabProperty.GetValue(prefabRef) as GameObject;
+                                                string? resourcePath = resourcePathProperty.GetValue(prefabRef) as string;
+
+                                                if (prefab != null && !string.IsNullOrEmpty(resourcePath))
+                                                {
+                                                    items[prefab] = $"cosmetic_{rarityPaths[i]}";
+                                                    // Store the resource path for later use when spawning
+                                                    itemResourcePaths[prefab] = resourcePath;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    // Skip if reflection fails for this setup
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silently fail if CosmeticWorldObjects aren't available
+            }
+
             return items.Where(i => !string.IsNullOrEmpty(i.Value)).ToDictionary(i => i.Key, i => i.Value);
         }
 

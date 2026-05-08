@@ -33,7 +33,7 @@ namespace REPOssessed.Handler
         public string GetName()
         {
             if (IsShopItem()) return itemAttributes?.item?.itemName ?? "Unknown";
-            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "").Trim() ?? "Unknown";
+            string name = physGrabObject?.name?.Replace("(Clone)", "").Replace("Valuable", "").Replace("Museum", "").Replace("Manor", "").Replace("Arctic", "").Replace("Wizard", "").Replace("Cosmetic World Object", "CosmBox").Trim() ?? "Unknown";
             int dash = name.IndexOf('-');
             return dash < 0 ? name : $"{name[(dash + 1)..].Trim()} {name[..dash].Trim()}";
         }
@@ -55,6 +55,7 @@ namespace REPOssessed.Handler
         }
         public void Teleport(Vector3 position, Quaternion rotation) => physGrabObject?.Teleport(position, rotation);
         public bool IsShopItem() => itemAttributes != null;
+        public bool IsCosmeticBox() => physGrabObject?.GetComponentInParent<CosmeticWorldObject>() ?? false;
         public bool HasBattery() => physGrabObject?.GetComponent<ItemBattery>() != null;
         public bool IsEquippable() => physGrabObject?.GetComponent<ItemEquippable>() != null;
         public bool IsEquiped() => physGrabObject?.GetComponent<ItemEquippable>()?.Reflect().GetValue<bool>("isEquipped") ?? false;
@@ -112,7 +113,7 @@ namespace REPOssessed.Handler
         public bool IsCart() => physGrabObject?.Reflect().GetValue<bool>("isCart") ?? false;
         public bool IsUpgrade() => physGrabObject?.GetComponentInParent<ItemUpgrade>() ?? false;
         public bool IsInCart() => GameObjectManager.carts?.Any(c => c?.physGrabInCart?.Reflect().GetValue<List<PhysGrabInCart.CartObject>>("inCartObjects")?.Any(i => i?.physGrabObject == physGrabObject) == true) ?? false;
-        public bool IsInExtraction() => valuableObject?.Reflect()?.GetValue<RoomVolumeCheck>("roomVolumeCheck")?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
+        public bool IsInExtraction() => physGrabObject?.GetComponentInParent<RoomVolumeCheck>()?.CurrentRooms?.Any(r => r != null && r.Extraction) ?? false;
         public bool IsTrap() => trap != null;
         public bool CurrentlyHeld() => (physGrabObject?.grabbed ?? false) || (physGrabObject?.grabbedLocal ?? false);
     }

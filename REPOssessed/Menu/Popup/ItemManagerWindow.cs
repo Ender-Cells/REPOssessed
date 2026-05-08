@@ -49,24 +49,47 @@ namespace REPOssessed.Menu.Popup
                     if (cameraTransform == null) return;
                     string path = i.Value;
                     GameObject item = i.Key;
-                    string resourcePath = ValuableDirector.instance.Reflect().GetValue<string>("resourcePath")?.Replace("/", "") ?? "";
-                    if (string.IsNullOrEmpty(resourcePath)) return;
+                    string resourcePath = ValuableDirector.instance?.Reflect()?.GetValue<string>("resourcePath")?.Replace("/", "") ?? "";
+
                     for (int j = 0; j < int.Parse(amount); j++)
                     {
                         GameObject? spawnedItem = null;
-                        if (GameManager.Multiplayer())
+
+                        if (path.StartsWith("cosmetic_"))
                         {
-                            string spawnPath = path switch
+                            if (GameManager.Multiplayer())
                             {
-                                "shop" => $"Items/{item.name}",
-                                "surplus" => $"{resourcePath}/{item.name}",
-                                "enemy" => $"{resourcePath}/{item.name}",
-                                _ => $"{resourcePath}/{path}/{item.name}"
-                            };
-                            if (!string.IsNullOrEmpty(spawnPath)) spawnedItem = PhotonNetwork.InstantiateRoomObject(spawnPath, cameraTransform.position, default);
+                                var resourcePaths = GameUtil.GetItemResourcePaths();
+                                string cosmeticResourcePath = resourcePaths.ContainsKey(item) ? resourcePaths[item] : $"CosmeticWorldObjects/{item.name}";
+
+                                spawnedItem = PhotonNetwork.InstantiateRoomObject(cosmeticResourcePath, cameraTransform.position, default, 0);
+                            }
+                            else 
+                            {
+                                spawnedItem = Object.Instantiate(item, cameraTransform.position, default);
+                            }
                         }
-                        else spawnedItem = Object.Instantiate(item, cameraTransform.position, default);
-                        spawnedItem?.GetComponent<PhysGrabObject>()?.Handle()?.SetValue(int.Parse(value));
+                        else
+                        {
+                            if (string.IsNullOrEmpty(resourcePath)) return;
+                            if (GameManager.Multiplayer())
+                            {
+                                string spawnPath = path switch
+                                {
+                                    "shop" => $"Items/{item.name}",
+                                    "surplus" => $"{resourcePath}/{item.name}",
+                                    "enemy" => $"{resourcePath}/{item.name}",
+                                    _ => $"{resourcePath}/{path}/{item.name}"
+                                };
+                                if (!string.IsNullOrEmpty(spawnPath)) 
+                                    spawnedItem = PhotonNetwork.InstantiateRoomObject(spawnPath, cameraTransform.position, default);
+                            }
+                            else 
+                            {
+                                spawnedItem = Object.Instantiate(item, cameraTransform.position, default);
+                            }
+                            spawnedItem?.GetComponent<PhysGrabObject>()?.Handle()?.SetValue(int.Parse(value));
+                        }
                     }
                 }, 3);
             });

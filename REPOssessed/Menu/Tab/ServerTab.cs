@@ -44,12 +44,12 @@ namespace REPOssessed.Menu.Tab
                 }));
                 UI.Button(["ServerTab.BreakAllObjects", "General.HostTag"], () => GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.Break(false)));
                 UI.Button(["ServerTab.ForceThiefPunishment", "General.HostTag"], () => Cheat.Instance<ForceThiefPunishment>().Execute());
-                UI.Textbox("ServerTab.WizardStaff", ref Time, @"[^0-9]", 10, new UIButton("General.Set", () =>
+                UI.Textbox(["ServerTab.WizardStaff", "General.HostTag"], ref Time, @"[^0-9]", 10, new UIButton("General.Set", () =>
                 {
                     WizardStaff.time = int.Parse(Time);
                     Cheat.Instance<WizardStaff>().Execute();
                 }));
-                UI.Button("ServerTab.RubberDuck", () => Cheat.Instance<RubberDuck>().Execute());
+                UI.Button(["ServerTab.RubberDuck", "General.HostTag"], () => Cheat.Instance<RubberDuck>().Execute());
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));
         }
 

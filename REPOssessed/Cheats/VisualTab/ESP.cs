@@ -67,7 +67,7 @@ namespace REPOssessed.Cheats.VisualTab
         private void DisplayItems()
         {
             DisplayObjects(
-                GameObjectManager.items.Where(i => i != null && i.Handle() is ObjectHandler h && (!h.IsCart() && h.IsShopItem() || h.IsValuable())),
+                GameObjectManager.items.Where(i => i != null && i.Handle() is ObjectHandler h && (!h.IsCart() && h.IsShopItem() || h.IsValuable() || h.IsCosmeticBox())),
                 item => item.Handle() is ObjectHandler h ? $"{h.GetName()}{(h.IsValuable() ? $" ( {h.GetValue()} )" : "")}{(h.IsTrap() ? " ( Trap )" : "")}" : "Unknown",
                 item =>
                 {

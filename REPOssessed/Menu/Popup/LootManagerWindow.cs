@@ -28,7 +28,7 @@ namespace REPOssessed.Menu.Popup
                 return;
             }
 
-            List<PhysGrabObject> items = GameObjectManager.items?.Where(i => i != null && i.Handle() is ObjectHandler h && !h.CurrentlyHeld() && (h.IsValuable() || h.IsShopItem()) && (!ignoreExtractionItems || !h.IsInExtraction()) && (!ignoreCartItems || !h.IsInCart()) && (!ignoreShopItems || !h.IsShopItem())).ToList() ?? new List<PhysGrabObject>();
+            List<PhysGrabObject> items = GameObjectManager.items?.Where(i => i != null && i.Handle() is ObjectHandler h && (!h.CurrentlyHeld() && !h.IsEquiped()) && (h.IsValuable() || h.IsShopItem() || h.IsCosmeticBox()) && (!ignoreExtractionItems || !h.IsInExtraction()) && (!ignoreCartItems || !h.IsInCart()) && (!ignoreShopItems || !h.IsShopItem())).ToList() ?? new List<PhysGrabObject>();
             Dictionary<string, List<PhysGrabObject>> groupedItems = items.GroupBy(i => i.Handle()?.GetName() ?? "Unknown").ToDictionary(g => g.Key, g => g.ToList());
             UI.VerticalGroup(ref scrollPos, () =>
             {

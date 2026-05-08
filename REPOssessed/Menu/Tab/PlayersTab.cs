@@ -76,10 +76,10 @@ namespace REPOssessed.Menu.Tab
             UI.Button("PlayersTab.PhysDisabler", () => PhysDisable.SetPlayerPhys(selectedPlayerHandler, !PhysDisable.IsPlayerPhys(selectedPlayerHandler)), PhysDisable.IsPlayerPhys(selectedPlayerHandler) ? "PlayersTab.PhysDisabler.Disable" : "PlayersTab.PhysDisabler.Enable");
             UI.Button(["PlayersTab.Kill", "General.HostOrLocalTag"], () => selectedPlayerHandler.Kill());
             UI.Button(["PlayersTab.Revive", "General.HostTag"], () => selectedPlayerHandler.RevivePlayer());
-            UI.Button("PlayersTab.ForceTumble", () => selectedPlayerHandler.ForceTumble());
+            UI.Button(["PlayersTab.ForceTumble", "General.HostTag"], () => selectedPlayerHandler.ForceTumble());
             UI.Textbox("PlayersTab.Heal", ref heal, @"[^0-9]", 3, new UIButton("General.Set", () => selectedPlayerHandler.Heal(int.Parse(heal))));
             UI.Textbox(["PlayersTab.Damage", "General.HostOrLocalTag"], ref damage, @"[^0-9]", 3, new UIButton("General.Set", () => selectedPlayerHandler.Hurt(int.Parse(damage))));
-            UI.Button(["PlayersTab.BreakHeldObject"], () => objectHandler?.Break(false));
+            UI.Button(["PlayersTab.BreakHeldObject", "General.HostTag"], () => objectHandler?.Break(false));
             UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
             UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
             UI.Button("PlayersTab.DropItems", () =>
@@ -103,19 +103,19 @@ namespace REPOssessed.Menu.Tab
             });
             if (!selectedPlayerHandler.IsLocalPlayer())
             {
-                UI.Button("PlayersTab.TeleportToPlayer", () =>
+                UI.Button(["PlayersTab.TeleportToPlayer", "General.HostTag"],() =>
                 {
                     Transform? transform = selectedPlayer.transform;
                     if (transform != null) GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
-                UI.Button(["PlayersTab.TeleportPlayerToYou"], () =>
+                UI.Button(["PlayersTab.TeleportPlayerToYou", "General.HostTag"], () =>
                 {
                     Transform? transform = SemiFunc.MainCamera()?.transform;
                     if (transform != null) selectedPlayerHandler.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
                 UI.Button("PlayersTab.BlockRPCs", () => selectedPlayerHandler.ToggleRPCBlock(), selectedPlayerHandler.IsRPCBlocked() ? "PlayersTab.Unblock" : "PlayersTab.Block");
                 
-                UI.Button("PlayersTab.Glitch", () => selectedPlayerHandler.glitch());
+                UI.Button(["PlayersTab.Glitch", "General.HostTag"], () => selectedPlayerHandler.glitch());
             }
         }
 

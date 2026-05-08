@@ -29,7 +29,7 @@ namespace REPOssessed.Menu.Tab
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
                 //UI.Button("SelfTab.ReviveOnClient", () => Cheat.Instance<Revive>().Execute());
-                //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
+                UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
                 UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
                 UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
                 UI.Checkbox("SelfTab.DontLooseItems", Cheat.Instance<DontLooseItems>());
