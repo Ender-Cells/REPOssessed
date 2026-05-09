@@ -66,6 +66,12 @@ namespace REPOssessed.Menu.Tab
 
                 UI.Checkbox("SettingsTab.FPSCounter", Cheat.Instance<FPSCounter>());
                 UI.Checkbox("SettingsTab.DebugMode", Cheat.Instance<DebugMode>());
+                if (Cheat.Instance<Credits>().started == false)
+                {
+                    Cheat.Instance<Credits>().Enabled = true;
+                    Cheat.Instance<Credits>().started = true;
+                }
+                UI.Checkbox("SettingsTab.Credits", Cheat.Instance<Credits>());
 
                 UI.Label("SettingsTab.Colors", null, true, -1, true);
                 UI.Textbox("SettingsTab.MenuText", ref s_menuText, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
