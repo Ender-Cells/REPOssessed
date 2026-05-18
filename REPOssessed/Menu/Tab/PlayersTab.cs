@@ -82,40 +82,21 @@ namespace REPOssessed.Menu.Tab
             UI.Button(["PlayersTab.BreakHeldObject", "General.HostTag"], () => objectHandler?.Break(false));
             UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
             UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
-            UI.Button("PlayersTab.DropItems", () =>
-            {
-                List<PhysGrabObject> items = GameObjectManager.items?.Where(i => i != null && i.Handle() is ObjectHandler h && (h.IsEquiped())).ToList() ?? new List<PhysGrabObject>();
-                Dictionary<string, List<PhysGrabObject>> groupedItems = items.GroupBy(i => i.Handle()?.GetName() ?? "Unknown").ToDictionary(g => g.Key, g => g.ToList());
-
-                List<PhysGrabObject>? phys_list = items?.Where(i => i != null).ToList();
-                PhysGrabObject phys = phys_list.Where(i => i != null).FirstOrDefault();
-                int equip_id = phys.GetComponent<ItemEquippable>().Reflect().GetValue<int>("ownerPlayerId");
-                items?.Where(i => i != null).ToList().ForEach(p => items?.ForEach(p =>
-                {
-                    var eq = p.GetComponent<ItemEquippable>();
-                    if (eq == null) return;
-
-                    if (eq.Reflect()?.GetValue<int>("ownerPlayerId") == selectedPlayerHandler.photonView.ViewID)
-                    {
-                        eq.RequestUnequip();
-                    }
-                }));
-            });
+            UI.Button("PlayersTab.DropItems", () => GameObjectManager.items?.Where(i => i?.Handle() is ObjectHandler h && h.IsEquiped()).Select(i => i.GetComponent<ItemEquippable>()).Where(eq => eq != null &&eq.Reflect().GetValue<int>("ownerPlayerId") == selectedPlayerHandler?.photonView?.ViewID).ToList().ForEach(eq => eq.RequestUnequip()));
             if (!selectedPlayerHandler.IsLocalPlayer())
             {
-                UI.Button(["PlayersTab.TeleportToPlayer", "General.HostTag"],() =>
+                UI.Button("PlayersTab.TeleportToPlayer",() =>
                 {
                     Transform? transform = selectedPlayer.transform;
                     if (transform != null) GameObjectManager.LocalPlayer?.Handle()?.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
-                UI.Button(["PlayersTab.TeleportPlayerToYou", "General.HostTag"], () =>
+                UI.Button(["PlayersTab.TeleportPlayerToYou", "General.HostTag", "Host.Kinda.Tumble"], () =>
                 {
                     Transform? transform = SemiFunc.MainCamera()?.transform;
                     if (transform != null) selectedPlayerHandler.Teleport(transform.position, transform.rotation);
                 }, "SelfTab.Teleport");
                 UI.Button("PlayersTab.BlockRPCs", () => selectedPlayerHandler.ToggleRPCBlock(), selectedPlayerHandler.IsRPCBlocked() ? "PlayersTab.Unblock" : "PlayersTab.Block");
-                
-                UI.Button(["PlayersTab.Glitch", "General.HostTag"], () => selectedPlayerHandler.glitch());
+                UI.Button(["PlayersTab.Glitch", "General.HostTag", "Host.Kinda.Tumble"], () => selectedPlayerHandler.glitch());
             }
         }
 
@@ -124,7 +105,7 @@ namespace REPOssessed.Menu.Tab
             if (HackMenu.Instance == null) return;
             float width = HackMenu.Instance.contentWidth * 0.3f - HackMenu.Instance.spaceFromLeft * 2;
             float height = HackMenu.Instance.contentHeight - 20;
-            GUI.Box(new Rect(0, 0, width, height), TranslationUtil.Translate("PlayersTab.PlayerList"));
+            GUI.Box(new Rect(0, 0, width, height), $"{TranslationUtil.Translate("PlayersTab.PlayerList")} ({GameObjectManager.players.Count})");
             GUILayout.BeginVertical(GUILayout.Width(width), GUILayout.Height(height));
             GUILayout.Space(25);
             foreach (PlayerAvatar player in GameObjectManager.players.Where(p => p != null))

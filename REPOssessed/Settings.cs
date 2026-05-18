@@ -193,7 +193,7 @@ namespace REPOssessed
                             if (bool.TryParse(toggle.Value, out bool result) && result)
                             {
                                 ToggleCheat? toggleCheat = Cheat.instances.OfType<ToggleCheat>().FirstOrDefault(c => c.GetType().Name == toggle.Key);
-                                if (toggleCheat != null && !toggleCheat.Enabled) toggleCheat.Toggle();
+                                if (toggleCheat != null && !toggleCheat.Enabled) toggleCheat.Toggle(); toggleCheat!.Enabled =true ;
                             }
                         }
                     }
@@ -211,7 +211,7 @@ namespace REPOssessed
                             if (cheat.GetType().GetInterface(typeof(IVariableCheat<>).FullName) != null)
                             {
                                 FieldInfo valueField = cheat.GetType().GetField("Value", BindingFlags.Static | BindingFlags.Public);
-                                    valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
+                                valueField.SetValue(cheat, Convert.ChangeType(value.Value, valueField.FieldType));
                             }
                         }
                     }

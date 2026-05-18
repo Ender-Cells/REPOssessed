@@ -1,5 +1,5 @@
 ﻿using REPOssessed.Cheats.Core;
-//using REPOssessed.Cheats.REPOGambling;
+using REPOssessed.Cheats.REPOGambling;
 using REPOssessed.Menu.Core;
 using REPOssessed.Util;
 using System.Linq;
@@ -24,10 +24,10 @@ namespace REPOssessed.Menu.Tab
             if (HackMenu.Instance == null) return;
             UI.VerticalGroup(ref scrollPos, () =>
             {
-                //UI.Label("Gambling.Wheel", null, true, -1, true);
-                //UI.Checkbox("Gambling.Jackpot_auto", Cheat.Instance<Jackpot_auto>());
-                //UI.Textbox("Gambling.User", ref Jackpot_auto.Id_string, @"[^0-9]", 100);
-                //UI.Select("Gambling.JackpotPrize", ref SettingsTab.i_prizeIndex, Jackpot_auto.prizes.Select(x => new UIOption(x, () => Jackpot_auto.prize = x)).ToArray());
+                UI.Label("Gambling.Wheel", null, true, -1, true);
+                UI.Checkbox("Gambling.Jackpot_auto", Cheat.Instance<Jackpot_auto>());
+                UI.Textbox("Gambling.User", ref Jackpot_auto.Id_string, @"[^0-9]", 100);
+                UI.Select("Gambling.JackpotPrize", ref SettingsTab.i_prizeIndex, Jackpot_auto.prizes.Select(x => new UIOption(x, () => Jackpot_auto.prize = x)).ToArray());
 
 
             }, GUILayout.Width(HackMenu.Instance.contentWidth * 0.5f - HackMenu.Instance.spaceFromLeft));

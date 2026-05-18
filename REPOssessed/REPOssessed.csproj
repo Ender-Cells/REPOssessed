@@ -41,7 +41,7 @@
       <HintPath>Resources\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>D:\Steam\steamapps\common\REPO\REPO_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>Resources\BaseGame\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>Resources\BaseGame\Facepunch.Steamworks.Win64.dll</HintPath>
@@ -57,6 +57,9 @@
     </Reference>
     <Reference Include="PhotonUnityNetworking">
       <HintPath>Resources\BaseGame\PhotonUnityNetworking.dll</HintPath>
+    </Reference>
+    <Reference Include="REPOGambling">
+      <HintPath>Resources\Mods\REPOGambling.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>Resources\BaseGame\Unity.InputSystem.dll</HintPath>

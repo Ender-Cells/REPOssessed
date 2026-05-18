@@ -14,6 +14,10 @@ namespace REPOssessed.Cheats.SelfTab
         {
             if (Instance<SteamIDSpoofer>().Enabled)
             {
+                if (string.IsNullOrEmpty(Value))
+                {
+                    Value = "0";
+                }
                 __result = ulong.Parse(Value);
                 return false;
             }

@@ -17,7 +17,7 @@ namespace REPOssessed.Menu.Popup
 
         private string search = "";
         private Vector2 scrollPos = Vector2.zero;
-        public static Inventory? instance;
+        
 
         public override void DrawContent(int windowID)
         {
@@ -34,7 +34,7 @@ namespace REPOssessed.Menu.Popup
             {
                 GUILayout.BeginHorizontal();
                 UI.Textbox("General.Search", ref search, "", 50);
-                UI.Button("EquipManager.EquipAllItems", () => items?.Where(i => i != null).ToList().ForEach(p => Equip(p)));
+                UI.Button("EquipManager.EquipAllItems", () => EquipAll(items));
                 UI.Button("EquipManager.UnequipAllItems", () => Unequip());
                 GUILayout.EndHorizontal();
                 GUILayout.Space(20);
@@ -77,6 +77,53 @@ namespace REPOssessed.Menu.Popup
             if (loose)
             {
                 Cheat.Instance<DontLooseItems>().Enabled = true;
+            }
+        }
+        private static void EquipAll(List<PhysGrabObject> items)
+        {
+
+            var slots = Inventory.instance.Reflect().GetValue<List<InventorySpot>>("inventorySpots");
+
+            if (slots == null)
+                return;
+
+            HashSet<int> usedSlots = new();
+
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (Inventory.instance.IsSpotOccupied(i))
+                    usedSlots.Add(i);
+            }
+
+            foreach (var item in items)
+            {
+                var equip = item.GetComponent<ItemEquippable>();
+
+                if (equip == null)
+                    continue;
+
+                int slot = -1;
+
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    if (!usedSlots.Contains(i))
+                    {
+                        slot = i;
+                        usedSlots.Add(i);
+                        break;
+                    }
+                }
+
+                if (slot == -1)
+                    break;
+
+                if (equip.Reflect().GetValue<bool>("isEquipped"))
+                {
+                    equip.ForceUnequip(item.centerPoint, SemiFunc.PhotonViewIDPlayerAvatarLocal());
+                }
+
+                equip.RequestEquip(slot, SemiFunc.PhotonViewIDPlayerAvatarLocal()
+                );
             }
         }
     }

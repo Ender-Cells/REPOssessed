@@ -16,6 +16,8 @@ namespace REPOssessed
 {
     public class REPOssessed : MonoBehaviour
     {
+
+        public static bool showCR = true;
         private List<ToggleCheat> cheats = new List<ToggleCheat>();
         private HackMenu? hackMenu;
         public Harmony? harmony;
@@ -98,7 +100,7 @@ namespace REPOssessed
             {
                 if (Event.current.type == EventType.Repaint)
                 {
-                    if (Cheat.Instance<Credits>().Credit)
+                    if (showCR)
                     {
                         VisualUtil.DrawString(new Vector2(5f, 2f), $"REPOssessed {Settings.s_Version} By Dustin and Ender_Cells =) | Menu Toggle: {(Cheat.Instance<ToggleMenu>().HasKeybind ? Cheat.Instance<ToggleMenu>().keybind.ToString() : KeyCode.None.ToString())} | Unload Toggle: {(Cheat.Instance<UnloadMenu>().HasKeybind ? Cheat.Instance<UnloadMenu>().keybind.ToString() : "None")}{(Cheat.Instance<FPSCounter>().Enabled ? $" | FPS: {Cheat.Instance<FPSCounter>().FPS}" : "")}", Settings.c_primary.GetColor(), false, false, true, 14);
                     }

@@ -18,7 +18,8 @@ namespace REPOssessed.Manager
         {
             get
             {
-                if (localPlayer == null) localPlayer = players.FirstOrDefault(p => p?.Handle()?.IsLocalPlayer() == true);
+                if (localPlayer == null || !players.Contains(localPlayer)) 
+                    localPlayer = players.FirstOrDefault(p => p?.Handle()?.IsLocalPlayer() == true);
                 return localPlayer;
             }
         }
@@ -31,19 +32,39 @@ namespace REPOssessed.Manager
         public static TruckScreenText? truck;
 
         [HarmonyPatch(typeof(PhysGrabObject), "Awake"), HarmonyPrefix]
-        public static void Awake(PhysGrabObject __instance) => items.Add(__instance);
+        public static void Awake(PhysGrabObject __instance)
+        {
+            items.RemoveAll(i => i == null);
+            items.Add(__instance);
+        }
 
         [HarmonyPatch(typeof(PlayerAvatar), "Awake"), HarmonyPrefix]
-        public static void Awake(PlayerAvatar __instance) => players.Add(__instance);
+        public static void Awake(PlayerAvatar __instance)
+        {
+            players.RemoveAll(p => p == null);
+            players.Add(__instance);
+        }
 
         [HarmonyPatch(typeof(Enemy), "Awake"), HarmonyPrefix]
-        public static void Awake(Enemy __instance) => enemies.Add(__instance);
+        public static void Awake(Enemy __instance)
+        {
+            enemies.RemoveAll(e => e == null);
+            enemies.Add(__instance);
+        }
 
         [HarmonyPatch(typeof(ExtractionPoint), "Start"), HarmonyPrefix]
-        public static void Start(ExtractionPoint __instance) => extractions.Add(__instance);
+        public static void Start(ExtractionPoint __instance)
+        {
+            extractions.RemoveAll(e => e == null);
+            extractions.Add(__instance);
+        }
 
         [HarmonyPatch(typeof(PhysGrabCart), "Start"), HarmonyPrefix]
-        public static void Start(PhysGrabCart __instance) => carts.Add(__instance);
+        public static void Start(PhysGrabCart __instance)
+        {
+            carts.RemoveAll(c => c == null);
+            carts.Add(__instance);
+        }
 
         [HarmonyPatch(typeof(TruckScreenText), "Start"), HarmonyPrefix]
         public static void Start(TruckScreenText __instance) => truck = __instance;
@@ -52,7 +73,11 @@ namespace REPOssessed.Manager
         public static void RemoveInstantiatedGO(GameObject go, bool localOnly)
         {
             if (go?.GetComponent<PhysGrabObject>() is { } physGrabObject && items.Contains(physGrabObject)) items.Remove(physGrabObject);
-            if (go?.GetComponent<PlayerAvatar>() is { } playerAvatar && players.Contains(playerAvatar)) players.Remove(playerAvatar);
+            if (go?.GetComponent<PlayerAvatar>() is { } playerAvatar && players.Contains(playerAvatar))
+            {
+                players.Remove(playerAvatar);
+                if (localPlayer == playerAvatar) localPlayer = null;
+            }
             if (go?.GetComponent<Enemy>() is { } enemy && enemies.Contains(enemy)) enemies.Remove(enemy);
             if (go?.GetComponent<ExtractionPoint>() is { } extractionPoint && extractions.Contains(extractionPoint)) extractions.Remove(extractionPoint);
             if (go?.GetComponent<PhysGrabCart>() is { } physGrabCart && carts.Contains(physGrabCart)) carts.Remove(physGrabCart);
@@ -76,6 +101,7 @@ namespace REPOssessed.Manager
             extractions.Clear();
             carts.Clear();
             truck = null;
+            localPlayer = null;
         }
 
         public static void CleanUpObjects()

@@ -19,18 +19,12 @@ namespace REPOssessed.Util
             if (runManager != null)
             {
                 levels.AddRange(RunManager.instance.levels);
-                if (RunManager.instance.levelShop != null && RunManager.instance.levelShop.Count > 0)
-                    levels.AddRange(RunManager.instance.levelShop);
-                if (RunManager.instance.levelTutorial != null)
-                    levels.Add(RunManager.instance.levelTutorial);
-                if (RunManager.instance.levelRecording != null)
-                    levels.Add(RunManager.instance.levelRecording);
-                if (RunManager.instance.levelArena != null && RunManager.instance.levelArena.Count > 0)
-                    levels.AddRange(RunManager.instance.levelArena);
-                if (RunManager.instance.levelLobby != null)
-                    levels.Add(RunManager.instance.levelLobby);
-                if (RunManager.instance.levelLobbyMenu != null)
-                    levels.Add(RunManager.instance.levelLobbyMenu);
+                levels.AddRange(RunManager.instance.levelShop);
+                levels.Add(RunManager.instance.levelTutorial);
+                levels.Add(RunManager.instance.levelRecording);
+                levels.AddRange(RunManager.instance.levelArena);
+                levels.Add(RunManager.instance.levelLobby);
+                levels.Add(RunManager.instance.levelLobbyMenu);
             }
             return levels;
         }
@@ -66,7 +60,7 @@ namespace REPOssessed.Util
             }
             StatsManager.instance?.itemDictionary?.Values?.Select(i => i?.prefab?.Prefab).Where(p => p != null).Cast<GameObject>().ToList().ForEach(p => items[p] = "shop");
 
-            // Add CosmeticWorldObjects
+
             try
             {
                 ValuableDirector? valuableDirector = ValuableDirector.instance;
@@ -105,7 +99,6 @@ namespace REPOssessed.Util
                                                 if (prefab != null && !string.IsNullOrEmpty(resourcePath))
                                                 {
                                                     items[prefab] = $"cosmetic_{rarityPaths[i]}";
-                                                    // Store the resource path for later use when spawning
                                                     itemResourcePaths[prefab] = resourcePath;
                                                 }
                                             }
@@ -114,7 +107,7 @@ namespace REPOssessed.Util
                                 }
                                 catch
                                 {
-                                    // Skip if reflection fails for this setup
+
                                 }
                             }
                         }
@@ -123,7 +116,7 @@ namespace REPOssessed.Util
             }
             catch
             {
-                // Silently fail if CosmeticWorldObjects aren't available
+
             }
 
             return items.Where(i => !string.IsNullOrEmpty(i.Value)).ToDictionary(i => i.Key, i => i.Value);

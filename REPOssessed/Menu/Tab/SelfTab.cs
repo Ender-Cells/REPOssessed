@@ -29,7 +29,7 @@ namespace REPOssessed.Menu.Tab
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
                 //UI.Button("SelfTab.ReviveOnClient", () => Cheat.Instance<Revive>().Execute());
-                UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
+                //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
                 UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
                 UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
                 UI.Checkbox("SelfTab.DontLooseItems", Cheat.Instance<DontLooseItems>());
@@ -46,12 +46,13 @@ namespace REPOssessed.Menu.Tab
                 //UI.Checkbox("SelfTab.STR", Cheat.Instance<STR_patch>());
                 UI.Checkbox("SelfTab.NoTumble", Cheat.Instance<NoTumble>());
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
-                UI.Checkbox(["SelfTab.UnlimitedBattery"], Cheat.Instance<UnlimitedBattery>());
-                UI.Checkbox("SelfTab.NoGunSpread", Cheat.Instance<NoGunSpread>());
-                UI.Checkbox("SelfTab.NoGunCooldown", Cheat.Instance<NoGunCooldown>());
+                UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());
+                UI.Checkbox(["SelfTab.NoGunSpread", "General.HostTag"], Cheat.Instance<NoGunSpread>());
+                UI.Checkbox(["SelfTab.NoGunCooldown", "General.HostTag"], Cheat.Instance<NoGunCooldown>());
                 UI.ToggleSlider(Cheat.Instance<GunBulletAmount>(), "SelfTab.GunBulletAmount", GunBulletAmount.Value.ToString("F1"), ref GunBulletAmount.Value, 1, 50);
                 UI.Checkbox(["SelfTab.NonEnemyTargetable", "General.HostTag"], Cheat.Instance<NonEnemyTargetable>());
                 UI.Checkbox("SelfTab.AlwaysShowLevel", Cheat.Instance<AlwaysShowLevel>());
+                UI.Checkbox("SelfTab.GrabThroughWalls", Cheat.Instance<GrabThroughWallsPatch>());
                 UI.Checkbox("SelfTab.NoOverCharge", Cheat.Instance<NoOverCharge>());
                 //UI.ToggleSlider(Cheat.Instance<RainbowSuit>(), "SelfTab.RainbowSuit", RainbowSuit.Value.ToString("F1"), ref RainbowSuit.Value, 0.1f, 1f);
                 UI.ToggleSlider(Cheat.Instance<NoClip>(), "SelfTab.NoClip", NoClip.Value.ToString("F1"), ref NoClip.Value, 1f, 50f);

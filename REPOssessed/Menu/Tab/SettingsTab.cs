@@ -66,11 +66,6 @@ namespace REPOssessed.Menu.Tab
 
                 UI.Checkbox("SettingsTab.FPSCounter", Cheat.Instance<FPSCounter>());
                 UI.Checkbox("SettingsTab.DebugMode", Cheat.Instance<DebugMode>());
-                if (Cheat.Instance<Credits>().started == false)
-                {
-                    Cheat.Instance<Credits>().Enabled = true;
-                    Cheat.Instance<Credits>().started = true;
-                }
                 UI.Checkbox("SettingsTab.Credits", Cheat.Instance<Credits>());
 
                 UI.Label("SettingsTab.Colors", null, true, -1, true);
@@ -121,7 +116,7 @@ namespace REPOssessed.Menu.Tab
         private void KeybindContent()
         {
             if (HackMenu.Instance == null) return;
-            UI.VerticalGroup(ref scrollPos3, async () =>
+            UI.VerticalGroup(ref scrollPos3, () =>
             {
                 UI.Label("SettingsTab.Keybinds", null, true, -1, true);
                 UI.Textbox("SettingsTab.Search", ref s_kbSearch, "", 50);
@@ -136,7 +131,7 @@ namespace REPOssessed.Menu.Tab
                     string btnText = cheat.WaitingForKeybind ? TranslationUtil.Translate("General.Waiting") : cheat.HasKeybind ? cheat.keybind.ToString() : TranslationUtil.Translate("General.None");
                     if (GUILayout.Button(btnText, GUILayout.Width(85)))
                     {
-                        await KBUtil.BeginChangeKeybind(cheat);
+                        _ = KBUtil.BeginChangeKeybind(cheat);
                     }
                     GUILayout.EndHorizontal();
                 }
