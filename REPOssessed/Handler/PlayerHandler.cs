@@ -141,19 +141,7 @@ namespace REPOssessed.Handler
         public int GetHealth() => player.playerHealth?.Reflect().GetValue<int>("health") ?? 0;
         public int GetMaxHealth() => player.playerHealth?.Reflect().GetValue<int>("maxHealth") ?? 0;
         public bool IsDead() => player.Reflect().GetValue<bool>("deadSet");
-        public bool IsCrowned()
-        {
-            try
-            {
-                string? crownedSteamID = SessionManager.instance?.Reflect()?.GetValue<string>("crownedPlayerSteamID");
-                string? playerSteamID = GetSteamID();
-                return !string.IsNullOrEmpty(crownedSteamID) && crownedSteamID == playerSteamID;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        public bool IsCrowned() => SessionManager.instance.crownedPlayerSteamID == GetSteamID();
         public void RevivePlayer()
         {
             if (!GameUtil.IsMasterClient() || !IsDead()) return;
