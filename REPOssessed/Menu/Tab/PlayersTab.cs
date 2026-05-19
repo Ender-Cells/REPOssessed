@@ -1,7 +1,9 @@
 ﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using REPOssessed.Cheats.Core;
 using REPOssessed.Cheats.PlayersTab;
+using REPOssessed.Cheats.SelfTab;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
@@ -82,6 +84,15 @@ namespace REPOssessed.Menu.Tab
             UI.Button(["PlayersTab.BreakHeldObject", "General.HostTag"], () => objectHandler?.Break(false));
             UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
             UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
+            UI.Button("SelfTab.Test", () =>
+            {
+                TubmleUPG tubmle = Cheat.Instance<TubmleUPG>();
+                tubmle.Enabled = !tubmle.Enabled;
+                if (tubmle.Enabled)
+                {
+                    tubmle.playerUPG = selectedPlayerHandler.player;
+                }
+            }, Cheat.Instance<TubmleUPG>().Enabled ? "PlayersTab.PhysDisabler.Disable" : "PlayersTab.PhysDisabler.Enable");
             UI.Button("PlayersTab.DropItems", () => GameObjectManager.items?.Where(i => i?.Handle() is ObjectHandler h && h.IsEquiped()).Select(i => i.GetComponent<ItemEquippable>()).Where(eq => eq != null &&eq.Reflect().GetValue<int>("ownerPlayerId") == selectedPlayerHandler?.photonView?.ViewID).ToList().ForEach(eq => eq.RequestUnequip()));
             if (!selectedPlayerHandler.IsLocalPlayer())
             {

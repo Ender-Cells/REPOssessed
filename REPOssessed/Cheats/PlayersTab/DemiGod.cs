@@ -30,10 +30,7 @@ namespace REPOssessed.Cheats.PlayersTab
             if (DemiGodPlayers.Count == 0) return;
 
             // Удаляем игроков которых уже нет в игре
-            var activeSteamIds = GameObjectManager.players
-                .Select(p => p?.Handle()?.GetSteamID())
-                .Where(s => !string.IsNullOrEmpty(s))
-                .ToHashSet();
+            var activeSteamIds = GameObjectManager.players.Select(p => p?.Handle()?.GetSteamID()).Where(s => !string.IsNullOrEmpty(s)).ToHashSet();
             DemiGodPlayers.RemoveWhere(s => !activeSteamIds.Contains(s));
 
             // Лечим всех DemiGod игроков

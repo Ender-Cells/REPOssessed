@@ -1,10 +1,5 @@
 ﻿using HarmonyLib;
-using Photon.Pun;
-using Photon.Realtime;
-using REPOssessed.Cheats.Core;
 using System;
-using System.Threading;
-using UnityEngine.InputSystem.Utilities;
 
 namespace REPOssessed.Cheats.SelfTab
 {
