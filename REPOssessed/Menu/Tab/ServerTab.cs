@@ -43,6 +43,7 @@ namespace REPOssessed.Menu.Tab
                     Cheat.Instance<SetCurrency>().Execute();
                 }));
                 UI.Button(["ServerTab.BreakAllObjects"], () => GameObjectManager.items.Select(i => i?.Handle()).Where(h => h != null).ToList().ForEach(h => h?.Teleport(h.physGrabObject!.transform.position - Vector3.up * 100, Quaternion.identity)));
+                UI.Button("ServerTab.DestroyAll", () => Photon.Pun.PhotonNetwork.DestroyAll(false));
                 UI.Button(["ServerTab.ForceThiefPunishment", "General.HostTag"], () => Cheat.Instance<ForceThiefPunishment>().Execute());
                 UI.Textbox(["ServerTab.WizardStaff", "General.HostTag"], ref Time, @"[^0-9]", 10, new UIButton("General.Set", () =>
                 {

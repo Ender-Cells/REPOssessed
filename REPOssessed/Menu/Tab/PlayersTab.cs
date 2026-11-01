@@ -84,6 +84,7 @@ namespace REPOssessed.Menu.Tab
             UI.Button(["PlayersTab.BreakHeldObject", "General.HostTag"], () => objectHandler?.Break(false));
             UI.Textbox(["PlayersTab.DamageHeldObject", "General.HostTag"], ref objectDamage, @"[^0-9]", 5, new UIButton("General.Set", () => objectHandler?.Damage(int.Parse(objectDamage))));
             UI.Textbox(["PlayersTab.ChatMessage", "General.HostOrLocalTag"], ref message, "", 100, new UIButton("PlayersTab.Send", () => selectedPlayerHandler.SendMessage(message)));
+            //UI.Button("Delet user", () => Photon.Pun.PhotonNetwork.Destroy(selectedPlayerHandler.photonView));
             UI.Button("SelfTab.Test", () =>
             {
                 TubmleUPG tubmle = Cheat.Instance<TubmleUPG>();

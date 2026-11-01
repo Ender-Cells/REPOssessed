@@ -15,6 +15,9 @@ namespace REPOssessed.Menu.Tab
         public SelfTab() : base("SelfTab.Title") { }
         private Vector2 scrollPos = Vector2.zero;
         private Vector2 scrollPos2 = Vector2.zero;
+        private string overridePullerPosX = "0";
+        private string overridePullerPosY = "0";
+        private string overridePullerPosZ = "0";
 
         public override void Draw()
         {
@@ -28,22 +31,15 @@ namespace REPOssessed.Menu.Tab
             UI.VerticalGroup(ref scrollPos, () =>
             {
                 UI.Label("SelfTab.Title", null, true, -1, true);
-                //UI.Button("SelfTab.ReviveOnClient", () => Cheat.Instance<Revive>().Execute());
-                //UI.Checkbox("PhotonPatch", Cheat.Instance<PhotonPatch>());
                 UI.Checkbox(["SelfTab.SuperMelle", "General.HostTag"], Cheat.Instance<SuperMelle>());
                 UI.Checkbox("SelfTab.Hear_all_pl", Cheat.Instance<HearAllPlayer>());
                 UI.Checkbox("SelfTab.DontLooseItems", Cheat.Instance<DontLooseItems>());
-                //UI.Checkbox("SelfTab.Jackpot_auto", Cheat.Instance<Jackpot_auto>());
-                //UI.Textbox("SelfTab.Jackpot.User", ref Jackpot_auto.Id_string, @"[^0-9]", 100);
-                //UI.Select("SelfTab.JackpotPrize", ref SettingsTab.i_prizeIndex, Jackpot_auto.prizes.Select(x => new UIOption(x, () => Jackpot_auto.prize = x)).ToArray());
                 UI.Checkbox("SelfTab.UnlimitedEnergy", Cheat.Instance<UnlimitedStamina>());
                 UI.Checkbox("SelfTab.Godmode", Cheat.Instance<Godmode>());
                 UI.Checkbox("SelfTab.SafeGodmode", Cheat.Instance<SafeGodmode>());
                 UI.Checkbox("SelfTab.GODitems", Cheat.Instance<GODitems>());
                 UI.Checkbox("SelfTab.AllItemsGOD", Cheat.Instance<AllItemsGOD>());
-                //UI.Checkbox("SelfTab.Invis", Cheat.Instance<Invis>());
-                UI.Checkbox("SelfTab.Strength", Cheat.Instance<Strength>());
-                //UI.Checkbox("SelfTab.STR", Cheat.Instance<STR_patch>());
+                UI.Checkbox(["SelfTab.Strength", "General.HostTag"], Cheat.Instance<Strength>());
                 UI.Checkbox("SelfTab.NoTumble", Cheat.Instance<NoTumble>());
                 UI.Checkbox("SelfTab.InfiniteJump", Cheat.Instance<InfiniteJump>());
                 UI.Checkbox(["SelfTab.UnlimitedBattery", "General.HostTag"], Cheat.Instance<UnlimitedBattery>());

@@ -1,19 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\Changelog.json" />
     <None Remove="Resources\0Harmony.dll" />
@@ -24,7 +20,6 @@
     <None Remove="Resources\Theme\Green.skin" />
     <None Remove="Resources\Languages\English.json" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\Changelog.json" />
     <EmbeddedResource Include="Resources\Languages\English.json" />
@@ -35,7 +30,6 @@
     <EmbeddedResource Include="Resources\Theme\Default.skin" />
     <EmbeddedResource Include="Resources\Theme\Green.skin" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>Resources\0Harmony.dll</HintPath>
@@ -89,5 +83,4 @@
       <HintPath>Resources\BaseGame\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>

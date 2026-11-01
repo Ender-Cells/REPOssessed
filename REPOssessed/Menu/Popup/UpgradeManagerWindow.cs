@@ -1,7 +1,9 @@
 ﻿using Photon.Pun;
+using REPOssessed.Cheats.REPOGambling;
 using REPOssessed.Handler;
 using REPOssessed.Manager;
 using REPOssessed.Menu.Core;
+using REPOssessed.Menu.Tab;
 using REPOssessed.Util;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,8 @@ namespace REPOssessed.Menu.Popup
 
         private string search = "";
         private Vector2 scrollPos = Vector2.zero;
-
+        public static PlayerAvatar[] players => GameObjectManager.players.ToArray();
+        public static int user = GameObjectManager.LocalPlayer ? GameObjectManager.LocalPlayer.photonView.ViewID : -1;
         public override void DrawContent(int windowID)
         {
             if (!GameUtil.IsInGame())
@@ -35,6 +38,7 @@ namespace REPOssessed.Menu.Popup
                 GUILayout.BeginHorizontal();
                 UI.Textbox("General.Search", ref search, "", 50);
                 UI.Button("UpgradeManager.UseAllUpgrades", () => items?.Where(i => i != null).ToList().ForEach(p => Use(p)));
+                UI.Select("UpgradeManager.User", ref SettingsTab.i_userIndex, UpgradeManagerWindow.players.Select(x => new UIOption(x.Reflect()?.GetValue<string>("playerName"), () => UpgradeManagerWindow.user = x.photonView.ViewID)).ToArray());
                 GUILayout.EndHorizontal();
                 GUILayout.Space(20);
                 UI.ButtonGrid(groupedItems.Keys.ToList(), name => name + " " + groupedItems[name].Count + "x", search, name =>
@@ -61,7 +65,6 @@ namespace REPOssessed.Menu.Popup
                 if (item == null) return;
                 
                 ItemToggle toggle = item.GetComponent<ItemToggle>();
-                toggle.enabled = true;
                 if (toggle == null)
                 {
                     toggle = item.GetComponentInParent<ItemToggle>();
@@ -70,16 +73,21 @@ namespace REPOssessed.Menu.Popup
                 toggle.enabled = true;
                 PhotonView photon = item.GetComponent<PhotonView>();
 
-                int player = SemiFunc.PhotonViewIDPlayerAvatarLocal();
+                // Преобразуем user (string) в int для передачи в ToggleItem
+                //int playerId = -1;
+                //int.TryParse(user, out playerId);
+
                 if (toggle.enabled)
                 {
+                    if(user==-1)
+                        user=GameObjectManager.LocalPlayer.photonView.ViewID;
                     if (!SemiFunc.IsMultiplayer())
                     {
-                        toggle?.ToggleItem(true, player);
+                        toggle?.ToggleItem(true, user);
                     }
                     else
                     {
-                        photon?.RPC("ToggleItemRPC", RpcTarget.All, true, player);
+                        photon?.RPC("ToggleItemRPC", RpcTarget.All, true, user);
                     }
                 }
             }

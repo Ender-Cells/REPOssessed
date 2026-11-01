@@ -44,9 +44,12 @@ namespace REPOssessed
                     ? PhotonNetwork.PhotonServerSettings.RpcList[i]
                     : rpcData[keyByteThree] as string ?? "";
 
-                if (!IgnoredRPCDebugs.Contains(rpc)) Debug.LogWarning($"Processing RPC {rpc} from {sender.NickName}");
+                if (!IgnoredRPCDebugs.Contains(rpc) && Settings.b_EnableRPCLogs)
+                {
+                    Debug.LogWarning($"Processing RPC {rpc} from {sender.NickName}");
+                }
 
-                if (!sender.IsLocal && senderHandler.IsRPCBlocked())
+                if (!sender.IsLocal && senderHandler.IsRPCBlocked() && Settings.b_EnableRPCLogs)
                 {
                     Debug.LogError($"RPC {rpc} was blocked from {sender.NickName}.");
                     return false;
@@ -105,7 +108,7 @@ namespace REPOssessed
             {
                 EnemyHandler.NoEnemyOrbEnemies.Remove(enemy);
                 enemy.Handle()?.enemyHealth?.spawnValuable = true;
-            }         
+            }
         }
     }
 }

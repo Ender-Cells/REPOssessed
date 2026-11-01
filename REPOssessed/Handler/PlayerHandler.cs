@@ -110,7 +110,10 @@ namespace REPOssessed.Handler
                 RPCData rpcData = new RPCData(photonPlayer, rpc, rpcHash);
                 if (rpcData == null) return true;
 
-                if (!Patches.IgnoredRPCDebugs.Contains(rpc) && rpcHash.TryGetValue(Patches.keyByteFour, out object? rpcParameters) && rpcParameters is object[] parameters) Debug.Log($"RPC Params '{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'");
+                if (!Patches.IgnoredRPCDebugs.Contains(rpc) && rpcHash.TryGetValue(Patches.keyByteFour, out object? rpcParameters) && rpcParameters is object[] parameters && Settings.b_EnableRPCLogs)
+                {
+                    Debug.Log($"RPC Params '{string.Join(", ", parameters.Select(p => p?.ToString() ?? "null"))}'");
+                }
 
                 if (IsLocalPlayer()) return true;
 
@@ -140,6 +143,7 @@ namespace REPOssessed.Handler
         public bool IsLocalPlayer() => player.Reflect()?.GetValue<bool>("isLocal") ?? false;
         public int GetHealth() => player.playerHealth?.Reflect().GetValue<int>("health") ?? 0;
         public int GetMaxHealth() => player.playerHealth?.Reflect().GetValue<int>("maxHealth") ?? 0;
+        public int GetActorNumber() => photonPlayer?.ActorNumber ?? -1;
         public bool IsDead() => player.Reflect().GetValue<bool>("deadSet");
         public bool IsCrowned() => SessionManager.instance.crownedPlayerSteamID == GetSteamID();
         public void RevivePlayer()
@@ -175,7 +179,7 @@ namespace REPOssessed.Handler
 
         public bool IsMasterClient() => IsLocalPlayer() ? SemiFunc.IsMasterClientOrSingleplayer() : photonPlayer?.IsMasterClient ?? false;
         public void PhysDisable() => player.physGrabber?.OverrideGrabRelease(0, 1);
-        
+
         public void Heal(int amount) => player.playerHealth?.HealOther(amount, false);
         public void Hurt(int amount)
         {
@@ -185,10 +189,10 @@ namespace REPOssessed.Handler
         public void Kill() => Hurt(GetHealth());
         public void Teleport(Vector3 position, Quaternion rotation)
         {
-            if (IsDead()) 
+            if (IsDead())
             {
                 Debug.LogWarning("Can't teleport a dead player!");
-                return; 
+                return;
             }
 
             if (IsLocalPlayer())

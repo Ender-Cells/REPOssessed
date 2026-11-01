@@ -19,7 +19,7 @@ namespace REPOssessed
         /* *    
          * Menu Settings
          * */
-        public static string s_Version = "v1.0.2";
+        public static string s_Version = "v1.0.3";
         public static string Language = "English";
         public static bool b_IsFirstLaunch = true;
 
@@ -60,6 +60,7 @@ namespace REPOssessed
         public static bool b_DisplayDeathHeads = false;
         public static bool b_DisplayPlayers = false;
         public static bool b_DisplayEnemies = false;
+        public static bool b_EnableRPCLogs = false;
 
         public static int[] i_valuableValueThresholds = new int[] { 1000, 5000, 10000, 20000 };
 
@@ -193,7 +194,7 @@ namespace REPOssessed
                             if (bool.TryParse(toggle.Value, out bool result) && result)
                             {
                                 ToggleCheat? toggleCheat = Cheat.instances.OfType<ToggleCheat>().FirstOrDefault(c => c.GetType().Name == toggle.Key);
-                                if (toggleCheat != null && !toggleCheat.Enabled) toggleCheat.Toggle(); toggleCheat!.Enabled =true ;
+                                if (toggleCheat != null && !toggleCheat.Enabled) toggleCheat.Toggle(); toggleCheat!.Enabled = true;
                             }
                         }
                     }

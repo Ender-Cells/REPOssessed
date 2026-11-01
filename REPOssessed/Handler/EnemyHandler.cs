@@ -64,6 +64,17 @@ namespace REPOssessed.Handler
         {
             enemy.EnemyTeleported(position);
         }
+        //public void Destroy()
+        //{
+        //    if (SemiFunc.IsMultiplayer())
+        //    {
+        //        Photon.Pun.PhotonNetwork.Destroy(enemyParent?.gameObject);
+        //    }
+        //    else
+        //    {
+        //        Kill(false);
+        //    }
+        //}
         public bool IsDisabled() => (!enemyParent?.EnableObject?.activeSelf ?? false) || (!enemyParent.Reflect()?.GetValue<bool>("Spawned") ?? false);
         public bool IsDead() => enemyHealth?.Reflect().GetValue<bool>("dead") ?? false;
         public string GetName() => enemyParent?.enemyName ?? "Unknown";

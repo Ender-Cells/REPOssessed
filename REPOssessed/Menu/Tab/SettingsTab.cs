@@ -20,6 +20,7 @@ namespace REPOssessed.Menu.Tab
         private int i_languageIndex = -1;
         private int i_themeIndex = -1;
         public static int i_prizeIndex = 0;
+        public static int i_userIndex = 0;
 
         private string s_kbSearch = "";
 
@@ -67,43 +68,44 @@ namespace REPOssessed.Menu.Tab
                 UI.Checkbox("SettingsTab.FPSCounter", Cheat.Instance<FPSCounter>());
                 UI.Checkbox("SettingsTab.DebugMode", Cheat.Instance<DebugMode>());
                 UI.Checkbox("SettingsTab.Credits", Cheat.Instance<Credits>());
+                UI.Checkbox("SettingsTab.RPCLogs", Cheat.Instance<RPCLogs>());
 
                 UI.Label("SettingsTab.Colors", null, true, -1, true);
                 UI.Textbox("SettingsTab.MenuText", ref s_menuText, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
                 {
-                    if (Settings.c_menuText != null) SetColor(ref Settings.c_menuText, s_menuText); 
+                    if (Settings.c_menuText != null) SetColor(ref Settings.c_menuText, s_menuText);
                 }));
                 UI.Textbox("SettingsTab.Primary", ref s_primaryColor, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
                 {
                     if (Settings.c_primary != null) SetColor(ref Settings.c_primary, s_primaryColor);
                 }));
-                UI.Textbox("SettingsTab.PlayerColor", ref s_espPlayer, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
-                { 
-                    if (Settings.c_espPlayer != null) SetColor(ref Settings.c_espPlayer, s_espPlayer); 
+                UI.Textbox("SettingsTab.PlayerColor", ref s_espPlayer, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                {
+                    if (Settings.c_espPlayer != null) SetColor(ref Settings.c_espPlayer, s_espPlayer);
                 }));
-                UI.Textbox("SettingsTab.ItemColor", ref s_espItem, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
-                { 
-                    if (Settings.c_espItem != null) SetColor(ref Settings.c_espItem, s_espItem); 
+                UI.Textbox("SettingsTab.ItemColor", ref s_espItem, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                {
+                    if (Settings.c_espItem != null) SetColor(ref Settings.c_espItem, s_espItem);
                 }));
                 UI.Textbox("SettingsTab.EnemyColor", ref s_espEnemy, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
-                { 
+                {
                     if (Settings.c_espEnemy != null) SetColor(ref Settings.c_espEnemy, s_espEnemy);
                 }));
-                UI.Textbox("SettingsTab.CartColor", ref s_espCart, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                UI.Textbox("SettingsTab.CartColor", ref s_espCart, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
                 {
                     if (Settings.c_espCart != null) SetColor(ref Settings.c_espCart, s_espCart);
                 }));
-                UI.Textbox("SettingsTab.ExtractionColor", ref s_espExtraction, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                UI.Textbox("SettingsTab.ExtractionColor", ref s_espExtraction, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
                 {
-                    if (Settings.c_espExtraction != null) SetColor(ref Settings.c_espExtraction, s_espExtraction); 
+                    if (Settings.c_espExtraction != null) SetColor(ref Settings.c_espExtraction, s_espExtraction);
                 }));
-                UI.Textbox("SettingsTab.DeathHeadColor", ref s_espDeathHead, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
-                { 
+                UI.Textbox("SettingsTab.DeathHeadColor", ref s_espDeathHead, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
+                {
                     if (Settings.c_espDeathHead != null) SetColor(ref Settings.c_espDeathHead, s_espDeathHead);
                 }));
-                UI.Textbox("SettingsTab.TruckColor", ref s_espTruck, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () => 
+                UI.Textbox("SettingsTab.TruckColor", ref s_espTruck, @"[^0-9A-Za-z]", 8, new UIButton("General.Set", () =>
                 {
-                    if (Settings.c_espTruck != null) SetColor(ref Settings.c_espTruck, s_espTruck); 
+                    if (Settings.c_espTruck != null) SetColor(ref Settings.c_espTruck, s_espTruck);
                 }));
                 UI.Button(["SettingsTab.TieredLootColors", $"({GetTiersColored()})"], () => EditTierColors(), "General.Set");
                 UI.Textbox("SettingsTab.Tiers", ref s_lootTiers, @"[^0-9,]", 50);

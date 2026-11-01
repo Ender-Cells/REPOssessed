@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using REPOssessed.Cheats.Core;
+using REPOssessed.Util;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -25,7 +26,8 @@ namespace REPOssessed.Cheats.SelfTab
         [HarmonyPrefix]
         public static void Prefix(PhysGrabber __instance, bool _grab)
         {
-            if (!Instance<GrabThroughWallsPatch>().Enabled || !__instance.isLocal)
+            //bool flag = __instance.playerAvatar.Reflect().GetValue<PlayerTumble>("tumble") ? __instance.playerAvatar.Reflect().GetValue<float>("upgradeTumbleClimb") > 0 : false;
+            if (!Instance<GrabThroughWallsPatch>().Enabled || !__instance.isLocal || (__instance.playerAvatar.Reflect().GetValue<PlayerTumble>("tumble").Reflect().GetValue<bool>("isTumbling") ? __instance.playerAvatar.Reflect().GetValue<float>("upgradeTumbleClimb") > 0 : false) )
             {
                 return;
             }

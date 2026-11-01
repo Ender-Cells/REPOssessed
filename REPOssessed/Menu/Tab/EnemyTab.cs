@@ -141,6 +141,7 @@ namespace REPOssessed.Menu.Tab
             UI.Label("EnemyTab.MaxHealth", enemyHandler.GetMaxHealth().ToString());
             UI.Label("EnemyTab.EnemyTarget", enemyHandler.GetEnemyTarget()?.Handle()?.GetName() ?? TranslationUtil.Translate("General.None"));
             UI.Button(["EnemyTab.Kill"], () => enemyHandler.Kill(noEnemyOrb));
+            //UI.Button(["EnemyTab.Destroy"], () => enemyHandler.Destroy());
             UI.Button(["EnemyTab.PermaKill"], () => enemyHandler.PermaKill());
             UI.Button(["EnemyTab.Lure", "General.HostTag"], () =>
             {

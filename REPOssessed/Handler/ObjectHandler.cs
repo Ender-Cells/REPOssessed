@@ -41,7 +41,19 @@ namespace REPOssessed.Handler
         public void Break(bool effects)
         {        
             if (IsEnemy() || IsPlayer()) return;
-            physGrabObject?.DestroyPhysGrabObject();
+            if (!SemiFunc.IsMultiplayer())
+            {
+                physGrabObject?.DestroyPhysGrabObject();
+            }
+            else
+            {
+                Vector3 poss = physGrabObject?.transform?.position ?? Vector3.zero;
+                poss.y = -50;
+                physGrabObject?.Teleport(poss, Quaternion.identity);
+
+
+                //Photon.Pun.PhotonNetwork.Destroy(physGrabObject?.Reflect()?.GetValue<PhotonView>("photonView"));
+            }
         }
         public void Damage(int valueLost, int breakLevel = 1, bool loseValue = true)
         {
@@ -102,7 +114,7 @@ namespace REPOssessed.Handler
                 float batteryLife = chargeAmount;
                 int batteryLifeInt = (int)Mathf.Round(batteryLife / (float)(100 / batteryBars));
                 batteryLifeInt = Mathf.Min(batteryLifeInt, batteryBars);
-                photonview?.RPC("BatteryFullPercentChangeRPC", RpcTarget.All, batteryLifeInt, false);
+                photonview?.RPC("BatteryFullPercentChangeRPC", RpcTarget.Others, batteryLifeInt, true, batteryLife, true);
             }
         }
         public bool IsPlayer() => physGrabObject?.Handle()?.GetName()?.Contains("Player") ?? false || (physGrabObject?.Reflect()?.GetValue<bool>("isPlayer") ?? false);

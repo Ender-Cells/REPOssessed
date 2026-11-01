@@ -28,7 +28,8 @@ namespace REPOssessed.Cheats.SelfTab
                 return;
             }
             Vector3 pos = grab.physGrabPointPullerPosition;
-            phys?.Teleport(pos, Quaternion.identity);
+            Quaternion rot = phys?.transform?.localRotation ?? Quaternion.identity;
+            phys?.Teleport(pos, rot);
         }
     }
 }
